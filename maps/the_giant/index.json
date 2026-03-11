@@ -1,0 +1,38 @@
+{
+  "map_id": "the_giant",
+  "display_name": "The Giant",
+  "aliases": ["the giant", "giant"],
+  "summary": "Remake of Der Riese with a simple classic layout focused on power, teleporters, Pack-a-Punch, the Fly Trap / Paradoxical Prologue easter egg, the Annihilator reward, a music easter egg, an extra perk side easter egg, and a few small visual side easter eggs.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overall map overview, classic layout, power, teleporters, Pack-a-Punch, the Wonderwaffe DG-2 from the Mystery Box, and the main systems of The Giant."
+    },
+    {
+      "path": "pap_teleporters.md",
+      "category": "pap",
+      "summary": "How to turn on the power, locate the 3 teleporters, link each teleporter to the mainframe, and unlock Pack-a-Punch."
+    },
+    {
+      "path": "main_ee_annihilator.md",
+      "category": "main_ee",
+      "summary": "Fly Trap / Paradoxical Prologue easter egg, how to shoot the hidden panel, find the teddy bears, and unlock the Annihilator."
+    },
+    {
+      "path": "music_ee.md",
+      "category": "side_ee",
+      "summary": "How to activate the Beauty of Annihilation music easter egg by interacting with the 3 hidden music objects."
+    },
+    {
+      "path": "extra_perk.md",
+      "category": "side_ee",
+      "summary": "How to use Monkey Bombs and the teleporter system to activate the giant robot laser and reveal the extra perk hidden under the snow pile."
+    },
+    {
+      "path": "side_ee.md",
+      "category": "side_ee",
+      "summary": "Visual side easter eggs including the Icarus plane, giant robot head, Maxis office, and teddy bear shadow."
+    }
+  ]
+}

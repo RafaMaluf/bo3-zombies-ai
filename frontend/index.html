@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zombies AI</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <h1>Zombies AI</h1>
+        <p>Black Ops 3 Zombies knowledge assistant</p>
+      </div>
+      <div class="status" id="status">Backend: checking...</div>
+    </header>
+
+    <main class="chat-shell">
+      <div id="chat" class="chat"></div>
+
+      <form id="chat-form" class="chat-form">
+        <textarea
+          id="message-input"
+          placeholder="Ask something like: how do i unlock pack a punch on shadows of evil?"
+          rows="3"
+          required
+        ></textarea>
+
+        <div class="actions">
+          <button type="submit" id="send-btn">Send</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

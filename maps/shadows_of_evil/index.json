@@ -1,0 +1,113 @@
+{
+  "map_id": "shadows_of_evil",
+  "display_name": "Shadows of Evil",
+  "aliases": ["soe", "shadows", "shadows of evil"],
+  "summary": "District-based Black Ops 3 Zombies map built around Beast Mode, rituals, the underground Rift, Gateworms, Pack-a-Punch unlock, the Apothicon Sword, Civil Protector, Rocket Shield, Apothicon Servant, Harvest Pods, and a large set of side easter eggs.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Map overview, district structure, Beast Mode, rituals, Rift, and the main progression systems of Shadows of Evil."
+    },
+    {
+      "path": "pap.md",
+      "category": "pap",
+      "summary": "Pack-a-Punch unlock, all four rituals, Summoning Key setup, ritual items including Nero's Fountain Pen, Jackie's Police Badge, Jessica's Hairpiece / Wig, Floyd's Championship Belt, Gateworms, and the final ritual in the Sacred Place."
+    },
+    {
+      "path": "sword.md",
+      "category": "weapon",
+      "summary": "How to access the sword room, read and match symbols, charge the egg at statues, obtain the Apothicon Sword, and upgrade it into the Reborn Keeper Sword."
+    },
+    {
+      "path": "shield.md",
+      "category": "equipment",
+      "summary": "Rocket Shield part locations in Canals, Waterfront, and Footlight, plus the Goddard Apparatus upgrade."
+    },
+    {
+      "path": "wonder_weapon.md",
+      "category": "weapon",
+      "summary": "How to build the Apothicon Servant using Margwa Heart, Margwa Tentacle, and Xenomatter."
+    },
+    {
+      "path": "pods.md",
+      "category": "resource",
+      "summary": "Fumigator spawns, Harvest Pod stages, and possible pod rewards including the purple pod drops."
+    },
+    {
+      "path": "civil-protector.md",
+      "category": "equipment",
+      "summary": "Civil Protector fuse locations, Rift fuse box activation, and summon panel usage."
+    },
+    {
+      "path": "build-table.md",
+      "category": "resource",
+      "summary": "Workbench locations in Canals, Footlight, and Waterfront."
+    },
+    {
+      "path": "main-ee.md",
+      "category": "main_ee",
+      "summary": "Main easter egg flow including Pack-a-Punch, sword setup, Nero's book, flag step, Shadow Man fight, and the 4-player final step."
+    },
+    {
+      "path": "side_ee/free_500.md",
+      "category": "side_ee",
+      "summary": "How to get the free 500 points reward from Chang's Laundry."
+    },
+    {
+      "path": "side_ee/round-skip.md",
+      "category": "side_ee",
+      "summary": "How to shoot the Shadow Man at spawn to skip to rounds 5, 10, or 15."
+    },
+    {
+      "path": "side_ee/upgrade-tripmine-cream.md",
+      "category": "side_ee",
+      "summary": "How to upgrade Trip Mines into cream cakes using the Devo Donut carts."
+    },
+    {
+      "path": "side_ee/upgrade-tripmine-donut.md",
+      "category": "side_ee",
+      "summary": "How to upgrade Trip Mines into donuts using the Holly's Cream Cakes signs."
+    },
+    {
+      "path": "side_ee/free_mega.md",
+      "category": "side_ee",
+      "summary": "How to get a free random Mega Gobblegum using Widow's Wine, lion statues, and the candy shop plate."
+    },
+    {
+      "path": "side_ee/upgrade_lil_arnies.md",
+      "category": "side_ee",
+      "summary": "How to upgrade Lil' Arnies after getting 100 kills and throwing them at the cane, hat, and bow tie."
+    },
+    {
+      "path": "side_ee/margwa-mask.md",
+      "category": "side_ee",
+      "summary": "How to unlock the Margwa Head by shooting the six tram heart targets and where the reward can spawn."
+    },
+    {
+      "path": "side_ee/noir-mode.md",
+      "category": "side_ee",
+      "summary": "How to activate Noir Mode in the boxing gym and apply the black-and-white filter."
+    },
+    {
+      "path": "side_ee/jumpscare.md",
+      "category": "side_ee",
+      "summary": "How to trigger the Ultimis Richtofen jumpscare after opening Pack-a-Punch."
+    },
+    {
+      "path": "side_ee/icarus_plane.md",
+      "category": "side_ee",
+      "summary": "Story easter egg showing the Icarus plane from Mob of the Dead flying over Junction."
+    },
+    {
+      "path": "side_ee/music1.md",
+      "category": "side_ee",
+      "summary": "How to play Snakeskin Boots by interacting with the three wooden radios."
+    },
+    {
+      "path": "side_ee/music2.md",
+      "category": "side_ee",
+      "summary": "How to build the microphone on the Burlesque stage and play Cold Hard Cash."
+    }
+  ]
+}

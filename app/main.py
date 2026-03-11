@@ -1,25 +1,25 @@
 import json
+import re
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from openai import OpenAI
-from pathlib import Path
 from fastapi.staticfiles import StaticFiles
+from openai import OpenAI
 
 from app.config import GROQ_API_KEY, GROQ_MODEL, MAX_SELECTED_FILES
-from app.kb_loader import build_catalog_for_selection, load_all_map_indexes, read_selected_files
+from app.kb_loader import build_catalog_for_selection, load_all_map_indexes, get_file_info
 from app.prompt_builder import build_answer_messages, build_selection_messages
-from app.schemas import ChatRequest, ChatResponse, FinalAnswerResponse, SelectionResponse
+from app.schemas import (
+    ChatRequest,
+    ChatResponse,
+    FinalAnswerResponse,
+    RelevantImage,
+    SelectionResponse,
+)
 
 app = FastAPI(title="Zombies AI Backend", version="0.1.0")
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-FRONTEND_DIR = BASE_DIR / "frontend"
-MAPS_DIR = BASE_DIR / "maps"
-
-app.mount("/static", StaticFiles(directory=MAPS_DIR), name="static")
-app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,6 +53,77 @@ def call_groq_json(messages: list[dict]) -> dict[str, Any]:
     return json.loads(content)
 
 
+def extract_image_paths(content: str) -> list[str]:
+    paths: list[str] = []
+
+    pattern_related = re.findall(r"Related image:\s*([^\s]+)", content)
+    paths.extend(pattern_related)
+
+    pattern_list = re.findall(r"^\-\s+(images/[^\s]+)$", content, flags=re.MULTILINE)
+    paths.extend(pattern_list)
+
+    deduped = []
+    seen = set()
+    for p in paths:
+        if p not in seen:
+            seen.add(p)
+            deduped.append(p)
+    return deduped
+
+
+def read_selected_files(indexes: dict, selected_files: list) -> tuple[str, list[RelevantImage]]:
+    chunks: list[str] = []
+    available_images: list[RelevantImage] = []
+
+    for sf in selected_files:
+        info = get_file_info(indexes, sf.map_id, sf.path)
+        if info is None:
+            continue
+
+        file_path = Path("maps") / sf.map_id / sf.path
+        if not file_path.exists():
+            continue
+
+        content = file_path.read_text(encoding="utf-8")
+
+        image_paths = extract_image_paths(content)
+        for img_path in image_paths:
+            available_images.append(RelevantImage(map_id=sf.map_id, path=img_path))
+
+        chunk = (
+            f"MAP: {sf.map_id}\n"
+            f"FILE: {sf.path}\n"
+            f"CATEGORY: {info.get('category', 'unknown')}\n"
+            f"SUMMARY: {info.get('summary', '')}\n\n"
+            f"{content}\n"
+        )
+        chunks.append(chunk)
+
+    return "\n\n---\n\n".join(chunks), dedupe_images(available_images)
+
+
+def dedupe_images(images: list[RelevantImage]) -> list[RelevantImage]:
+    seen = set()
+    deduped = []
+    for img in images:
+        key = (img.map_id, img.path)
+        if key not in seen:
+            seen.add(key)
+            deduped.append(img)
+    return deduped
+
+
+def infer_active_map_id(selected_files: list) -> str | None:
+    if not selected_files:
+        return None
+
+    unique_maps = {sf.map_id for sf in selected_files}
+    if len(unique_maps) == 1:
+        return selected_files[0].map_id
+
+    return None
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
@@ -66,11 +137,11 @@ def chat(req: ChatRequest):
 
     catalog_text = build_catalog_for_selection(indexes)
 
-    # Step 1: selection
     selection_messages = build_selection_messages(
         user_message=req.message,
         catalog_text=catalog_text,
         conversation_history=req.conversation_history,
+        active_map_id=req.active_map_id,
     )
 
     try:
@@ -86,6 +157,7 @@ def chat(req: ChatRequest):
             clarification_question=selection.clarification_question,
             selected_files=[],
             relevant_images=[],
+            active_map_id=req.active_map_id,
         )
 
     selected_files = selection.selected_files[:MAX_SELECTED_FILES]
@@ -96,20 +168,19 @@ def chat(req: ChatRequest):
             clarification_question="Which map or topic do you mean?",
             selected_files=[],
             relevant_images=[],
+            active_map_id=req.active_map_id,
         )
 
-    # Step 2: read selected files
-    combined_context, used_images = read_selected_files(indexes, selected_files)
+    combined_context, available_images = read_selected_files(indexes, selected_files)
 
     if not combined_context.strip():
         raise HTTPException(status_code=500, detail="Selected files could not be loaded")
 
-    # Step 3: answer
     answer_messages = build_answer_messages(
         user_message=req.message,
         combined_context=combined_context,
         selected_files=selected_files,
-        available_images=used_images,
+        available_images=available_images,
         conversation_history=req.conversation_history,
     )
 
@@ -119,10 +190,21 @@ def chat(req: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Answer step failed: {e}")
 
+    new_active_map_id = infer_active_map_id(selected_files) or req.active_map_id
+
     return ChatResponse(
         answer=final_answer.answer,
         need_clarification=final_answer.need_clarification,
         clarification_question=final_answer.clarification_question,
         selected_files=selected_files,
         relevant_images=final_answer.relevant_images,
+        active_map_id=new_active_map_id,
     )
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
+MAPS_DIR = BASE_DIR / "maps"
+
+app.mount("/static", StaticFiles(directory=MAPS_DIR), name="static")
+app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

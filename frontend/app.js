@@ -6,6 +6,8 @@ const sendBtn = document.getElementById("send-btn");
 const statusEl = document.getElementById("status");
 
 const conversationHistory = [];
+const SHOW_DEBUG_FILES = false;
+let activeMapId = null;
 
 function addMessage(role, text, options = {}) {
   const wrapper = document.createElement("div");
@@ -24,37 +26,31 @@ function addMessage(role, text, options = {}) {
     const imagesWrap = document.createElement("div");
     imagesWrap.className = "message-images";
 
-    for (const imgPath of options.images) {
+    for (const imgObj of options.images) {
       const img = document.createElement("img");
-      img.src = buildImageUrl(options.selectedFiles, imgPath);
-      img.alt = imgPath;
-      img.title = imgPath;
+      img.src = buildImageUrl(imgObj);
+      img.alt = imgObj.path;
+      img.title = `${imgObj.map_id}/${imgObj.path}`;
       imagesWrap.appendChild(img);
     }
 
     wrapper.appendChild(imagesWrap);
   }
 
-//   if (options.selectedFiles && options.selectedFiles.length > 0) {
-//     const fileList = document.createElement("div");
-//     fileList.className = "file-list";
-//     const labels = options.selectedFiles.map(f => `${f.map_id}/${f.path}`);
-//     fileList.textContent = `Selected files: ${labels.join(", ")}`;
-//     wrapper.appendChild(fileList);
-//   }
+  if (SHOW_DEBUG_FILES && options.selectedFiles && options.selectedFiles.length > 0) {
+    const fileList = document.createElement("div");
+    fileList.className = "file-list";
+    const labels = options.selectedFiles.map(f => `${f.map_id}/${f.path}`);
+    fileList.textContent = `Selected files: ${labels.join(", ")}`;
+    wrapper.appendChild(fileList);
+  }
 
   chatEl.appendChild(wrapper);
   chatEl.scrollTop = chatEl.scrollHeight;
 }
 
-function buildImageUrl(selectedFiles, relativeImagePath) {
-  if (!selectedFiles || selectedFiles.length === 0) {
-    return "";
-  }
-
-  // Assume first selected file's map is the correct map for image resolution.
-  const mapId = selectedFiles[0].map_id;
-  return `${API_BASE}/static/${mapId}/${relativeImagePath}`;
+function buildImageUrl(imageObj) {
+  return `${API_BASE}/static/${imageObj.map_id}/${imageObj.path}`;
 }
 
 async function checkHealth() {
@@ -70,7 +66,8 @@ async function checkHealth() {
 async function sendMessage(message) {
   const payload = {
     message,
-    conversation_history: conversationHistory
+    conversation_history: conversationHistory,
+    active_map_id: activeMapId
   };
 
   const res = await fetch(`${API_BASE}/chat`, {
@@ -105,6 +102,10 @@ formEl.addEventListener("submit", async (e) => {
   try {
     const data = await sendMessage(message);
 
+    if (data.active_map_id) {
+      activeMapId = data.active_map_id;
+    }
+
     if (data.need_clarification) {
       addMessage("assistant", data.clarification_question, {
         clarification: true,
@@ -134,6 +135,7 @@ formEl.addEventListener("submit", async (e) => {
     inputEl.focus();
   }
 });
+
 inputEl.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();

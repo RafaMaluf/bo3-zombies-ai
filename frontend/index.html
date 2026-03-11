@@ -3,23 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zombies AI</title>
+  <title>KronoChat</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div class="app">
+  <div class="app-shell">
     <header class="topbar">
-      <div>
-        <h1>Zombies AI</h1>
-        <p>Black Ops 3 Zombies knowledge assistant</p>
+      <div class="brand">
+        <img src="./logo.png" alt="KronoChat logo" class="brand-logo" />
       </div>
-      <div class="status" id="status">Backend: checking...</div>
     </header>
 
-    <main class="chat-shell">
-      <div id="chat" class="chat"></div>
+    <main class="chat-card">
+      <section id="chat" class="chat"></section>
 
-      <form id="chat-form" class="chat-form">
+      <form id="chat-form" class="composer">
         <textarea
           id="message-input"
           placeholder="Ask something like: how do i unlock pack a punch on shadows of evil?"
@@ -27,11 +25,16 @@
           required
         ></textarea>
 
-        <div class="actions">
+        <div class="composer-actions">
           <button type="submit" id="send-btn">Send</button>
         </div>
       </form>
     </main>
+  </div>
+
+  <div id="image-modal" class="image-modal hidden" aria-hidden="true">
+    <button id="modal-close" class="modal-close" aria-label="Close image viewer">×</button>
+    <img id="modal-image" class="modal-image" alt="Expanded chat image" />
   </div>
 
   <script src="./app.js"></script>

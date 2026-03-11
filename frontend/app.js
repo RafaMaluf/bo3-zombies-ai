@@ -3,11 +3,15 @@ const chatEl = document.getElementById("chat");
 const formEl = document.getElementById("chat-form");
 const inputEl = document.getElementById("message-input");
 const sendBtn = document.getElementById("send-btn");
-const statusEl = document.getElementById("status");
+const imageModalEl = document.getElementById("image-modal");
+const modalImageEl = document.getElementById("modal-image");
+const modalCloseEl = document.getElementById("modal-close");
 
 const conversationHistory = [];
 const SHOW_DEBUG_FILES = false;
 let activeMapId = null;
+let typingBubble = null;
+let hasSentFirstMessage = false;
 
 function addMessage(role, text, options = {}) {
   const wrapper = document.createElement("div");
@@ -15,7 +19,7 @@ function addMessage(role, text, options = {}) {
 
   const meta = document.createElement("div");
   meta.className = "message-meta";
-  meta.textContent = role === "user" ? "You" : options.clarification ? "Clarification needed" : "Assistant";
+  meta.textContent = role === "user" ? "You" : options.clarification ? "Clarification needed" : "KronoChat";
   wrapper.appendChild(meta);
 
   const body = document.createElement("div");
@@ -31,6 +35,7 @@ function addMessage(role, text, options = {}) {
       img.src = buildImageUrl(imgObj);
       img.alt = imgObj.path;
       img.title = `${imgObj.map_id}/${imgObj.path}`;
+      img.addEventListener("click", () => openImageModal(img.src, img.alt));
       imagesWrap.appendChild(img);
     }
 
@@ -49,17 +54,64 @@ function addMessage(role, text, options = {}) {
   chatEl.scrollTop = chatEl.scrollHeight;
 }
 
+function addTypingMessage() {
+  const wrapper = document.createElement("div");
+  wrapper.className = "message assistant";
+  wrapper.id = "typing-message";
+
+  const meta = document.createElement("div");
+  meta.className = "message-meta";
+  meta.textContent = "KronoChat";
+  wrapper.appendChild(meta);
+
+  const typing = document.createElement("div");
+  typing.className = "typing";
+  typing.innerHTML = "<span></span><span></span><span></span>";
+  wrapper.appendChild(typing);
+
+  chatEl.appendChild(wrapper);
+  chatEl.scrollTop = chatEl.scrollHeight;
+  typingBubble = wrapper;
+}
+
+function removeTypingMessage() {
+  if (typingBubble) {
+    typingBubble.remove();
+    typingBubble = null;
+  }
+}
+
 function buildImageUrl(imageObj) {
   return `${API_BASE}/static/${imageObj.map_id}/${imageObj.path}`;
+}
+
+function openImageModal(src, alt = "") {
+  modalImageEl.src = src;
+  modalImageEl.alt = alt;
+  imageModalEl.classList.remove("hidden");
+  imageModalEl.setAttribute("aria-hidden", "false");
+}
+
+function closeImageModal() {
+  imageModalEl.classList.add("hidden");
+  imageModalEl.setAttribute("aria-hidden", "true");
+  modalImageEl.src = "";
+}
+
+function updateInputPlaceholder() {
+  if (hasSentFirstMessage) {
+    inputEl.placeholder = "Digite aqui...";
+  } else {
+    inputEl.placeholder = "Ask something like: how do i unlock pack a punch on shadows of evil?";
+  }
 }
 
 async function checkHealth() {
   try {
     const res = await fetch(`${API_BASE}/health`);
     if (!res.ok) throw new Error("Health check failed");
-    statusEl.textContent = "Backend: online";
   } catch (err) {
-    statusEl.textContent = "Backend: offline";
+    // Intentionally silent in UI now
   }
 }
 
@@ -95,9 +147,13 @@ formEl.addEventListener("submit", async (e) => {
   addMessage("user", message);
   conversationHistory.push({ role: "user", content: message });
 
+  hasSentFirstMessage = true;
+  updateInputPlaceholder();
+
   inputEl.value = "";
   sendBtn.disabled = true;
   sendBtn.textContent = "Sending...";
+  addTypingMessage();
 
   try {
     const data = await sendMessage(message);
@@ -105,6 +161,8 @@ formEl.addEventListener("submit", async (e) => {
     if (data.active_map_id) {
       activeMapId = data.active_map_id;
     }
+
+    removeTypingMessage();
 
     if (data.need_clarification) {
       addMessage("assistant", data.clarification_question, {
@@ -128,6 +186,7 @@ formEl.addEventListener("submit", async (e) => {
       });
     }
   } catch (err) {
+    removeTypingMessage();
     addMessage("assistant", `Error: ${err.message}`, { error: true });
   } finally {
     sendBtn.disabled = false;
@@ -143,4 +202,19 @@ inputEl.addEventListener("keydown", (e) => {
   }
 });
 
+modalCloseEl.addEventListener("click", closeImageModal);
+
+imageModalEl.addEventListener("click", (e) => {
+  if (e.target === imageModalEl) {
+    closeImageModal();
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !imageModalEl.classList.contains("hidden")) {
+    closeImageModal();
+  }
+});
+
+updateInputPlaceholder();
 checkHealth();

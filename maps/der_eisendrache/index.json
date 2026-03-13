@@ -1,0 +1,113 @@
+{
+  "map_id": "der_eisendrache",
+  "display_name": "Der Eisendrache",
+  "aliases": ["der eisendrache", "de", "der eisen"],
+  "summary": "Castle-based Black Ops 3 Zombies map focused on power, rotating Pack-a-Punch, the Wrath of the Ancients, the 4 elemental bow upgrades, the Rocket Shield, the Ragnarok DG-4, a full main easter egg quest, and several side easter eggs.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overall map overview, castle layout, core progression, Wrath of the Ancients, upgraded bows, buildables, main easter egg, and side easter eggs."
+    },
+    {
+      "path": "power_pap_teleporter.md",
+      "category": "pap",
+      "summary": "How to turn on power, rebuild rotating Pack-a-Punch, access the rocket test site, and use the teleporter and Wundersphere / jump pad system."
+    },
+    {
+      "path": "wrath_of_the_ancients.md",
+      "category": "wonder_weapon",
+      "summary": "How to obtain the base bow by feeding the 3 dragons and collecting the Wrath of the Ancients."
+    },
+    {
+      "path": "fire_bow.md",
+      "category": "wonder_weapon",
+      "summary": "Complete Fire Bow upgrade guide, including the rocket test fireball, airborne circle shots, fireplace step, sun interaction, and altar charging."
+    },
+    {
+      "path": "wolf_bow.md",
+      "category": "wonder_weapon",
+      "summary": "Complete Wolf Bow upgrade guide, including the painting order, wolf skull, spirit wolf path, rocket flag, anti-gravity wall hole, and altar charging."
+    },
+    {
+      "path": "lightning_bow.md",
+      "category": "wonder_weapon",
+      "summary": "Complete Lightning Bow upgrade guide, including the weathercock, bonfires, anti-gravity symbols, electric jars, blue cloud, and altar charging."
+    },
+    {
+      "path": "void_bow.md",
+      "category": "wonder_weapon",
+      "summary": "Complete Void Bow upgrade guide, including the void symbol, purple square, skull collection, crawler feeding, spoken code, statue step, symbol shooting, and altar charging."
+    },
+    {
+      "path": "ragnarock.md",
+      "category": "equipment",
+      "summary": "How to build the Ragnarok DG-4 by collecting the Panzer part, Death Ray / Wundersphere part, and rocket test site teleporter-box part."
+    },
+    {
+      "path": "shield.md",
+      "category": "equipment",
+      "summary": "How to build the Rocket Shield by finding the 3 parts and using one of the available crafting tables."
+    },
+    {
+      "path": "main_ee.md",
+      "category": "main_ee",
+      "summary": "Full Der Eisendrache main easter egg guide, including teleporter charging, spark items, time travel, safe code, Death Ray steps, Simon Says, keeper soul step, boss fight, and final Summoning Key step."
+    },
+    {
+      "path": "side_ee/disco_ball.md",
+      "category": "side_ee",
+      "summary": "How to activate the disco ball effect in the Church command room by shooting the moon and rocket on the ceiling globe."
+    },
+    {
+      "path": "side_ee/death_machine.md",
+      "category": "side_ee",
+      "summary": "How to get the free Death Machine power-up by wall-running on the blue square in the pyramid room during anti-gravity."
+    },
+    {
+      "path": "side_ee/free_mega_gobblegum.md",
+      "category": "side_ee",
+      "summary": "How to get a free random Mega Gobblegum by picking up the plant, placing it in the past, and returning to collect it in the present."
+    },
+    {
+      "path": "side_ee/panzer_helmet.md",
+      "category": "side_ee",
+      "summary": "How to unlock the Panzer Soldat Helmet by using the hidden ceiling claws to kill 3 Panzers."
+    },
+    {
+      "path": "side_ee/plunger.md",
+      "category": "side_ee",
+      "summary": "How to unlock the Plunger melee weapon, use the clock step and time-travel pickup, and temporarily upgrade it into the flaming anti-Panzer version."
+    },
+    {
+      "path": "side_ee/second_gondola.md",
+      "category": "side_ee",
+      "summary": "How to unlock the second gondola by throwing grenades into the first gondola and then using fuses until the improved reward appears."
+    },
+    {
+      "path": "side_ee/music_1_dead_again.md",
+      "category": "music_ee",
+      "summary": "How to activate Dead Again by interacting with the 3 teddy bears."
+    },
+    {
+      "path": "side_ee/music_2_gramophones.md",
+      "category": "music_ee",
+      "summary": "How to activate the second music easter egg by interacting with the 3 gramophones."
+    },
+    {
+      "path": "side_ee/music_3_music_box.md",
+      "category": "music_ee",
+      "summary": "How to activate the Samantha's Lullaby variant by interacting with the music box in Samantha's room."
+    },
+    {
+      "path": "side_ee/skeletons.md",
+      "category": "side_ee",
+      "summary": "How to replace zombies with skeletons by shooting the 3 hidden skulls, and how to disable the effect again in the church."
+    },
+    {
+      "path": "side_ee/brm_wallbuy.md",
+      "category": "side_ee",
+      "summary": "How to unlock the BRM wallbuy by wall-running on all required blue squares in the anti-gravity room."
+    }
+  ]
+}

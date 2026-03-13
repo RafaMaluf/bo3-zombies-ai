@@ -1,0 +1,108 @@
+{
+  "map_id": "zetsubou_no_shima",
+  "display_name": "Zetsubou No Shima",
+  "aliases": ["zetsubou no shima", "zetsubou", "zns"],
+  "summary": "Swamp and bunker-based Black Ops 3 Zombies map built around buckets, water colors, plant growth, bunker progression, Pack-a-Punch, the Skull of Nan Sapwe, KT-4, Masamune, trials, a simple but setup-heavy main easter egg, and many side easter eggs.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overall map overview, core systems, layout, setup priorities, and how Zetsubou's many mechanics connect."
+    },
+    {
+      "path": "power_bunker_pap.md",
+      "category": "pap",
+      "summary": "How to fill the generators, enter the bunker, activate power, collect the 3 Pack-a-Punch parts, and unlock Pack-a-Punch."
+    },
+    {
+      "path": "buckets_water.md",
+      "category": "system",
+      "summary": "Bucket basics, the blue, green, purple, and rainbow water sources, and how bucket charges and water collection work."
+    },
+    {
+      "path": "plants.md",
+      "category": "system",
+      "summary": "Plant encyclopedia covering no-water plants, blue, green, and purple plants, fruit plants, fertilized variants, mimic plants, and mixed-color growth rules."
+    },
+    {
+      "path": "kt4.md",
+      "category": "wonder_weapon",
+      "summary": "How to build the KT-4 by collecting spider venom, the green glowing flask, and the underwater flower."
+    },
+    {
+      "path": "masamune.md",
+      "category": "wonder_weapon",
+      "summary": "How to upgrade the KT-4 into the Masamune using the spider tooth, rainbow-water plant step, electrified shield panel, and Element 115 flask."
+    },
+    {
+      "path": "skull_of_nan_sapwe.md",
+      "category": "equipment",
+      "summary": "How to complete the 4 skull cleansing rituals and the final cave ritual to obtain the Skull of Nan Sapwe."
+    },
+    {
+      "path": "trials.md",
+      "category": "system",
+      "summary": "Trials of the Ancients overview, rewards, full list of trial types, strategy notes, and electric shield requirement."
+    },
+    {
+      "path": "shield.md",
+      "category": "equipment",
+      "summary": "How to build the shield from the 3 parts found in Lab A, Lab B, and the AA gun balcony area."
+    },
+    {
+      "path": "gas_mask.md",
+      "category": "equipment",
+      "summary": "How to build the Gas Mask from the cable, mask, and filter, and why it is useful for spores and underwater sections."
+    },
+    {
+      "path": "main_ee.md",
+      "category": "main_ee",
+      "summary": "Full Zetsubou No Shima main easter egg guide, including the shell plant, plane cannon gear, zipline gear, Anywhere But Here gear, elevator repair, and boss fight."
+    },
+    {
+      "path": "side_ee/music_1.md",
+      "category": "music_ee",
+      "summary": "How to activate the first secret song, Dead Flowers, by interacting with the 3 puppets."
+    },
+    {
+      "path": "side_ee/music_2.md",
+      "category": "music_ee",
+      "summary": "How to activate the second secret song, Samantha's Lullaby, by filling the underground wall pockets with the correct water amounts."
+    },
+    {
+      "path": "side_ee/golden_bucket.md",
+      "category": "side_ee",
+      "summary": "How to obtain the Golden Bucket by revealing the special grow spot, placing the bucket, and feeding the plant sequence."
+    },
+    {
+      "path": "side_ee/spider_transformation.md",
+      "category": "side_ee",
+      "summary": "How to transform into a spider using the Skull, KT-4, electrified shield, and special Lab A cage process."
+    },
+    {
+      "path": "side_ee/hallucinations.md",
+      "category": "side_ee",
+      "summary": "How spore gas hallucinations work and where they can be seen on the map."
+    },
+    {
+      "path": "side_ee/friendly_thrasher.md",
+      "category": "side_ee",
+      "summary": "How to create a friendly blue-eyed Thrasher using the Masamune and the hidden green-tanks room wall setup."
+    },
+    {
+      "path": "side_ee/jumpscare.md",
+      "category": "side_ee",
+      "summary": "How to trigger the doppelganger jumpscare by aiming at the test subject in the green tank room with a sniper rifle."
+    },
+    {
+      "path": "side_ee/swamp_monster.md",
+      "category": "side_ee",
+      "summary": "How to see the distant swamp monster shadow outside the map around round 50."
+    },
+    {
+      "path": "side_ee/free_widows_wine.md",
+      "category": "side_ee",
+      "summary": "How to get Widow's Wine for free after defeating the giant spider during the Masamune setup."
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "map_id": "gorod_krovi",
+  "display_name": "Gorod Krovi",
+  "aliases": ["gorod krovi", "gk"],
+  "summary": "Dragon-heavy Black Ops 3 Zombies map set in Stalingrad, focused on dragon travel, code cylinders, Groph Pods, the Guard of Fafnir, the Siegfried Gauntlet, Dragon Strike, trials, and the Love and War easter egg.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overall map overview, major locations, core systems, dragon travel, trials, equipment, and easter egg structure."
+    },
+    {
+      "path": "power_pap.md",
+      "category": "pap",
+      "summary": "How to turn on power, use code cylinders, defend Groph Pods, place Network Circuits, and access Pack-a-Punch through dragon travel."
+    },
+    {
+      "path": "siegfried_gauntlet.md",
+      "category": "equipment",
+      "summary": "How to get the Dragon Egg, complete the egg challenges, incubate it, and claim the Siegfried Gauntlet."
+    },
+    {
+      "path": "dragon_strike.md",
+      "category": "equipment",
+      "summary": "How to unlock the Dragon Strike Controller and how to upgrade it."
+    },
+    {
+      "path": "shield.md",
+      "category": "equipment",
+      "summary": "How to build the Guard of Fafnir shield and upgrade it into Tiamat's Maw."
+    },
+    {
+      "path": "main_ee.md",
+      "category": "main_ee",
+      "summary": "Full Love and War easter egg guide, including trophies, generator, valve step, KRONOS step, challenge sequence, bomb step, Gersh, escorts, Groph Pod, card download, power core, and the 2-phase boss fight."
+    },
+    {
+      "path": "side_ee/shield_upgrade.md",
+      "category": "side_ee",
+      "summary": "Quick reference for the upgraded shield, pointing to the full procedure in shield.md."
+    },
+    {
+      "path": "side_ee/upgrade_dragon_strike.md",
+      "category": "side_ee",
+      "summary": "Quick reference for the upgraded Dragon Strike, pointing to the full procedure in dragon_strike.md."
+    },
+    {
+      "path": "side_ee/dragon_wings.md",
+      "category": "side_ee",
+      "summary": "How to unlock Dragon Wings for free Hatchery travel and passive fire / explosive resistance."
+    },
+    {
+      "path": "side_ee/mangler_helmet.md",
+      "category": "side_ee",
+      "summary": "How to unlock the Mangler Helmet and its Mangler damage / defense bonuses."
+    },
+    {
+      "path": "side_ee/valkyrie_helmet.md",
+      "category": "side_ee",
+      "summary": "How to unlock the Valkyrie Helmet and its Valkyrie / electricity resistance bonuses."
+    },
+    {
+      "path": "side_ee/dubstep_monkeys.md",
+      "category": "side_ee",
+      "summary": "How to upgrade Monkey Bombs into Dubstep Monkeys using flowerpots, candles, kills, and the tomb interaction."
+    },
+    {
+      "path": "side_ee/speed_trials.md",
+      "category": "side_ee",
+      "summary": "How the under-1h30 easter egg completion reward works for keeping perks after going down."
+    },
+    {
+      "path": "side_ee/time_trials.md",
+      "category": "side_ee",
+      "summary": "How to unlock the timed melee weapons by reaching round milestones quickly."
+    },
+    {
+      "path": "side_ee/music_1.md",
+      "category": "music_ee",
+      "summary": "How to activate Dead Ended by interacting with the 3 vodka bottles."
+    },
+    {
+      "path": "side_ee/music_2.md",
+      "category": "music_ee",
+      "summary": "How to activate Ace of Spades by interacting with the 3 Ace cards."
+    },
+    {
+      "path": "side_ee/music_3_samantha_sorrow.md",
+      "category": "music_ee",
+      "summary": "How to trigger Samantha Sorrow by doing the Monkey Bomb fire setup and completing the timed doll hide-and-seek sequence."
+    }
+  ]
+}

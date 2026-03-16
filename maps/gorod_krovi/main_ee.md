@@ -139,6 +139,16 @@ Related images:
 
 ## valve step - quick solution lookup
 
+### very important valve rule
+
+For every valve solution:
+- set only the valves listed in the matching solution
+- the codex / cylinder valve is the end point
+- do not assign a number to the codex valve
+- if an answer sets the codex valve to 1, 2, or 3, that answer is wrong
+
+Tank Factory and Tank Station mean the same location.
+
 Important note:
 - In some tools and guides, **Tank Factory** is called **Tank Station**
 - In this guide, they mean the same location
@@ -146,8 +156,9 @@ Important note:
 The valve step always works like this:
 - find where the **green light** is
 - find where the **codex / cylinder** is
-- set the other valves to the numbers shown below
-- the codex valve is the end point and does not need its own number changed in the final line below
+- set only the valves listed in the matching solution below
+- the **codex valve is the end point**
+- **do not set the codex valve itself**
 
 If the **green light** and the **codex** are in the same location, the setup is invalid:
 - **you cannot begin and end at the same location**
@@ -155,224 +166,344 @@ If the **green light** and the **codex** are in the same location, the setup is 
 ### when Armory is green
 
 #### codex in Department Store
+Set:
 - Armory = 1
 - Supply Depot = 3
 - Tank Factory = 1
 - Infirmary = 3
 - Dragon Command = 2
 
+End point:
+- Department Store
+
 #### codex in Dragon Command
+Set:
 - Armory = 3
 - Department Store = 2
 - Infirmary = 2
 - Tank Factory = 2
 - Supply Depot = 1
 
+End point:
+- Dragon Command
+
 #### codex in Infirmary
+Set:
 - Armory = 2
 - Tank Factory = 2
 - Supply Depot = 1
 - Dragon Command = 2
 - Department Store = 2
 
+End point:
+- Infirmary
+
 #### codex in Supply Depot
+Set:
 - Armory = 2
 - Tank Factory = 1
 - Infirmary = 1
 - Department Store = 3
 - Dragon Command = 1
 
+End point:
+- Supply Depot
+
 #### codex in Tank Factory
+Set:
 - Armory = 3
 - Department Store = 2
 - Infirmary = 3
 - Dragon Command = 1
 - Supply Depot = 3
+
+End point:
+- Tank Factory
 
 ### when Department Store is green
 
 #### codex in Armory
+Set:
 - Department Store = 3
 - Dragon Command = 3
 - Infirmary = 2
 - Tank Factory = 2
 - Supply Depot = 2
 
+End point:
+- Armory
+
 #### codex in Dragon Command
+Set:
 - Department Store = 2
 - Infirmary = 2
 - Tank Factory = 3
 - Armory = 1
 - Supply Depot = 1
 
+End point:
+- Dragon Command
+
 #### codex in Infirmary
+Set:
 - Department Store = 1
 - Armory = 2
 - Tank Factory = 2
 - Supply Depot = 1
 - Dragon Command = 3
 
+End point:
+- Infirmary
+
 #### codex in Supply Depot
+Set:
 - Department Store = 1
 - Armory = 2
 - Tank Factory = 1
 - Infirmary = 3
 - Dragon Command = 1
 
+End point:
+- Supply Depot
+
 #### codex in Tank Factory
+Set:
 - Department Store = 2
 - Infirmary = 3
 - Dragon Command = 1
 - Supply Depot = 2
 - Armory = 2
+
+End point:
+- Tank Factory
 
 ### when Dragon Command is green
 
 #### codex in Armory
+Set:
 - Dragon Command = 1
 - Supply Depot = 3
 - Tank Factory = 1
 - Infirmary = 1
 - Department Store = 1
 
+End point:
+- Armory
+
 #### codex in Department Store
+Set:
 - Dragon Command = 1
 - Supply Depot = 2
 - Armory = 2
 - Tank Factory = 1
 - Infirmary = 1
 
+End point:
+- Department Store
+
 #### codex in Infirmary
+Set:
 - Dragon Command = 1
 - Supply Depot = 3
 - Tank Factory = 3
 - Armory = 3
 - Department Store = 2
 
+End point:
+- Infirmary
+
 #### codex in Supply Depot
+Set:
 - Dragon Command = 2
 - Department Store = 2
 - Infirmary = 2
 - Tank Factory = 3
 - Armory = 1
 
+End point:
+- Supply Depot
+
 #### codex in Tank Factory
+Set:
 - Dragon Command = 3
 - Infirmary = 1
 - Department Store = 1
 - Armory = 1
 - Supply Depot = 3
+
+End point:
+- Tank Factory
 
 ### when Infirmary is green
 
 #### codex in Armory
+Set:
 - Infirmary = 2
 - Tank Factory = 2
 - Supply Depot = 1
 - Dragon Command = 2
 - Department Store = 1
 
+End point:
+- Armory
+
 #### codex in Department Store
+Set:
 - Infirmary = 3
 - Dragon Command = 1
 - Supply Depot = 3
 - Tank Factory = 3
 - Armory = 3
 
+End point:
+- Department Store
+
 #### codex in Dragon Command
+Set:
 - Infirmary = 2
 - Tank Factory = 2
 - Supply Depot = 2
 - Armory = 3
 - Department Store = 3
 
+End point:
+- Dragon Command
+
 #### codex in Supply Depot
+Set:
 - Infirmary = 3
 - Dragon Command = 2
 - Department Store = 1
 - Armory = 2
 - Tank Factory = 2
 
+End point:
+- Supply Depot
+
 #### codex in Tank Factory
+Set:
 - Infirmary = 3
 - Dragon Command = 2
 - Department Store = 1
 - Armory = 1
 - Supply Depot = 3
 
+End point:
+- Tank Factory
+
 ### when Supply Depot is green
 
 #### codex in Armory
+Set:
 - Supply Depot = 3
 - Tank Factory = 1
 - Infirmary = 3
 - Dragon Command = 2
 - Department Store = 1
 
+End point:
+- Armory
+
 #### codex in Department Store
+Set:
 - Supply Depot = 2
 - Armory = 2
 - Tank Factory = 1
 - Infirmary = 3
 - Dragon Command = 2
 
+End point:
+- Department Store
+
 #### codex in Dragon Command
+Set:
 - Supply Depot = 3
 - Tank Factory = 3
 - Armory = 3
 - Department Store = 2
 - Infirmary = 3
 
+End point:
+- Dragon Command
+
 #### codex in Infirmary
+Set:
 - Supply Depot = 3
 - Tank Factory = 3
 - Armory = 3
 - Department Store = 3
 - Dragon Command = 3
 
+End point:
+- Infirmary
+
 #### codex in Tank Factory
+Set:
 - Supply Depot = 2
 - Armory = 3
 - Department Store = 3
 - Dragon Command = 3
 - Infirmary = 2
 
+End point:
+- Tank Factory
+
 ### when Tank Factory is green
 
 #### codex in Armory
+Set:
 - Tank Factory = 1
 - Infirmary = 1
 - Department Store = 3
 - Dragon Command = 1
 - Supply Depot = 2
 
+End point:
+- Armory
+
 #### codex in Department Store
+Set:
 - Tank Factory = 1
 - Infirmary = 3
 - Dragon Command = 1
 - Supply Depot = 2
 - Armory = 3
 
+End point:
+- Department Store
+
 #### codex in Dragon Command
+Set:
 - Tank Factory = 1
 - Infirmary = 1
 - Department Store = 1
 - Armory = 1
 - Supply Depot = 1
 
+End point:
+- Dragon Command
+
 #### codex in Infirmary
+Set:
 - Tank Factory = 2
 - Supply Depot = 2
 - Armory = 3
 - Department Store = 3
 - Dragon Command = 3
 
+End point:
+- Infirmary
+
 #### codex in Supply Depot
+Set:
 - Tank Factory = 1
 - Infirmary = 3
 - Dragon Command = 2
 - Department Store = 1
 - Armory = 1
+
+End point:
+- Supply Depot
 
 ## step 4 - enter KRONOS on S.O.P.H.I.A
 

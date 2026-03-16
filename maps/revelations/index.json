@@ -1,0 +1,78 @@
+{
+  "map_id": "revelations",
+  "display_name": "Revelations",
+  "aliases": ["revelations", "rev"],
+  "summary": "Final Black Ops 3 Aether map built from connected fragments of older maps, focused on ritual portal setup, Pack-a-Punch inside the Apothicon, the Apothicon Servant upgrade, Dragon Shield, Keeper Protector, masks, and a long main easter egg involving reels, bones, eggs, runes, the Summoning Key, and the Shadowman fight.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overall map overview, major zones, setup flow, core systems, major equipment, and how Revelations is structured."
+    },
+    {
+      "path": "pap.md",
+      "category": "pap",
+      "summary": "How to activate the 4 ritual altars, open the routes to Nacht, enter the Apothicon, and unlock Pack-a-Punch."
+    },
+    {
+      "path": "pap_apothican_servant.md",
+      "category": "wonder_weapon",
+      "summary": "How to upgrade the Apothicon Servant by shooting the 5 Element 115 stones and Pack-a-Punching it."
+    },
+    {
+      "path": "shield.md",
+      "category": "equipment",
+      "summary": "How to collect the 3 Dragon Shield parts and build the shield near Nacht Der Untoten."
+    },
+    {
+      "path": "keeper_protector.md",
+      "category": "equipment",
+      "summary": "How to collect the flag, Skull of Nan Sapwe, and purple gem, build the altar, and summon the Keeper Protector."
+    },
+    {
+      "path": "main_ee.md",
+      "category": "main_ee",
+      "summary": "Full Revelations easter egg guide, including the grave step, Keeper ritual, Lil' Arnies hole step, bone step, S.O.P.H.I.A turret step, Samantha's room, egg and rune phase, Summoning Key throws, and final Shadowman fight."
+    },
+    {
+      "path": "side_ee/masks.md",
+      "category": "side_ee",
+      "summary": "How to unlock all secret masks, including Dire Wolf, Viking, Keeper, Al's Hat, Helmet of the King, Margwa, Fury, and Apothicon masks."
+    },
+    {
+      "path": "side_ee/free_perk.md",
+      "category": "side_ee",
+      "summary": "How to get the free perk in the Der Eisendrache area using anti-gravity and the corruption generator parkour route."
+    },
+    {
+      "path": "side_ee/time_trial.md",
+      "category": "side_ee",
+      "summary": "How to unlock the timed melee weapons by reaching round milestones quickly."
+    },
+    {
+      "path": "side_ee/upgrade_lil_arnies.md",
+      "category": "side_ee",
+      "summary": "How to upgrade Lil' Arnies after the collective kill requirement and the church-window throw step."
+    },
+    {
+      "path": "side_ee/wisp.md",
+      "category": "side_ee",
+      "summary": "How the Wisp works, when to pick it up, where to place it in Samantha's room, and the rewards it unlocks."
+    },
+    {
+      "path": "side_ee/trading_table.md",
+      "category": "side_ee",
+      "summary": "How to unlock the trading table in Nacht Der Untoten and the M1927 wallbuy by moving the wall phrases with the pink chalk."
+    },
+    {
+      "path": "side_ee/music_1.md",
+      "category": "music_ee",
+      "summary": "How to activate The Gift by interacting with the 3 teddy bears."
+    },
+    {
+      "path": "side_ee/music_2.md",
+      "category": "music_ee",
+      "summary": "How to spawn and use the Nacht radio by pressing the 4 buttons quickly."
+    }
+  ]
+}

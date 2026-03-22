@@ -3,13 +3,15 @@ import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from app.chunking import split_markdown_by_sections
 from app.config import MAPS_DIR, MAX_FILE_CHARS, MAX_TOTAL_CONTEXT_CHARS
 from app.schemas import SelectedFile
 
 
 def load_all_map_indexes() -> Dict[str, dict]:
     """
-    Load all map index.json files from maps/*/index.json
+    Load all map index.json files from maps/*/index.json.
+    Also pre-computes and stores markdown chunks for every file in each index.
     """
     indexes: Dict[str, dict] = {}
 
@@ -28,6 +30,16 @@ def load_all_map_indexes() -> Dict[str, dict]:
             data = json.load(f)
 
         map_id = data["map_id"]
+
+        # Pre-compute chunks for each file so retrieval can use them later
+        for file_info in data.get("files", []):
+            file_path = map_dir / file_info["path"]
+            if file_path.exists():
+                content = file_path.read_text(encoding="utf-8")
+                file_info["chunks"] = split_markdown_by_sections(content)
+            else:
+                file_info["chunks"] = []
+
         indexes[map_id] = data
 
     return indexes
@@ -37,6 +49,8 @@ def build_catalog_for_selection(indexes: Dict[str, dict]) -> str:
     """
     Build a compact text catalog that the model uses in step 1
     to decide which files are relevant.
+
+    Sends only minimal metadata: display_name, map_id, and file count.
     """
     lines: List[str] = []
     lines.append("AVAILABLE KNOWLEDGE BASE")
@@ -44,21 +58,8 @@ def build_catalog_for_selection(indexes: Dict[str, dict]) -> str:
 
     for map_id, index_data in indexes.items():
         display_name = index_data.get("display_name", map_id)
-        aliases = ", ".join(index_data.get("aliases", []))
-        summary = index_data.get("summary", "")
-
-        lines.append(f"MAP: {display_name} ({map_id})")
-        lines.append(f"ALIASES: {aliases}")
-        lines.append(f"MAP SUMMARY: {summary}")
-        lines.append("FILES:")
-
-        for file_info in index_data.get("files", []):
-            path = file_info["path"]
-            category = file_info.get("category", "unknown")
-            file_summary = file_info.get("summary", "")
-            lines.append(f"- path={path} | category={category} | summary={file_summary}")
-
-        lines.append("")
+        file_count = len(index_data.get("files", []))
+        lines.append(f"MAP: {display_name} ({map_id}) - {file_count} files")
 
     return "\n".join(lines)
 

@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from openai import OpenAI
 
-from app.config import GROQ_API_KEY, GROQ_MODEL, MAX_SELECTED_FILES
+from app.config import GROQ_API_KEY, GROQ_MODEL, MAX_SELECTED_FILES, MAX_TOTAL_CONTEXT_CHARS
 from app.kb_loader import build_catalog_for_selection, load_all_map_indexes, get_file_info
 from app.prompt_builder import build_answer_messages, build_selection_messages
 from app.schemas import (
@@ -74,30 +74,41 @@ def extract_image_paths(content: str) -> list[str]:
 def read_selected_files(indexes: dict, selected_files: list) -> tuple[str, list[RelevantImage]]:
     chunks: list[str] = []
     available_images: list[RelevantImage] = []
+    total_chars = 0
 
     for sf in selected_files:
         info = get_file_info(indexes, sf.map_id, sf.path)
         if info is None:
             continue
 
-        file_path = Path("maps") / sf.map_id / sf.path
-        if not file_path.exists():
+        # Usar chunks pré-computados em vez de ler arquivo
+        file_chunks = info.get("chunks", [])
+        if not file_chunks:
             continue
 
-        content = file_path.read_text(encoding="utf-8")
+        for file_chunk in file_chunks:
+            # Extrai imagens de cada chunk
+            image_paths = extract_image_paths(file_chunk["content"])
+            for img_path in image_paths:
+                available_images.append(RelevantImage(map_id=sf.map_id, path=img_path))
 
-        image_paths = extract_image_paths(content)
-        for img_path in image_paths:
-            available_images.append(RelevantImage(map_id=sf.map_id, path=img_path))
+            # Monta o contexto com metadados do chunk
+            chunk = (
+                f"MAP: {sf.map_id}\n"
+                f"FILE: {sf.path}\n"
+                f"SECTION: {file_chunk['section_title']}\n"
+                f"CATEGORY: {info.get('category', 'unknown')}\n\n"
+                f"{file_chunk['content']}\n"
+            )
 
-        chunk = (
-            f"MAP: {sf.map_id}\n"
-            f"FILE: {sf.path}\n"
-            f"CATEGORY: {info.get('category', 'unknown')}\n"
-            f"SUMMARY: {info.get('summary', '')}\n\n"
-            f"{content}\n"
-        )
-        chunks.append(chunk)
+            if total_chars + len(chunk) > MAX_TOTAL_CONTEXT_CHARS:
+                break
+
+            chunks.append(chunk)
+            total_chars += len(chunk)
+
+        if total_chars >= MAX_TOTAL_CONTEXT_CHARS:
+            break
 
     return "\n\n---\n\n".join(chunks), dedupe_images(available_images)
 

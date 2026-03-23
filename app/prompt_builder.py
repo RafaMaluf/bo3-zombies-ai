@@ -1,160 +1,163 @@
-import json
-from typing import List, Optional
+from typing import List, Dict
 
-from app.schemas import SelectedFile, RelevantImage
+from app.config import MAPS_DIR
 
 
 def build_selection_messages(
     user_message: str,
     catalog_text: str,
-    conversation_history: Optional[List[dict]] = None,
-    active_map_id: Optional[str] = None,
+    conversation_history: list[dict],
+    active_map_id: str | None,
 ) -> list[dict]:
-    history_text = ""
-    if conversation_history:
-        trimmed = conversation_history[-6:]
-        history_text = json.dumps(trimmed, ensure_ascii=False, indent=2)
-
-    active_map_text = active_map_id if active_map_id else "None"
-
-    system_prompt = """
+    """
+    Build messages for the selection step.
+    Includes the actual index.json structure so model knows real file names.
+    """
+    
+    # Constrói o index com nomes e descrições reais
+    file_index = _build_file_index()
+    
+    system_prompt = f"""
 You are a routing assistant for a Black Ops 3 Zombies knowledge base.
 
 Your job is ONLY to choose which map files are relevant to answer the user's question.
 
 Rules:
-- Use only the provided catalog.
+- Use only files listed in the FILE INDEX below.
+- Do NOT invent or hallucinate file names.
+- Select only files that exist in the index.
 - If the request is ambiguous, ask ONE short clarification question.
 - If the request is about one specific map, use query_mode = "single_map".
-- If the request compares multiple maps or asks a general BO3 Zombies question, use query_mode = "multi_map".
-- Select only relevant files.
-- Do not select unnecessary files.
-- Prefer specific files over general.md whenever the user mentions a concrete item, step, or mechanic.
-- If the user asks about something that does not clearly exist in the catalog, do not guess.
-- If the term is not clearly present in the file summaries or map summaries, ask for clarification.
-- Do not reinterpret slang or vague words as game mechanics unless strongly supported by the catalog.
+- If the request compares multiple maps, use query_mode = "multi_map".
+- Prefer specific files over general.md when user mentions concrete items.
 - Use general.md only for broad map overview questions.
-- If there is an active_map_id and the new user message is short, vague, or an obvious follow-up, prefer staying on that same map.
-- Only switch away from the active_map_id if the user explicitly mentions another map or clearly asks a multi-map question.
-- Return JSON only.
-- Never include explanations outside JSON.
-- **IMPORTANT: In selected_files, the "path" field must be ONLY the filename (e.g., "general.md"), NOT including the map_id prefix.**
+- If active_map_id exists and message is a follow-up, prefer staying on that map.
+- **CRITICAL: Only select files that exist in the FILE INDEX. Match by exact path name.**
+- **IMPORTANT: The "path" field must be ONLY the filename (e.g., "general.md"), NOT including map_id.**
+
+FILE INDEX (all available files):
+{file_index}
 
 JSON format:
-{
+{{
   "need_clarification": true/false,
   "clarification_question": "",
   "query_mode": "single_map" or "multi_map",
   "selected_files": [
-    {"map_id": "der_eisendrache", "path": "general.md"}
+    {{"map_id": "der_eisendrache", "path": "general.md"}}
   ]
-}
+}}
 """.strip()
 
-    user_prompt = f"""
-Active map id:
-{active_map_text}
+    messages = [{"role": "system", "content": system_prompt}]
+
+    if conversation_history:
+        messages.extend(conversation_history)
+
+    user_content = f"""Active map id:
+{active_map_id or 'None'}
 
 Conversation history:
-{history_text if history_text else "[]"}
+{len(conversation_history)} messages
 
 Catalog:
 {catalog_text}
 
-User question:
-{user_message}
-""".strip()
+User query: {user_message}"""
 
-    return [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt},
-    ]
+    messages.append({"role": "user", "content": user_content})
+
+    return messages
+
+
+def _build_file_index() -> str:
+    """Build index with actual filenames and descriptions from index.json files."""
+    import json
+    
+    lines = []
+    
+    for map_dir in sorted(MAPS_DIR.iterdir()):
+        if not map_dir.is_dir():
+            continue
+        
+        index_file = map_dir / "index.json"
+        if not index_file.exists():
+            continue
+        
+        with index_file.open("r", encoding="utf-8") as f:
+            index_data = json.load(f)
+        
+        map_id = index_data.get("map_id")
+        display_name = index_data.get("display_name", map_id)
+        
+        lines.append(f"\n{display_name} ({map_id}):")
+        
+        # Usa a lista de arquivos do index.json
+        for file_info in index_data.get("files", []):
+            path = file_info.get("path")
+            summary = file_info.get("summary", "")
+            lines.append(f"  - {path}: {summary}")
+    
+    return "\n".join(lines)
 
 
 def build_answer_messages(
     user_message: str,
     combined_context: str,
-    selected_files: List[SelectedFile],
-    available_images: List[RelevantImage],
-    conversation_history: Optional[List[dict]] = None,
+    selected_files: List,
+    available_images: List,
+    conversation_history: list[dict],
 ) -> list[dict]:
-    history_text = ""
-    if conversation_history:
-        trimmed = conversation_history[-6:]
-        history_text = json.dumps(trimmed, ensure_ascii=False, indent=2)
-
-    selected_text = json.dumps(
-        [{"map_id": sf.map_id, "path": sf.path} for sf in selected_files],
-        ensure_ascii=False,
-        indent=2,
-    )
-
-    available_images_text = json.dumps(
-        [{"map_id": img.map_id, "path": img.path} for img in available_images],
-        ensure_ascii=False,
-        indent=2,
-    )
-
+    """
+    Build messages for the answer generation step.
+    """
     system_prompt = """
-You are a Black Ops 3 Zombies assistant.
+You are a helpful Black Ops 3 Zombies expert assistant.
+
+Your job is to answer the user's question based on the provided context.
 
 Rules:
-- Answer ONLY using the provided knowledge base context.
-- If the provided context is insufficient, set need_clarification=true and ask one short clarification question.
-- Do not invent steps, locations, mechanics, mappings, or values.
-- If a user term is not explicitly supported by the context, do not map it to a similar reward or mechanic.
-- If the term is unclear, ask a clarification question instead of guessing.
-- Prefer direct, practical answers.
-- Select only the images that are directly useful for the answer.
-- For step-by-step and location-based questions, prefer returning 1 to 4 relevant images instead of none.
-- For broad summary questions, you may return no images if they are not necessary.
-- Return image objects exactly as they appear in the available images list.
-- If no images are needed, return an empty relevant_images list.
-- Return JSON only.
-
-Special rule for Gorod Krovi valve-step questions:
-- Use only the fixed lookup table present in the provided context.
-- Never solve the valve puzzle from memory or by inference.
-- Treat "Tank Station" and "Tank Factory" as the same location.
-- The codex / cylinder valve is always the END POINT.
-- Never assign a number to the codex / cylinder valve.
-- Return only the valves that must be set, plus the end point.
-- If the context says the start and end are the same location, say that this setup is invalid.
-
-If the user asks for a lookup-style answer such as a Gorod Krovi valve combination:
-- reproduce the mapping exactly from context
-- do not add extra valve values
-- do not rewrite the endpoint as a configurable valve
+- Answer based ONLY on the provided context.
+- If the answer is not in the context, say so.
+- Be concise but thorough.
+- If relevant images are available, mention them in your answer.
+- Format your response as JSON with fields: answer, need_clarification, clarification_question, relevant_images.
+- Return ONLY valid JSON, no explanations outside JSON.
 
 JSON format:
 {
-  "answer": "text here",
-  "need_clarification": true/false,
+  "answer": "Your detailed answer here",
+  "need_clarification": false,
   "clarification_question": "",
-  "relevant_images": [
-    {"map_id": "...", "path": "images/..."}
-  ]
+  "relevant_images": []
 }
 """.strip()
 
-    user_prompt = f"""
-Conversation history:
-{history_text if history_text else "[]"}
+    messages = [{"role": "system", "content": system_prompt}]
 
-Selected files:
-{selected_text}
+    if conversation_history:
+        messages.extend(conversation_history)
 
-Knowledge base context:
+    selected_files_str = "\n".join(
+        [f"- {sf.map_id}/{sf.path}" for sf in selected_files]
+    )
+    available_images_str = "\n".join(
+        [f"- {img.map_id}/{img.path}" for img in available_images]
+    )
+
+    user_content = f"""Context from selected files:
+{selected_files_str}
+
+Available images:
+{available_images_str}
+
+Knowledge base content:
 {combined_context}
 
-Available related images:
-{available_images_text}
+---
 
-User question:
-{user_message}
-""".strip()
+User question: {user_message}"""
 
-    return [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt},
-    ]
+    messages.append({"role": "user", "content": user_content})
+
+    return messages

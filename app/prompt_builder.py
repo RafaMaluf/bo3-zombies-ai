@@ -38,6 +38,7 @@ Rules:
 - Only switch away from the active_map_id if the user explicitly mentions another map or clearly asks a multi-map question.
 - Return JSON only.
 - Never include explanations outside JSON.
+- **IMPORTANT: In selected_files, the "path" field must be ONLY the filename (e.g., "general.md"), NOT including the map_id prefix.**
 
 JSON format:
 {
@@ -45,7 +46,7 @@ JSON format:
   "clarification_question": "",
   "query_mode": "single_map" or "multi_map",
   "selected_files": [
-    {"map_id": "...", "path": "..."}
+    {"map_id": "der_eisendrache", "path": "general.md"}
   ]
 }
 """.strip()

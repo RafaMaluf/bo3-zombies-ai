@@ -100,7 +100,6 @@ def _build_file_index() -> str:
     
     return "\n".join(lines)
 
-
 def build_answer_messages(
     user_message: str,
     combined_context: str,
@@ -123,13 +122,17 @@ Rules:
 - If relevant images are available, mention them in your answer.
 - Format your response as JSON with fields: answer, need_clarification, clarification_question, relevant_images.
 - Return ONLY valid JSON, no explanations outside JSON.
+- **IMPORTANT: relevant_images must be an array of objects with map_id and path fields. Example: {"map_id": "der_eisendrache", "path": "images/shield/a1.jpg"}**
+- **Do NOT include the full path with map_id prefix in the path field. The path should start with "images/".**
 
 JSON format:
 {
   "answer": "Your detailed answer here",
   "need_clarification": false,
   "clarification_question": "",
-  "relevant_images": []
+  "relevant_images": [
+    {"map_id": "der_eisendrache", "path": "images/shield/a1.jpg"}
+  ]
 }
 """.strip()
 
@@ -142,7 +145,7 @@ JSON format:
         [f"- {sf.map_id}/{sf.path}" for sf in selected_files]
     )
     available_images_str = "\n".join(
-        [f"- {img.map_id}/{img.path}" for img in available_images]
+        [f"- {img.map_id}: {img.path}" for img in available_images]
     )
 
     user_content = f"""Context from selected files:

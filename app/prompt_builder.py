@@ -119,21 +119,15 @@ Rules:
 - Answer based ONLY on the provided context.
 - If the answer is not in the context, say so.
 - Be concise but thorough.
+- If relevant images are available, mention them in your answer.
 - Format your response as JSON with fields: answer, need_clarification, clarification_question, relevant_images.
 - Return ONLY valid JSON, no explanations outside JSON.
-
-Image embedding rules:
-- When a relevant image illustrates a step or concept, embed it DIRECTLY in the answer text using the marker: [IMAGE: map_id|images/path.jpg]
-- Place the marker on its own line, IMMEDIATELY after the sentence or step it illustrates.
-- When a section has multiple related images (e.g. spawn locations), group them as consecutive markers on separate lines right after that section.
-- Example answer with inline images:
-  "First, find the double pipe part in the first courtyard.\\n[IMAGE: der_eisendrache|images/shield/a1.jpg]\\n[IMAGE: der_eisendrache|images/shield/a2.jpg]\\nThen look for the griffin plate near the church.\\n[IMAGE: der_eisendrache|images/shield/b1.jpg]"
-- **IMPORTANT: relevant_images must be an array of objects with map_id and path fields listing ALL images referenced in the answer.**
-- **Do NOT include the map_id prefix in the path field. Path must start with "images/".**
+- **IMPORTANT: relevant_images must be an array of objects with map_id and path fields. Example: {"map_id": "der_eisendrache", "path": "images/shield/a1.jpg"}**
+- **Do NOT include the full path with map_id prefix in the path field. The path should start with "images/".**
 
 JSON format:
 {
-  "answer": "Your detailed answer with [IMAGE: map_id|images/path.jpg] markers embedded inline",
+  "answer": "Your detailed answer here",
   "need_clarification": false,
   "clarification_question": "",
   "relevant_images": [

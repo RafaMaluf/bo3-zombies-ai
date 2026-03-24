@@ -26,34 +26,27 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
   font-family: Arial, Helvetica, sans-serif;
   background: var(--bg);
   color: var(--text);
 }
 
 body {
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .app-shell {
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
-  overflow: hidden;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 20px 18px 24px;
 }
 
 .topbar {
-  width: 200px;
-  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 24px 16px;
-  border-right: 1px solid var(--border);
-  background: rgba(37, 36, 34, 0.48);
+  margin-bottom: 18px;
 }
 
 .brand {
@@ -63,7 +56,7 @@ body {
 }
 
 .brand-logo {
-  width: 160px;
+  width: min(420px, 74vw);
   height: auto;
   display: block;
   user-select: none;
@@ -72,21 +65,16 @@ body {
 }
 
 .chat-card {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
   background: rgba(37, 36, 34, 0.62);
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
   overflow: hidden;
   backdrop-filter: blur(10px);
 }
 
 .chat {
-  flex: 1;
-  min-height: 0;
+  height: min(72vh, 820px);
   overflow-y: auto;
   padding: 18px;
   display: flex;
@@ -106,18 +94,6 @@ body {
   white-space: pre-wrap;
   word-wrap: break-word;
   line-height: 1.6;
-}
-
-.message-body {
-  white-space: pre-wrap;
-}
-
-.message-text-block {
-  margin: 0;
-}
-
-.message-text-block + .message-text-block {
-  margin-top: 8px;
 }
 
 .message.user {
@@ -159,8 +135,7 @@ body {
   margin-top: 14px;
 }
 
-.message-images img,
-.inline-image {
+.message-images img {
   width: 100%;
   aspect-ratio: 16 / 10;
   object-fit: cover;
@@ -170,30 +145,11 @@ body {
   cursor: zoom-in;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   box-shadow: var(--shadow);
-  display: block;
 }
 
-.message-images img:hover,
-.inline-image:hover {
+.message-images img:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-strong);
-}
-
-.inline-image {
-  margin: 10px 0;
-  max-width: 480px;
-}
-
-.inline-image-group {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(200px, 40vw), 1fr));
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.inline-image-group .inline-image {
-  margin: 0;
-  max-width: none;
 }
 
 .file-list {
@@ -338,39 +294,15 @@ body {
 }
 
 @media (max-width: 900px) {
-  html, body {
-    height: auto;
-    overflow: auto;
-    min-height: 100vh;
-  }
-
   .app-shell {
-    flex-direction: column;
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
-  }
-
-  .topbar {
-    width: 100%;
-    flex-direction: row;
-    justify-content: center;
-    padding: 12px 16px;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
+    padding: 14px 12px 18px;
   }
 
   .brand-logo {
-    width: min(220px, 60vw);
-  }
-
-  .chat-card {
-    flex: 1;
-    border-radius: 0;
+    width: min(360px, 86vw);
   }
 
   .chat {
-    flex: none;
     height: 70vh;
     padding: 14px;
   }
@@ -384,14 +316,6 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .inline-image-group {
-    grid-template-columns: 1fr;
-  }
-
-  .inline-image {
-    max-width: none;
-  }
-
   .composer {
     padding: 12px;
   }
@@ -403,11 +327,11 @@ body {
 
 @media (max-width: 560px) {
   .brand-logo {
-    width: min(180px, 55vw);
+    width: min(320px, 88vw);
   }
 
   .chat-card {
-    border-radius: 0;
+    border-radius: 18px;
   }
 
   .message {

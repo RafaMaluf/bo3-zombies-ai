@@ -13,6 +13,86 @@ let activeMapId = null;
 let typingBubble = null;
 let hasSentFirstMessage = false;
 
+function renderMessageBody(text, allImages, container) {
+  // Parse [IMAGE: map_id|images/path.jpg] markers embedded inline by the LLM
+  const markerRe = /\[IMAGE:\s*([^\|\]]+)\|([^\]]+)\]/g;
+  const renderedPaths = new Set();
+  const segments = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = markerRe.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ type: "text", content: text.slice(lastIndex, match.index) });
+    }
+    segments.push({ type: "image", map_id: match[1].trim(), path: match[2].trim() });
+    lastIndex = markerRe.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    segments.push({ type: "text", content: text.slice(lastIndex) });
+  }
+
+  // Collapse consecutive image segments into groups for a grid layout
+  const collapsed = [];
+  for (const seg of segments) {
+    const last = collapsed[collapsed.length - 1];
+    if (seg.type === "image" && last && last.type === "image-group") {
+      last.images.push(seg);
+    } else if (seg.type === "image") {
+      collapsed.push({ type: "image-group", images: [seg] });
+    } else {
+      collapsed.push(seg);
+    }
+  }
+
+  for (const seg of collapsed) {
+    if (seg.type === "text") {
+      const trimmed = seg.content.trim();
+      if (!trimmed) continue;
+      const div = document.createElement("div");
+      div.className = "message-text-block";
+      div.textContent = trimmed;
+      container.appendChild(div);
+    } else if (seg.type === "image-group") {
+      const groupEl = document.createElement("div");
+      if (seg.images.length > 1) groupEl.className = "inline-image-group";
+
+      for (const imgSeg of seg.images) {
+        const imgEl = document.createElement("img");
+        imgEl.src = buildImageUrl(imgSeg);
+        imgEl.alt = imgSeg.path;
+        imgEl.className = "inline-image";
+        imgEl.title = `${imgSeg.map_id}/${imgSeg.path}`;
+        imgEl.addEventListener("click", () => openImageModal(imgEl.src, imgEl.alt));
+        groupEl.appendChild(imgEl);
+        renderedPaths.add(`${imgSeg.map_id}/${imgSeg.path}`);
+      }
+
+      container.appendChild(groupEl);
+    }
+  }
+
+  // Fallback: show any images from relevant_images not already embedded inline
+  if (allImages && allImages.length > 0) {
+    const remaining = allImages.filter(
+      img => !renderedPaths.has(`${img.map_id}/${img.path}`)
+    );
+    if (remaining.length > 0) {
+      const grid = document.createElement("div");
+      grid.className = "message-images";
+      for (const imgObj of remaining) {
+        const imgEl = document.createElement("img");
+        imgEl.src = buildImageUrl(imgObj);
+        imgEl.alt = imgObj.path;
+        imgEl.title = `${imgObj.map_id}/${imgObj.path}`;
+        imgEl.addEventListener("click", () => openImageModal(imgEl.src, imgEl.alt));
+        grid.appendChild(imgEl);
+      }
+      container.appendChild(grid);
+    }
+  }
+}
+
 function addMessage(role, text, options = {}) {
   const wrapper = document.createElement("div");
   wrapper.className = `message ${role}${options.clarification ? " clarification" : ""}${options.error ? " error" : ""}`;
@@ -23,24 +103,9 @@ function addMessage(role, text, options = {}) {
   wrapper.appendChild(meta);
 
   const body = document.createElement("div");
-  body.textContent = text;
+  body.className = "message-body";
+  renderMessageBody(text, options.images || [], body);
   wrapper.appendChild(body);
-
-  if (options.images && options.images.length > 0) {
-    const imagesWrap = document.createElement("div");
-    imagesWrap.className = "message-images";
-
-    for (const imgObj of options.images) {
-      const img = document.createElement("img");
-      img.src = buildImageUrl(imgObj);
-      img.alt = imgObj.path;
-      img.title = `${imgObj.map_id}/${imgObj.path}`;
-      img.addEventListener("click", () => openImageModal(img.src, img.alt));
-      imagesWrap.appendChild(img);
-    }
-
-    wrapper.appendChild(imagesWrap);
-  }
 
   if (SHOW_DEBUG_FILES && options.selectedFiles && options.selectedFiles.length > 0) {
     const fileList = document.createElement("div");

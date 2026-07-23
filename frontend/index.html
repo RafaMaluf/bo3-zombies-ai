@@ -1,41 +1,150 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KronoChat</title>
+  <meta name="theme-color" content="#09090b" />
+  <meta
+    name="description"
+    content="Assistente pessoal para os mapas de Zombies de Call of Duty: Black Ops III."
+  />
+  <title>Krono — Black Ops III Zombies</title>
+  <link rel="icon" href="./logo.png" type="image/png" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
+  <div class="noise" aria-hidden="true"></div>
+
   <div class="app-shell">
-    <header class="topbar">
+    <aside id="sidebar" class="sidebar" aria-label="Mapas disponíveis">
       <div class="brand">
-        <img src="./logo.png" alt="KronoChat logo" class="brand-logo" />
+        <img src="./logo.png" alt="Kronochat" class="brand-logo" />
+        <p class="brand-kicker">Black Ops III Zombies</p>
       </div>
-    </header>
 
-    <main class="chat-card">
-      <section id="chat" class="chat"></section>
+      <div class="library-heading">
+        <span>Base de conhecimento</span>
+        <span id="map-count" class="library-count">—</span>
+      </div>
 
-      <form id="chat-form" class="composer">
-        <textarea
-          id="message-input"
-          placeholder="Ask something like: how do i unlock pack a punch on shadows of evil?"
-          rows="3"
-          required
-        ></textarea>
+      <nav id="map-list" class="map-list" aria-label="Selecionar mapa">
+        <div class="map-skeleton"></div>
+        <div class="map-skeleton"></div>
+        <div class="map-skeleton"></div>
+      </nav>
 
-        <div class="composer-actions">
-          <button type="submit" id="send-btn">Send</button>
+      <div class="sidebar-footer">
+        <div id="system-status" class="system-status">
+          <span class="status-dot"></span>
+          <span>Verificando base</span>
         </div>
-      </form>
+        <button id="clear-chat" class="ghost-button" type="button">
+          Limpar conversa
+        </button>
+      </div>
+    </aside>
+
+    <button
+      id="sidebar-backdrop"
+      class="sidebar-backdrop"
+      type="button"
+      aria-label="Fechar menu"
+    ></button>
+
+    <main class="workspace">
+      <header class="topbar">
+        <button
+          id="menu-toggle"
+          class="icon-button menu-toggle"
+          type="button"
+          aria-label="Abrir mapas"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="active-context">
+          <span class="eyebrow">Contexto ativo</span>
+          <strong id="active-map-label">Todos os mapas</strong>
+        </div>
+
+        <div id="knowledge-stats" class="knowledge-stats" aria-label="Estatísticas">
+          <span>Carregando…</span>
+        </div>
+      </header>
+
+      <section class="chat-stage">
+        <div id="welcome" class="welcome">
+          <div class="welcome-orbit" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <p class="eyebrow accent">Krono está online</p>
+          <h1>Entre no round<br />sabendo o próximo passo.</h1>
+          <p class="welcome-copy">
+            Escolha um mapa ou pergunte diretamente. A resposta usa apenas os
+            guias locais e traz as imagens certas para cada etapa.
+          </p>
+          <div id="quick-prompts" class="quick-prompts">
+            <button type="button" data-prompt="Como eu libero o Pack-a-Punch?">
+              Liberar Pack-a-Punch
+            </button>
+            <button type="button" data-prompt="Como faço o Easter Egg principal?">
+              Easter Egg principal
+            </button>
+            <button type="button" data-prompt="Como monto o escudo?">
+              Montar o escudo
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="chat"
+          class="chat"
+          aria-live="polite"
+          aria-label="Conversa"
+        ></div>
+      </section>
+
+      <footer class="composer-shell">
+        <form id="chat-form" class="composer">
+          <div id="composer-context" class="composer-context">
+            <span class="context-dot"></span>
+            <span>Busca em todos os mapas</span>
+          </div>
+          <div class="composer-row">
+            <textarea
+              id="message-input"
+              placeholder="Pergunte sobre o mapa…"
+              rows="1"
+              maxlength="2000"
+              required
+            ></textarea>
+            <button id="send-btn" class="send-button" type="submit" aria-label="Enviar">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h13M13 6l6 6-6 6"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="composer-hint">
+            <span>Enter envia · Shift + Enter quebra a linha</span>
+            <span id="character-count">0 / 2000</span>
+          </div>
+        </form>
+      </footer>
     </main>
   </div>
 
-  <div id="image-modal" class="image-modal hidden" aria-hidden="true">
-    <button id="modal-close" class="modal-close" aria-label="Close image viewer">×</button>
-    <img id="modal-image" class="modal-image" alt="Expanded chat image" />
-  </div>
+  <dialog id="image-modal" class="image-modal">
+    <button id="modal-close" class="modal-close" type="button" aria-label="Fechar">
+      ×
+    </button>
+    <figure>
+      <img id="modal-image" alt="" />
+      <figcaption id="modal-caption"></figcaption>
+    </figure>
+  </dialog>
 
   <script src="./app.js"></script>
 </body>

@@ -8,3 +8,7 @@ venv/
 dist/
 build/
 .pytest_cache/
+.cache/
+.ruff_cache/
+htmlcov/
+.coverage

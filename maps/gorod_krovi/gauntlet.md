@@ -32,7 +32,7 @@ Go to the Pack-a-Punch area near the sewer exit and look upward. You should see 
 
 Related images:
 - images/gauntlet/2eggonroof.jpg
-- images/gauntlet/3eggnesgtowarmit.jpg
+- images/gauntlet/3eggnesttowarmit.jpg
 
 ## step 2 - warm up the egg
 
@@ -56,7 +56,7 @@ Important note:
 - after the egg is warmed, you must complete a full round **away from the nest**
 - if you stay too close, the dragon may burn the area again and interfere
 
-Related image: images/gauntlet/3eggnesgtowarmit.jpg
+Related image: images/gauntlet/3eggnesttowarmit.jpg
 
 ## step 3 - kill napalm zombies
 
@@ -141,7 +141,7 @@ Related image: images/gauntlet/7retrieve.jpg
 ## related images
 - images/gauntlet/1tombwithtrials.jpg
 - images/gauntlet/2eggonroof.jpg
-- images/gauntlet/3eggnesgtowarmit.jpg
+- images/gauntlet/3eggnesttowarmit.jpg
 - images/gauntlet/4tabtoshowprogress.jpg
 - images/gauntlet/5incubateegg.jpg
 - images/gauntlet/7retrieve.jpg

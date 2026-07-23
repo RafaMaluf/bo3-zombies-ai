@@ -38,8 +38,8 @@ class Settings:
     groq_model: str = field(
         default_factory=lambda: os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
     )
-    max_retrieved_chunks: int = field(default_factory=lambda: _env_int("MAX_RETRIEVED_CHUNKS", 8))
-    max_context_chars: int = field(default_factory=lambda: _env_int("MAX_CONTEXT_CHARS", 24_000))
+    max_retrieved_chunks: int = field(default_factory=lambda: _env_int("MAX_RETRIEVED_CHUNKS", 10))
+    max_context_chars: int = field(default_factory=lambda: _env_int("MAX_CONTEXT_CHARS", 28_000))
     max_candidate_images: int = field(default_factory=lambda: _env_int("MAX_CANDIDATE_IMAGES", 24))
     max_response_images: int = field(default_factory=lambda: _env_int("MAX_RESPONSE_IMAGES", 8))
     max_history_messages: int = field(default_factory=lambda: _env_int("MAX_HISTORY_MESSAGES", 10))

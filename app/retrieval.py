@@ -30,6 +30,23 @@ COMPARISON_TERMS = {
     "maps",
     "mapas",
 }
+COMPREHENSIVE_TERMS = {
+    "all",
+    "build",
+    "complete",
+    "completo",
+    "completa",
+    "every",
+    "faco",
+    "four",
+    "full",
+    "montar",
+    "monto",
+    "todos",
+    "todas",
+    "4",
+    "quatro",
+}
 STOP_WORDS = {
     "a",
     "as",
@@ -71,6 +88,23 @@ STOP_WORDS = {
     "what",
     "with",
 }
+TITLE_BOOST_STOP_WORDS = {
+    "abrir",
+    "activate",
+    "ativar",
+    "build",
+    "collect",
+    "consigo",
+    "faco",
+    "find",
+    "get",
+    "liberar",
+    "make",
+    "obtain",
+    "pego",
+    "unlock",
+    "where",
+}
 TOPIC_EXPANSIONS = {
     "pack a punch": ("pap", "pack", "punch"),
     "pack-a-punch": ("pap", "pack", "punch"),
@@ -81,16 +115,58 @@ TOPIC_EXPANSIONS = {
     "escudo": ("shield",),
     "energia": ("power",),
     "ligar a energia": ("power",),
+    "arco eletrico": ("lightning", "bow", "electric"),
+    "arco de fogo": ("fire", "bow"),
+    "arco do lobo": ("wolf", "bow"),
+    "arco do vazio": ("void", "bow"),
+    "arco iris": ("rainbow",),
 }
 TOKEN_EXPANSIONS = {
+    "abrir": ("open", "unlock"),
+    "agua": ("water",),
+    "aguas": ("water",),
+    "aranha": ("spider",),
+    "aranhas": ("spider", "spiders"),
+    "arco": ("bow",),
+    "ativar": ("activate",),
+    "balde": ("bucket",),
+    "baldes": ("bucket", "buckets"),
+    "caveira": ("skull",),
+    "caveiras": ("skull", "skulls"),
+    "eletrica": ("electric", "lightning"),
+    "eletrico": ("electric", "lightning"),
+    "fogo": ("fire",),
+    "fusivel": ("fuse",),
+    "fusiveis": ("fuse", "fuses"),
+    "garrafa": ("bottle",),
+    "garrafas": ("bottle", "bottles"),
+    "liberar": ("unlock",),
+    "lobo": ("wolf",),
+    "manopla": ("gauntlet",),
+    "mascara": ("mask", "helmet"),
+    "mascaras": ("mask", "masks", "helmet"),
+    "musica": ("music", "song"),
+    "musicas": ("music", "songs"),
     "peca": ("part", "piece"),
     "pecas": ("parts", "pieces"),
+    "planta": ("plant",),
+    "plantas": ("plant", "plants"),
     "primeira": ("first", "part", "1"),
     "primeiro": ("first", "part", "1"),
+    "quatro": ("four", "4"),
+    "ritual": ("ritual",),
+    "rituais": ("ritual", "rituals"),
     "segunda": ("second", "part", "2"),
     "segundo": ("second", "part", "2"),
+    "teletransportador": ("teleporter",),
+    "teletransportadores": ("teleporter", "teleporters"),
     "terceira": ("third", "part", "3"),
     "terceiro": ("third", "part", "3"),
+    "transformar": ("transform", "transformation"),
+    "vazio": ("void",),
+    "virar": ("transform", "transformation"),
+    "viro": ("transform", "transformation"),
+    "unlock": ("get", "obtain"),
     "quarta": ("fourth", "part", "4"),
     "quarto": ("fourth", "part", "4"),
 }
@@ -187,14 +263,19 @@ class SearchEngine:
             allowed_maps = set(self.knowledge_base.maps)
 
         query_tokens = self._expanded_query_tokens(query)
+        original_query_tokens = tokenize(query)
         scored: list[ScoredChunk] = []
         for chunk in self._chunks:
             if chunk.map_id not in allowed_maps:
                 continue
-            score = self._score_chunk(query_tokens, chunk)
+            score = self._score_chunk(query_tokens, original_query_tokens, chunk)
             if score > 0:
                 scored.append(ScoredChunk(chunk=chunk, score=score))
         scored.sort(key=lambda item: (-item.score, item.chunk.position))
+
+        unique_topic_map = self._unique_topic_map(original_query_tokens)
+        if not explicit_maps and not valid_active_map and unique_topic_map:
+            scored = [item for item in scored if item.chunk.map_id == unique_topic_map]
 
         if not scored:
             suggestions = tuple(sorted(allowed_maps))
@@ -256,19 +337,48 @@ class SearchEngine:
                 reverse=True,
             )
             dominant_file = ranked_files[0]
-            has_clear_file_winner = (
-                len(ranked_files) == 1
-                or best_by_file[dominant_file] >= best_by_file[ranked_files[1]] * 1.2 + 0.5
-            )
-            if has_clear_file_winner:
-                selection_pool = [
-                    item for item in scored if (item.chunk.map_id, item.chunk.path) == dominant_file
-                ]
+            selection_pool = [
+                item for item in scored if (item.chunk.map_id, item.chunk.path) == dominant_file
+            ]
 
-        score_floor = selection_pool[0].score * 0.72
-        selected = tuple(item for item in selection_pool[:limit] if item.score >= score_floor)
-        if not selected:
-            selected = (selection_pool[0],)
+        score_ratio = 0.0 if self._is_comprehensive_query(query) else 0.72
+        score_floor = selection_pool[0].score * score_ratio
+        selected_items = [item for item in selection_pool[:limit] if item.score >= score_floor]
+        if not selected_items:
+            selected_items = [selection_pool[0]]
+
+        # A guide's overview and progression summary carry prerequisites and
+        # connective steps that a highly specific score can otherwise omit.
+        # Include them when there is room, while keeping the most relevant
+        # section first for source attribution.
+        selected_ids = {item.chunk.id for item in selected_items}
+        for item in selection_pool:
+            if len(selected_items) >= limit:
+                break
+            normalized_title = normalize_text(item.chunk.section_title)
+            is_structural = normalized_title == "overview" or "summary" in normalized_title
+            if is_structural and item.chunk.id not in selected_ids:
+                selected_items.append(item)
+                selected_ids.add(item.chunk.id)
+
+        if self._is_comparison_query(query):
+            comparison_maps = explicit_maps or tuple(ranked_maps)
+            selected_maps = {item.chunk.map_id for item in selected_items}
+            for map_id in comparison_maps:
+                if map_id in selected_maps:
+                    continue
+                best_for_map = next(
+                    (item for item in selection_pool if item.chunk.map_id == map_id),
+                    None,
+                )
+                if best_for_map is None:
+                    continue
+                if len(selected_items) >= limit:
+                    selected_items.pop()
+                selected_items.append(best_for_map)
+                selected_maps.add(map_id)
+
+        selected = tuple(selected_items[:limit])
         selected_maps = {item.chunk.map_id for item in selected}
         inferred_active = next(iter(selected_maps)) if len(selected_maps) == 1 else valid_active_map
         return RetrievalResult(
@@ -285,6 +395,10 @@ class SearchEngine:
         return bool(set(tokenize(query)) & COMPARISON_TERMS)
 
     @staticmethod
+    def _is_comprehensive_query(query: str) -> bool:
+        return bool(set(tokenize(query)) & COMPREHENSIVE_TERMS)
+
+    @staticmethod
     def _expanded_query_tokens(query: str) -> list[str]:
         normalized = normalize_text(query)
         tokens = tokenize(normalized)
@@ -295,9 +409,25 @@ class SearchEngine:
                 tokens.extend(expansion)
         return list(dict.fromkeys(tokens))
 
+    def _unique_topic_map(self, original_query_tokens: list[str]) -> str | None:
+        candidates: set[str] = set()
+        ignored = TITLE_BOOST_STOP_WORDS | COMPREHENSIVE_TERMS | COMPARISON_TERMS
+        for token in original_query_tokens:
+            if token in ignored or token.isdigit() or len(token) < 3:
+                continue
+            matching_maps = {
+                chunk.map_id
+                for chunk in self._chunks
+                if self._term_frequencies[chunk.id].get(token, 0) > 0
+            }
+            if len(matching_maps) == 1:
+                candidates.update(matching_maps)
+        return next(iter(candidates)) if len(candidates) == 1 else None
+
     def _score_chunk(
         self,
         query_tokens: list[str],
+        original_query_tokens: list[str],
         chunk: KnowledgeChunk,
     ) -> float:
         if not query_tokens:
@@ -323,6 +453,13 @@ class SearchEngine:
 
         normalized_query = " ".join(query_tokens)
         normalized_title = normalize_text(chunk.section_title)
+        title_tokens = set(tokenize(normalized_title))
+        score += sum(1.25 for token in query_tokens if token in title_tokens)
+        score += sum(
+            6.0
+            for token in original_query_tokens
+            if token in title_tokens and token not in TITLE_BOOST_STOP_WORDS and not token.isdigit()
+        )
         if normalized_query and normalized_query in normalized_title:
             score += 3.0
         return round(score, 6)

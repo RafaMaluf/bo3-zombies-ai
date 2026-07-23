@@ -97,7 +97,7 @@ def _select_image_assets(
             continue
         selected.append(asset)
         seen_sections.add(section_key)
-        if len(selected) >= min(limit, 4):
+        if len(selected) >= min(limit, 6):
             break
     return selected
 
@@ -229,7 +229,6 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
     )
 
 
-app.mount("/static", StaticFiles(directory=settings.maps_dir), name="static")
 app.mount(
     "/app",
     StaticFiles(directory=settings.frontend_dir, html=True),

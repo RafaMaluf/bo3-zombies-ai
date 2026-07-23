@@ -53,7 +53,12 @@ def build_answer_prompt(
     image_ids: list[str] = []
     total_chars = 0
 
-    for scored in scored_chunks:
+    document_keys = {(item.chunk.map_id, item.chunk.path) for item in scored_chunks}
+    ordered_chunks = scored_chunks
+    if len(document_keys) == 1:
+        ordered_chunks = tuple(sorted(scored_chunks, key=lambda item: item.chunk.position))
+
+    for scored in ordered_chunks:
         chunk = scored.chunk
         context_part = "\n".join(
             [

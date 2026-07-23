@@ -59,17 +59,25 @@ class LLMService:
         except Exception as error:
             raise LLMResponseError(f"Model request failed: {error}") from error
 
-        content = response.choices[0].message.content
+        try:
+            content = response.choices[0].message.content
+        except (AttributeError, IndexError, TypeError) as error:
+            raise LLMResponseError("The model returned no usable completion.") from error
         if not content:
             raise LLMResponseError("The model returned an empty response.")
 
         try:
             payload = json.loads(_strip_json_fence(content))
-            return LLMResponse.model_validate(payload)
+            parsed = LLMResponse.model_validate(payload)
         except (json.JSONDecodeError, ValidationError) as error:
             raise LLMResponseError(
                 f"The model returned invalid structured output: {error}"
             ) from error
+        if not parsed.need_clarification and not parsed.answer.strip():
+            raise LLMResponseError("The model returned an empty answer.")
+        if parsed.need_clarification and not parsed.clarification_question.strip():
+            raise LLMResponseError("The model requested clarification without a question.")
+        return parsed
 
 
 def _strip_json_fence(value: str) -> str:

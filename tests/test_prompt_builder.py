@@ -51,3 +51,24 @@ def test_image_fallback_diversifies_by_section() -> None:
 
     assert len(selected) == 3
     assert len({asset.section for asset in selected}) == 3
+
+
+def test_single_document_context_is_ordered_like_the_guide() -> None:
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    result = SearchEngine(knowledge_base).search(
+        "Como faço os quatro rituais de Shadows of Evil?",
+        active_map_id=None,
+        limit=10,
+    )
+    prompt = build_answer_prompt(
+        user_message="Como faço os quatro rituais de Shadows of Evil?",
+        history=[],
+        scored_chunks=result.chunks,
+        knowledge_base=knowledge_base,
+        max_context_chars=28_000,
+        max_candidate_images=24,
+    )
+
+    positions = [item.chunk.position for item in prompt.chunks]
+    assert positions == sorted(positions)
+    assert {item.chunk.path for item in prompt.chunks} == {"pap.md"}

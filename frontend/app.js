@@ -257,7 +257,9 @@ function addMessage(role, text, options = {}) {
       button.textContent = map.display_name;
       button.addEventListener("click", () => {
         selectMap(mapId);
-        if (options.retryMessage) submitMessage(options.retryMessage);
+        if (options.retryMessage) {
+          submitMessage(options.retryMessage, { echoUser: false });
+        }
       });
       suggestions.appendChild(button);
     }
@@ -345,12 +347,14 @@ async function sendMessage(message) {
   return payload;
 }
 
-async function submitMessage(message) {
+async function submitMessage(message, { echoUser = true } = {}) {
   const cleanMessage = message.trim();
   if (!cleanMessage || state.pending) return;
 
-  addMessage("user", cleanMessage);
-  state.history.push({ role: "user", content: cleanMessage });
+  if (echoUser) {
+    addMessage("user", cleanMessage);
+    state.history.push({ role: "user", content: cleanMessage });
+  }
   resetComposer();
   setPending(true);
   const typing = addTypingIndicator();

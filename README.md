@@ -61,6 +61,7 @@ Acesse [http://127.0.0.1:8000/app/](http://127.0.0.1:8000/app/).
 ```bash
 python -m ruff check app scripts tests
 python -m pytest
+python -m pytest --cov=app --cov-report=term-missing
 python -m scripts.validate_kb
 ```
 
@@ -68,6 +69,13 @@ Para gerar previamente os thumbnails das imagens:
 
 ```bash
 python -m scripts.prewarm_thumbnails
+```
+
+Com a aplicação em execução, valide os endpoints e respostas reais:
+
+```bash
+python -m scripts.smoke_api
+python -m scripts.smoke_api --live-chat
 ```
 
 Os thumbnails e relatórios ficam em `.cache/` e não são versionados.

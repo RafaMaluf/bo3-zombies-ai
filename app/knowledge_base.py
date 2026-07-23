@@ -6,6 +6,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from PIL import Image, UnidentifiedImageError
+
 from app.chunking import (
     extract_image_paths,
     normalize_image_path,
@@ -60,14 +62,17 @@ def _humanize_filename(
 
 
 class KnowledgeBase:
-    def __init__(self, maps_dir: Path) -> None:
+    def __init__(self, maps_dir: Path, *, verify_images: bool = False) -> None:
         self.maps_dir = maps_dir.resolve()
         self.maps: dict[str, MapRecord] = {}
         self.chunks: dict[str, KnowledgeChunk] = {}
         self.images: dict[str, ImageAsset] = {}
         self.issues: list[ValidationIssue] = []
         self._document_count = 0
+        self._verified_image_ids: set[str] = set()
         self._load()
+        if verify_images:
+            self.validate_image_files()
 
     @property
     def errors(self) -> list[ValidationIssue]:
@@ -116,6 +121,25 @@ class KnowledgeBase:
 
     def get_image(self, image_id: str) -> ImageAsset | None:
         return self.images.get(image_id)
+
+    def validate_image_files(self) -> None:
+        """Decode every registered image once and record corrupt assets."""
+        for asset in self.images.values():
+            if asset.id in self._verified_image_ids:
+                continue
+            self._verified_image_ids.add(asset.id)
+            try:
+                with Image.open(asset.source_file) as image:
+                    if image.width <= 0 or image.height <= 0:
+                        raise ValueError("Image has invalid dimensions.")
+                    image.verify()
+            except (OSError, ValueError, UnidentifiedImageError) as error:
+                self._issue(
+                    "error",
+                    "invalid-image-file",
+                    f"Image cannot be decoded: {error}",
+                    asset.source_file,
+                )
 
     def _issue(
         self,

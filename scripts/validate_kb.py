@@ -14,7 +14,7 @@ from app.knowledge_base import KnowledgeBase  # noqa: E402
 
 
 def main() -> int:
-    knowledge_base = KnowledgeBase(settings.maps_dir)
+    knowledge_base = KnowledgeBase(settings.maps_dir, verify_images=True)
     stats = knowledge_base.stats
 
     print(

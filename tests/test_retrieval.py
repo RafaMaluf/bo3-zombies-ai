@@ -36,6 +36,19 @@ def test_generic_pack_a_punch_question_requests_a_map(search_engine: SearchEngin
     assert len(result.suggested_map_ids) > 1
 
 
+def test_missing_topic_in_active_map_does_not_suggest_same_map(
+    search_engine: SearchEngine,
+) -> None:
+    result = search_engine.search(
+        "assunto completamente inexistente xyz",
+        active_map_id="der_eisendrache",
+        limit=6,
+    )
+
+    assert result.needs_clarification
+    assert result.suggested_map_ids == ()
+
+
 def test_active_map_keeps_follow_up_in_context(search_engine: SearchEngine) -> None:
     result = search_engine.search(
         "Where is the third shield part?",

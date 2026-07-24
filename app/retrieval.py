@@ -137,6 +137,7 @@ TOKEN_EXPANSIONS = {
     "aranha": ("spider",),
     "aranhas": ("spider", "spiders"),
     "arco": ("bow",),
+    "arcos": ("bow", "bows"),
     "atirar": ("shoot",),
     "ativar": ("activate",),
     "azul": ("blue",),
@@ -225,6 +226,17 @@ def tokenize(value: str) -> list[str]:
     ]
 
 
+def expanded_query_tokens(query: str) -> list[str]:
+    normalized = normalize_text(query)
+    tokens = tokenize(normalized)
+    for token in tuple(tokens):
+        tokens.extend(TOKEN_EXPANSIONS.get(token, ()))
+    for phrase, expansion in TOPIC_EXPANSIONS.items():
+        if normalize_text(phrase) in normalized:
+            tokens.extend(expansion)
+    return list(dict.fromkeys(tokens))
+
+
 class SearchEngine:
     def __init__(self, knowledge_base: KnowledgeBase) -> None:
         self.knowledge_base = knowledge_base
@@ -304,7 +316,7 @@ class SearchEngine:
         else:
             allowed_maps = set(self.knowledge_base.maps)
 
-        query_tokens = self._expanded_query_tokens(query)
+        query_tokens = expanded_query_tokens(query)
         original_query_tokens = tokenize(query)
         scored: list[ScoredChunk] = []
         for chunk in self._chunks:
@@ -320,7 +332,7 @@ class SearchEngine:
             scored = [item for item in scored if item.chunk.map_id == unique_topic_map]
 
         if not scored:
-            suggestions = tuple(sorted(allowed_maps))
+            suggestions = () if valid_active_map else tuple(sorted(allowed_maps))
             return RetrievalResult(
                 chunks=(),
                 active_map_id=valid_active_map,
@@ -442,14 +454,7 @@ class SearchEngine:
 
     @staticmethod
     def _expanded_query_tokens(query: str) -> list[str]:
-        normalized = normalize_text(query)
-        tokens = tokenize(normalized)
-        for token in tuple(tokens):
-            tokens.extend(TOKEN_EXPANSIONS.get(token, ()))
-        for phrase, expansion in TOPIC_EXPANSIONS.items():
-            if normalize_text(phrase) in normalized:
-                tokens.extend(expansion)
-        return list(dict.fromkeys(tokens))
+        return expanded_query_tokens(query)
 
     @staticmethod
     def _singular_phrase_token(token: str) -> str:

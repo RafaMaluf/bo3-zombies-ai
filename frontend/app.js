@@ -203,7 +203,7 @@ function createImageGallery(images) {
     const figure = document.createElement("figure");
     const img = document.createElement("img");
     img.src = mediaUrl(image.id, "thumb");
-    img.alt = image.caption;
+    img.alt = "";
     img.loading = "lazy";
     img.decoding = "async";
 
@@ -261,6 +261,19 @@ function addMessage(role, text, options = {}) {
           submitMessage(options.retryMessage, { echoUser: false });
         }
       });
+      suggestions.appendChild(button);
+    }
+    article.appendChild(suggestions);
+  }
+
+  if (options.suggestedQueries?.length) {
+    const suggestions = document.createElement("div");
+    suggestions.className = "map-suggestions";
+    for (const query of options.suggestedQueries) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = query;
+      button.addEventListener("click", () => submitMessage(query));
       suggestions.appendChild(button);
     }
     article.appendChild(suggestions);
@@ -371,6 +384,7 @@ async function submitMessage(message, { echoUser = true } = {}) {
       addMessage("assistant", response.clarification_question, {
         clarification: true,
         suggestedMapIds: response.suggested_map_ids,
+        suggestedQueries: response.suggested_queries,
         retryMessage: cleanMessage
       });
       state.history.push({
@@ -382,7 +396,11 @@ async function submitMessage(message, { echoUser = true } = {}) {
         images: response.relevant_images,
         sources: response.sources
       });
-      state.history.push({ role: "assistant", content: response.answer });
+      state.history.push({
+        role: "assistant",
+        content: response.answer,
+        source_paths: [...new Set(response.sources.map(source => source.path))]
+      });
     }
   } catch (error) {
     typing.remove();

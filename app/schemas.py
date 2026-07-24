@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 class ConversationMessage(BaseModel):
     role: Literal["user", "assistant"]
     content: str = Field(min_length=1, max_length=12_000)
+    source_paths: list[str] = Field(default_factory=list, max_length=20)
 
 
 class ChatRequest(BaseModel):
@@ -49,6 +50,7 @@ class ChatResponse(BaseModel):
     need_clarification: bool = False
     clarification_question: str = ""
     suggested_map_ids: list[str] = Field(default_factory=list)
+    suggested_queries: list[str] = Field(default_factory=list)
     sources: list[SelectedSource] = Field(default_factory=list)
     relevant_images: list[RelevantImage] = Field(default_factory=list)
     active_map_id: str | None = None

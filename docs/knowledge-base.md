@@ -79,3 +79,7 @@ O validador detecta:
 Como o projeto é pessoal, screenshots públicas podem ser armazenadas
 localmente. Ainda assim, registre a URL de origem durante a importação para
 facilitar correções e substituir imagens no futuro.
+
+Para novos mapas, use o pipeline descrito em
+[ingestion.md](ingestion.md). Ele cria `sources.json` com a URL e o hash de
+cada página, além da URL, dimensões e hash de cada imagem importada.

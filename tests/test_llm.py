@@ -53,11 +53,57 @@ async def test_json_fence_is_accepted() -> None:
 
 
 @pytest.mark.asyncio
+async def test_query_resolution_is_validated() -> None:
+    response = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(
+                    content=(
+                        '{"resolved_query":"","need_clarification":true,'
+                        '"clarification_question":"Qual deles?",'
+                        '"candidate_document_paths":["fire_bow.md","wolf_bow.md"]}'
+                    )
+                )
+            )
+        ]
+    )
+
+    result = await _service_with_response(response).resolve_query(
+        [{"role": "user", "content": "e os outros?"}]
+    )
+
+    assert result.need_clarification
+    assert result.candidate_document_paths == ["fire_bow.md", "wolf_bow.md"]
+
+
+@pytest.mark.asyncio
+async def test_query_resolution_requires_query_or_clarification() -> None:
+    response = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(
+                    content=(
+                        '{"resolved_query":"","need_clarification":false,'
+                        '"clarification_question":"","candidate_document_paths":[]}'
+                    )
+                )
+            )
+        ]
+    )
+
+    with pytest.raises(LLMResponseError, match="no query"):
+        await _service_with_response(response).resolve_query(
+            [{"role": "user", "content": "e ele?"}]
+        )
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "response",
     [
         SimpleNamespace(choices=[]),
         SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=""))]),
+        SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="[]"))]),
         SimpleNamespace(
             choices=[
                 SimpleNamespace(

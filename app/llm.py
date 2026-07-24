@@ -17,6 +17,13 @@ class LLMResponse(BaseModel):
     image_ids: list[str] = Field(default_factory=list)
 
 
+class QueryResolution(BaseModel):
+    resolved_query: str = ""
+    need_clarification: bool = False
+    clarification_question: str = ""
+    candidate_document_paths: list[str] = Field(default_factory=list)
+
+
 class LLMUnavailableError(RuntimeError):
     pass
 
@@ -43,6 +50,40 @@ class LLMService:
         )
 
     async def answer(self, messages: list[dict[str, str]]) -> LLMResponse:
+        payload = await self._json_completion(messages)
+        try:
+            parsed = LLMResponse.model_validate(payload)
+        except ValidationError as error:
+            raise LLMResponseError(
+                f"The model returned invalid structured output: {error}"
+            ) from error
+        if not parsed.need_clarification and not parsed.answer.strip():
+            raise LLMResponseError("The model returned an empty answer.")
+        if parsed.need_clarification and not parsed.clarification_question.strip():
+            raise LLMResponseError("The model requested clarification without a question.")
+        return parsed
+
+    async def resolve_query(
+        self,
+        messages: list[dict[str, str]],
+    ) -> QueryResolution:
+        payload = await self._json_completion(messages)
+        try:
+            parsed = QueryResolution.model_validate(payload)
+        except ValidationError as error:
+            raise LLMResponseError(
+                f"The model returned invalid query resolution: {error}"
+            ) from error
+        if parsed.need_clarification and not parsed.clarification_question.strip():
+            raise LLMResponseError("Query resolution requested an empty clarification.")
+        if not parsed.need_clarification and not parsed.resolved_query.strip():
+            raise LLMResponseError("Query resolution returned no query.")
+        return parsed
+
+    async def _json_completion(
+        self,
+        messages: list[dict[str, str]],
+    ) -> dict[str, object]:
         if self._client is None:
             raise LLMUnavailableError(
                 "GROQ_API_KEY is not configured. The knowledge base is healthy, "
@@ -68,16 +109,13 @@ class LLMService:
 
         try:
             payload = json.loads(_strip_json_fence(content))
-            parsed = LLMResponse.model_validate(payload)
-        except (json.JSONDecodeError, ValidationError) as error:
+        except json.JSONDecodeError as error:
             raise LLMResponseError(
                 f"The model returned invalid structured output: {error}"
             ) from error
-        if not parsed.need_clarification and not parsed.answer.strip():
-            raise LLMResponseError("The model returned an empty answer.")
-        if parsed.need_clarification and not parsed.clarification_question.strip():
-            raise LLMResponseError("The model requested clarification without a question.")
-        return parsed
+        if not isinstance(payload, dict):
+            raise LLMResponseError("The model returned a non-object JSON value.")
+        return payload
 
 
 def _strip_json_fence(value: str) -> str:

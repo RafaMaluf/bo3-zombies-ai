@@ -63,6 +63,7 @@ python -m ruff check app scripts tests
 python -m pytest
 python -m pytest --cov=app --cov-report=term-missing
 python -m scripts.validate_kb
+python -m scripts.evaluate_retrieval
 ```
 
 Para gerar previamente os thumbnails das imagens:
@@ -79,6 +80,19 @@ python -m scripts.smoke_api --live-chat
 ```
 
 Os thumbnails e relatórios ficam em `.cache/` e não são versionados.
+
+## Importando novos mapas
+
+O pipeline em `scripts.ingest_map` baixa os guias definidos em um manifesto,
+converte as imagens para WebP, remove duplicatas, registra a procedência e
+valida o mapa antes de alterar `maps/`.
+
+```bash
+python -m scripts.ingest_map ingestion/manifests/nacht_der_untoten.json --dry-run
+```
+
+Veja [docs/ingestion.md](docs/ingestion.md) para o formato do manifesto e
+[docs/evaluations.md](docs/evaluations.md) para adicionar os casos de busca.
 
 ## Docker
 

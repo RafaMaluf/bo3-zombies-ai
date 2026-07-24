@@ -33,3 +33,6 @@ jobs:
 
       - name: Validate knowledge base
         run: python -m scripts.validate_kb
+
+      - name: Evaluate retrieval quality
+        run: python -m scripts.evaluate_retrieval

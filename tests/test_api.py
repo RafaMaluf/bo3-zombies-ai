@@ -2,7 +2,12 @@ import re
 
 from fastapi.testclient import TestClient
 
-from app.llm import LLMResponse, LLMUnavailableError
+from app.llm import (
+    LLMResponse,
+    LLMResponseError,
+    LLMUnavailableError,
+    QueryResolution,
+)
 from app.main import app
 
 
@@ -21,6 +26,51 @@ class NoImageLLM:
 class UnavailableLLM:
     async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
         raise LLMUnavailableError("GROQ_API_KEY is not configured.")
+
+
+class AmbiguousFollowUpLLM:
+    async def resolve_query(
+        self,
+        _: list[dict[str, str]],
+    ) -> QueryResolution:
+        return QueryResolution(
+            need_clarification=True,
+            clarification_question=("Há quatro melhorias de arco. Qual delas você quer fazer?"),
+            candidate_document_paths=[
+                "fire_bow.md",
+                "lightning_bow.md",
+                "void_bow.md",
+                "wolf_bow.md",
+                "invented_bow.md",
+            ],
+        )
+
+    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+        raise AssertionError("A clarification must not generate an answer.")
+
+
+class RewritingFollowUpLLM:
+    async def resolve_query(
+        self,
+        _: list[dict[str, str]],
+    ) -> QueryResolution:
+        return QueryResolution(
+            resolved_query="Como consigo o Wolf Bow em Der Eisendrache?",
+        )
+
+    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+        return LLMResponse(answer="Guia contextual do arco do lobo.")
+
+
+class FailingResolverLLM:
+    async def resolve_query(
+        self,
+        _: list[dict[str, str]],
+    ) -> QueryResolution:
+        raise LLMResponseError("No usable resolution.")
+
+    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+        return LLMResponse(answer="O escudo é montado na bancada.")
 
 
 def test_health_maps_and_thumbnail_endpoints() -> None:
@@ -91,6 +141,95 @@ def test_generic_question_returns_map_clarification_without_calling_llm() -> Non
         payload = response.json()
         assert payload["need_clarification"]
         assert len(payload["suggested_map_ids"]) == 6
+
+
+def test_ambiguous_follow_up_offers_valid_document_choices() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = AmbiguousFollowUpLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": "e os arcos?",
+                "active_map_id": "der_eisendrache",
+                "conversation_history": [
+                    {
+                        "role": "user",
+                        "content": "Como libero o Pack-a-Punch?",
+                    },
+                    {
+                        "role": "assistant",
+                        "content": "O Pack-a-Punch foi explicado.",
+                        "source_paths": ["power_pap_teleporter.md"],
+                    },
+                    {
+                        "role": "user",
+                        "content": "e os arcos?",
+                    },
+                ],
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["need_clarification"]
+        assert payload["clarification_question"] == (
+            "Encontrei 4 guias relacionados em Der Eisendrache. Qual deles você quer consultar?"
+        )
+        assert payload["suggested_queries"] == [
+            "Fire Bow",
+            "Lightning Bow",
+            "Void Bow",
+            "Wolf Bow",
+        ]
+        assert payload["suggested_map_ids"] == []
+
+
+def test_referential_follow_up_is_rewritten_before_retrieval() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = RewritingFollowUpLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": "e o do lobo?",
+                "active_map_id": "der_eisendrache",
+                "conversation_history": [
+                    {
+                        "role": "assistant",
+                        "content": "Esse é o passo a passo do arco de fogo.",
+                        "source_paths": ["fire_bow.md"],
+                    }
+                ],
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["answer"] == "Guia contextual do arco do lobo."
+        assert {source["path"] for source in payload["sources"]} == {"wolf_bow.md"}
+
+
+def test_referential_follow_up_uses_previous_source_when_resolution_fails() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = FailingResolverLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": "e onde monta?",
+                "active_map_id": "der_eisendrache",
+                "conversation_history": [
+                    {
+                        "role": "assistant",
+                        "content": "As peças do escudo ficam em três áreas.",
+                        "source_paths": ["shield.md"],
+                    }
+                ],
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["answer"] == "O escudo é montado na bancada."
+        assert {source["path"] for source in payload["sources"]} == {"shield.md"}
 
 
 def test_chat_rejects_model_image_ids_outside_retrieved_context() -> None:

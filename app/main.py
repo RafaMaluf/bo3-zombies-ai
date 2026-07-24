@@ -11,6 +11,16 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
+from app.conversation import (
+    build_resolution_messages,
+    clarification_for_options,
+    deterministic_follow_up_options,
+    document_catalog,
+    history_without_duplicate_current_message,
+    should_resolve_follow_up,
+    source_anchored_query,
+    validated_document_options,
+)
 from app.domain import ImageAsset
 from app.knowledge_base import KnowledgeBase
 from app.llm import LLMResponseError, LLMService, LLMUnavailableError
@@ -156,11 +166,106 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         )
 
     search_engine: SearchEngine = request.app.state.search_engine
+    history = history_without_duplicate_current_message(
+        req.conversation_history,
+        req.message,
+        settings.max_history_messages,
+    )
     retrieval = search_engine.search(
         query=req.message,
         active_map_id=req.active_map_id,
         limit=settings.max_retrieved_chunks,
     )
+
+    llm: LLMService = request.app.state.llm
+    if should_resolve_follow_up(
+        req.message,
+        history,
+        req.active_map_id,
+        retrieval,
+    ):
+        active_record = knowledge_base.maps.get(req.active_map_id or "")
+        catalog = document_catalog(knowledge_base, req.active_map_id or "")
+        if active_record is not None and catalog:
+            deterministic_options = deterministic_follow_up_options(
+                req.message,
+                history,
+                catalog,
+            )
+            if deterministic_options:
+                return ChatResponse(
+                    need_clarification=True,
+                    clarification_question=clarification_for_options(
+                        req.message,
+                        active_record.display_name,
+                        deterministic_options,
+                        "Qual guia você quer consultar?",
+                    ),
+                    suggested_queries=[item.label for item in deterministic_options],
+                    active_map_id=req.active_map_id,
+                )
+
+            anchored_query = source_anchored_query(
+                req.message,
+                history,
+                catalog,
+            )
+            resolution_messages = build_resolution_messages(
+                message=req.message,
+                history=history,
+                map_name=active_record.display_name,
+                catalog=catalog,
+            )
+            try:
+                resolution = await llm.resolve_query(resolution_messages)
+            except (LLMUnavailableError, LLMResponseError):
+                logger.warning("Could not resolve ambiguous follow-up", exc_info=True)
+                if anchored_query:
+                    anchored_retrieval = search_engine.search(
+                        query=anchored_query,
+                        active_map_id=req.active_map_id,
+                        limit=settings.max_retrieved_chunks,
+                    )
+                    if not anchored_retrieval.needs_clarification:
+                        retrieval = anchored_retrieval
+            else:
+                if resolution.need_clarification:
+                    options = validated_document_options(
+                        resolution.candidate_document_paths,
+                        catalog,
+                        req.message,
+                    )
+                    if options or not anchored_query:
+                        return ChatResponse(
+                            need_clarification=True,
+                            clarification_question=clarification_for_options(
+                                req.message,
+                                active_record.display_name,
+                                options,
+                                resolution.clarification_question,
+                            ),
+                            suggested_queries=[item.label for item in options],
+                            active_map_id=req.active_map_id,
+                        )
+                else:
+                    resolved_retrieval = search_engine.search(
+                        query=resolution.resolved_query,
+                        active_map_id=req.active_map_id,
+                        limit=settings.max_retrieved_chunks,
+                    )
+                    if not resolved_retrieval.needs_clarification:
+                        retrieval = resolved_retrieval
+                        anchored_query = ""
+
+                if anchored_query:
+                    anchored_retrieval = search_engine.search(
+                        query=anchored_query,
+                        active_map_id=req.active_map_id,
+                        limit=settings.max_retrieved_chunks,
+                    )
+                    if not anchored_retrieval.needs_clarification:
+                        retrieval = anchored_retrieval
+
     if retrieval.needs_clarification:
         return ChatResponse(
             need_clarification=True,
@@ -169,7 +274,6 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
             active_map_id=retrieval.active_map_id or req.active_map_id,
         )
 
-    history = req.conversation_history[-settings.max_history_messages :]
     prompt = build_answer_prompt(
         user_message=req.message,
         history=history,
@@ -179,7 +283,6 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         max_candidate_images=settings.max_candidate_images,
     )
 
-    llm: LLMService = request.app.state.llm
     try:
         generated = await llm.answer(prompt.messages)
     except LLMUnavailableError as error:

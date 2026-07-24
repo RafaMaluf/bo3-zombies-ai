@@ -1,0 +1,899 @@
+{
+  "version": 1,
+  "description": "Deterministic retrieval baseline for the six original Black Ops III maps. Fifteen bilingual, player-style questions per map exercise map inference, document ranking, section ranking, and image attachment without calling an LLM.",
+  "thresholds": {
+    "pass_rate": 0.85,
+    "map_accuracy": 0.98,
+    "document_hit_at_1": 0.9,
+    "section_hit_at_3": 0.85,
+    "image_hit_at_3": 0.85,
+    "clarification_accuracy": 1.0
+  },
+  "cases": [
+    {
+      "id": "de-lightning-bonfires",
+      "query": "Como acendo as três fogueiras do arco elétrico em Der Eisendrache?",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["lightning_bow.md"],
+      "expected_section_titles": ["step 2 - light the 3 bonfires"],
+      "minimum_images": 3,
+      "tags": ["der_eisendrache", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "de-fire-fireplace",
+      "query": "No arco de fogo, como levo a pedra em chamas até a lareira correta?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["fire_bow.md"],
+      "expected_section_titles": ["step 6 - move the blazing rock to the correct fireplace"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "de-wolf-paintings",
+      "query": "What is the correct painting order for the Wolf Bow in DE?",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["wolf_bow.md"],
+      "expected_section_titles": ["step 1 - interact with the 4 paintings in the correct order"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "wonder_weapon", "en"]
+    },
+    {
+      "id": "de-void-skulls",
+      "query": "Onde ficam as seis caveiras do arco do vazio?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["void_bow.md"],
+      "expected_section_titles": ["step 3 - interact with the 6 skulls"],
+      "minimum_images": 3,
+      "tags": ["der_eisendrache", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "de-base-bow",
+      "query": "How do I get the Wrath of the Ancients base bow?",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["wrath_of_the_ancients.md"],
+      "expected_section_titles": ["obtaining the bow"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "wonder_weapon", "en"]
+    },
+    {
+      "id": "de-ragnarok-death-ray",
+      "query": "Como pego a peça do Ragnarok usando a Death Ray e a Wundersphere?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["ragnarock.md"],
+      "expected_section_titles": ["part 2 - Death Ray + Wundersphere piece"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "buildable", "pt"]
+    },
+    {
+      "id": "de-shield-third-part",
+      "query": "Onde fica a terceira peça do Rocket Shield?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["shield.md"],
+      "expected_section_titles": ["part 3 - underground frame"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "buildable", "pt"]
+    },
+    {
+      "id": "de-pack-a-punch",
+      "query": "How do I rebuild Pack-a-Punch in Der Eisendrache?",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["power_pap_teleporter.md"],
+      "expected_section_titles": ["how to rebuild Pack-a-Punch"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "setup", "en"]
+    },
+    {
+      "id": "de-simon-says",
+      "query": "Como faço os dois Simon Says do easter egg de Der Eisendrache?",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["step 7 - complete the two Simon Says consoles"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "main_ee", "pt"]
+    },
+    {
+      "id": "de-panzer-helmet",
+      "query": "How do I unlock the Panzer helmet using the ceiling claws?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["side_ee/panzer_helmet.md"],
+      "expected_section_titles": ["claw locations", "steps"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "side_ee", "en"]
+    },
+    {
+      "id": "de-plunger",
+      "query": "Onde eu pego o Plunger depois de viajar para o passado?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["side_ee/plunger.md"],
+      "expected_section_titles": ["step 5 - pick up the Plunger"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "side_ee", "pt"]
+    },
+    {
+      "id": "de-gramophones",
+      "query": "Where are the three gramophones for the second music easter egg?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["side_ee/music_2_gramophones.md"],
+      "expected_section_titles": ["gramophone locations"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "side_ee", "en"]
+    },
+    {
+      "id": "de-skeleton-mode",
+      "query": "Como ativo o modo que troca os zumbis por esqueletos?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["side_ee/skeletons.md"],
+      "expected_section_titles": ["overview", "skull locations", "steps"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "side_ee", "pt"]
+    },
+    {
+      "id": "de-brm-wallbuy",
+      "query": "How do I unlock the BRM wallbuy in the anti-gravity room?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["side_ee/brm_wallbuy.md"],
+      "expected_section_titles": ["steps"],
+      "minimum_images": 1,
+      "tags": ["der_eisendrache", "side_ee", "en"]
+    },
+    {
+      "id": "de-music-box",
+      "query": "Como ativo a música da caixinha no quarto da Samantha?",
+      "active_map_id": "der_eisendrache",
+      "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["side_ee/music_3_music_box.md"],
+      "expected_section_titles": ["steps"],
+      "tags": ["der_eisendrache", "side_ee", "pt"]
+    },
+
+    {
+      "id": "gk-pack-a-punch",
+      "query": "Como libero o Pack-a-Punch em Gorod Krovi?",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["power_pap.md"],
+      "expected_section_titles": ["step 8 - access pack-a-punch"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "setup", "pt"]
+    },
+    {
+      "id": "gk-dragon-egg",
+      "query": "Where do I get the dragon egg for the Siegfried Gauntlet?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["gauntlet.md"],
+      "expected_section_titles": ["step 1 - get the dragon egg"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "wonder_weapon", "en"]
+    },
+    {
+      "id": "gk-incubate-egg",
+      "query": "Como faço para incubar o ovo da manopla no Hatchery?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["gauntlet.md"],
+      "expected_section_titles": ["step 6 - incubate the egg"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "gk-dragon-strike-flags",
+      "query": "How do I burn the flags while upgrading Dragon Strike?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["dragon_strike.md"],
+      "expected_section_titles": ["upgrade step 2 - burn the flags"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "equipment", "en"]
+    },
+    {
+      "id": "gk-shield-third-part",
+      "query": "Onde fica a terceira peça do escudo de Gorod Krovi?",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["shield.md"],
+      "expected_section_titles": ["part 3 - third shield piece"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "buildable", "pt"]
+    },
+    {
+      "id": "gk-tiamat-symbols",
+      "query": "Where are the three purple symbols for Tiamat's Maw?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["shield.md"],
+      "expected_section_titles": ["upgrade step 3 - shoot the 3 purple symbols"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "buildable", "en"]
+    },
+    {
+      "id": "gk-valve-puzzle",
+      "query": "Como resolvo o puzzle das válvulas do easter egg?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["step 3 - solve the valve puzzle and collect the cylinder", "valve step - quick solution lookup"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "main_ee", "pt"]
+    },
+    {
+      "id": "gk-bomb-step",
+      "query": "What do I do during the bomb challenge in Love and War?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["challenge 1 - bomb step"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "main_ee", "en"]
+    },
+    {
+      "id": "gk-gersh-orb",
+      "query": "Como completo o desafio da esfera do Gersh?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["challenge 2 - gersh orb"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "main_ee", "pt"]
+    },
+    {
+      "id": "gk-mangler-escort",
+      "query": "How do I complete the friendly Mangler escort challenge?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["challenge 3 - friendly mangler escort"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "main_ee", "en"]
+    },
+    {
+      "id": "gk-dragon-wings",
+      "query": "Como desbloqueio as Dragon Wings para viajar de graça?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["side_ee/dragon_wings.md"],
+      "expected_section_titles": ["overview", "required dragon stations", "steps", "result"],
+      "tags": ["gorod_krovi", "side_ee", "pt"]
+    },
+    {
+      "id": "gk-mangler-helmet",
+      "query": "How many Manglers do I need to kill for the Mangler Helmet?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["side_ee/mangler_helmet.md"],
+      "expected_section_titles": ["unlock requirement", "steps"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "side_ee", "en"]
+    },
+    {
+      "id": "gk-dubstep-monkeys",
+      "query": "Onde encontro e como acendo a vela dos Dubstep Monkeys?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["side_ee/dubstep_monkeys.md"],
+      "expected_section_titles": ["step 2 - light and pick up the candle"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "side_ee", "pt"]
+    },
+    {
+      "id": "gk-wrench-time-trial",
+      "query": "What round and time unlock the wrench?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["side_ee/time_trials.md"],
+      "expected_section_titles": ["weapon 1 - wrench"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "side_ee", "en"]
+    },
+    {
+      "id": "gk-vodka-bottles",
+      "query": "Onde ficam as três garrafas de vodka da música?",
+      "active_map_id": "gorod_krovi",
+      "expected_map_id": "gorod_krovi",
+      "expected_document_paths": ["side_ee/music_1.md"],
+      "expected_section_titles": ["bottle locations"],
+      "minimum_images": 1,
+      "tags": ["gorod_krovi", "side_ee", "pt"]
+    },
+
+    {
+      "id": "rev-ritual-altars",
+      "query": "Como ativo os quatro altares para abrir o Pack-a-Punch em Revelations?",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["pap.md"],
+      "expected_section_titles": ["step 1 - activate the 4 ritual altars"],
+      "minimum_images": 1,
+      "tags": ["revelations", "setup", "pt"]
+    },
+    {
+      "id": "rev-apothicon-upgrade",
+      "query": "How do I upgrade the Apothicon Servant in Revelations?",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["pap_apothican_servant.md"],
+      "expected_section_titles": ["step 2 - shoot the 5 Element 115 stones", "step 3 - upgrade it in the Apothicon"],
+      "minimum_images": 1,
+      "tags": ["revelations", "wonder_weapon", "en"]
+    },
+    {
+      "id": "rev-shield-origins",
+      "query": "Onde fica a peça do Dragon Shield na área de Origins?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["shield.md"],
+      "expected_section_titles": ["part 1 - origins area piece"],
+      "minimum_images": 1,
+      "tags": ["revelations", "buildable", "pt"]
+    },
+    {
+      "id": "rev-keeper-flag",
+      "query": "Where are the flag locations for the Keeper Protector?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["keeper_protector.md"],
+      "expected_section_titles": ["part 1 - flag"],
+      "minimum_images": 1,
+      "tags": ["revelations", "buildable", "en"]
+    },
+    {
+      "id": "rev-graves",
+      "query": "Qual é a ordem para atirar nas tumbas no easter egg?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["step 1 - shoot the graves in the death order"],
+      "minimum_images": 1,
+      "tags": ["revelations", "main_ee", "pt"]
+    },
+    {
+      "id": "rev-lil-arnies-holes",
+      "query": "What do I do with Lil' Arnies in the nine Apothicon holes?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["step 3 - lil arnies holes inside the apothicon"],
+      "minimum_images": 1,
+      "tags": ["revelations", "main_ee", "en"]
+    },
+    {
+      "id": "rev-bones",
+      "query": "Como encontro os seis ossos e faço o terceiro reel?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["step 4 - collect the 6 bones and create the third reel"],
+      "minimum_images": 3,
+      "tags": ["revelations", "main_ee", "pt"]
+    },
+    {
+      "id": "rev-sophia-turrets",
+      "query": "How do I use the corruption turrets on S.O.P.H.I.A?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["step 5 - shoot s.o.p.h.i.a with the corruption turrets"],
+      "minimum_images": 1,
+      "tags": ["revelations", "main_ee", "en"]
+    },
+    {
+      "id": "rev-key-throws",
+      "query": "Onde jogo a Summoning Key nos sete objetos escondidos?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["step 9 - throw the summoning key at the 7 hidden objects"],
+      "minimum_images": 3,
+      "tags": ["revelations", "main_ee", "pt"]
+    },
+    {
+      "id": "rev-viking-mask",
+      "query": "How do I unlock the Viking helmet?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["side_ee/masks.md"],
+      "expected_section_titles": ["viking helmet"],
+      "minimum_images": 1,
+      "tags": ["revelations", "side_ee", "en"]
+    },
+    {
+      "id": "rev-free-perk",
+      "query": "Como faço o parkour para pegar o perk grátis?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["side_ee/free_perk.md"],
+      "expected_section_titles": ["steps"],
+      "minimum_images": 1,
+      "tags": ["revelations", "side_ee", "pt"]
+    },
+    {
+      "id": "rev-upgrade-arnies",
+      "query": "How do I upgrade Lil' Arnies at the church window?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["side_ee/upgrade_lil_arnies.md"],
+      "expected_section_titles": ["steps"],
+      "minimum_images": 1,
+      "tags": ["revelations", "side_ee", "en"]
+    },
+    {
+      "id": "rev-wisp",
+      "query": "Onde coloco o Wisp no quarto da Samantha?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["side_ee/wisp.md"],
+      "expected_section_titles": ["step 2 - place it in samantha's room"],
+      "minimum_images": 1,
+      "tags": ["revelations", "side_ee", "pt"]
+    },
+    {
+      "id": "rev-trading-table",
+      "query": "How do I unlock the trading table and M1927 wallbuy?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["side_ee/trading_table.md"],
+      "expected_section_titles": ["overview", "step 2 - move the wall phrases in order", "result"],
+      "minimum_images": 1,
+      "tags": ["revelations", "side_ee", "en"]
+    },
+    {
+      "id": "rev-music-bears",
+      "query": "Onde estão os ursinhos da música The Gift?",
+      "active_map_id": "revelations",
+      "expected_map_id": "revelations",
+      "expected_document_paths": ["side_ee/music_1.md"],
+      "expected_section_titles": ["teddy bear locations"],
+      "minimum_images": 1,
+      "tags": ["revelations", "side_ee", "pt"]
+    },
+
+    {
+      "id": "soe-four-rituals",
+      "query": "Como faço os quatro rituais de Shadows of Evil?",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["pap.md"],
+      "expected_section_titles": ["get the summoning key + Nero setup", "Jackie's ritual / Canals", "Jessica's ritual / Footlight", "Floyd's ritual / Waterfront"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "setup", "pt"]
+    },
+    {
+      "id": "soe-nero-pen",
+      "query": "Where do I get Nero's Fountain Pen and perform his ritual?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["pap.md"],
+      "expected_section_titles": ["get the summoning key + Nero setup"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "setup", "en"]
+    },
+    {
+      "id": "soe-jackie-badge",
+      "query": "Como pego o Police Badge e faço o ritual da Jackie?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["pap.md"],
+      "expected_section_titles": ["Jackie's ritual / Canals"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "setup", "pt"]
+    },
+    {
+      "id": "soe-sword-symbols",
+      "query": "How do I read the train symbols and get the Apothicon Sword?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["sword.md"],
+      "expected_section_titles": ["base sword"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "wonder_weapon", "en"]
+    },
+    {
+      "id": "soe-upgrade-sword",
+      "query": "Como transformo a espada na Reborn Keeper Sword?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["sword.md"],
+      "expected_section_titles": ["upgraded sword / Reborn Keeper Sword"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "soe-shield-footlight",
+      "query": "Where are the Rocket Shield parts in Footlight?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["shield.md"],
+      "expected_section_titles": ["part 3 - Footlight"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "buildable", "en"]
+    },
+    {
+      "id": "soe-margwa-heart",
+      "query": "Como consigo o coração de Margwa para a wonder weapon?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["wonder_weapon.md"],
+      "expected_section_titles": ["Margwa Heart"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "soe-xenomatter",
+      "query": "How do I obtain Xenomatter for the Apothicon Servant?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["wonder_weapon.md"],
+      "expected_section_titles": ["Xenomatter"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "wonder_weapon", "en"]
+    },
+    {
+      "id": "soe-civil-fuses",
+      "query": "Onde ficam os fusíveis do Civil Protector?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["civil-protector.md"],
+      "expected_section_titles": ["steps"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "buildable", "pt"]
+    },
+    {
+      "id": "soe-build-tables",
+      "query": "Where are all three crafting table locations?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["build-table.md"],
+      "expected_section_titles": ["locations"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "setup", "en"]
+    },
+    {
+      "id": "soe-main-flag",
+      "query": "Como funciona a etapa da bandeira no easter egg principal?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["main-ee.md"],
+      "expected_section_titles": ["step 4 - flag step"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "main_ee", "pt"]
+    },
+    {
+      "id": "soe-free-mega",
+      "query": "How do I get the free Mega Gobblegum with the lion statues?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["side_ee/free_mega.md"],
+      "expected_section_titles": ["Steps"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "side_ee", "en"]
+    },
+    {
+      "id": "soe-margwa-mask",
+      "query": "Onde atiro nos seis corações para liberar a Margwa Head?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["side_ee/margwa-mask.md"],
+      "expected_section_titles": ["Margwa Heart locations"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "side_ee", "pt"]
+    },
+    {
+      "id": "soe-noir",
+      "query": "How do I activate Noir Mode in the boxing gym?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["side_ee/noir-mode.md"],
+      "expected_section_titles": ["overview"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "side_ee", "en"]
+    },
+    {
+      "id": "soe-microphone",
+      "query": "Como monto o microfone no palco do Burlesque?",
+      "active_map_id": "shadows_of_evil",
+      "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["side_ee/music2.md"],
+      "expected_section_titles": ["Parts", "Steps"],
+      "minimum_images": 1,
+      "tags": ["shadows_of_evil", "side_ee", "pt"]
+    },
+
+    {
+      "id": "giant-power",
+      "query": "Where is the power switch on The Giant?",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["pap_teleporters.md"],
+      "expected_section_titles": ["power"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "setup", "en"]
+    },
+    {
+      "id": "giant-teleporter-locations",
+      "query": "Onde ficam os três teleporters do The Giant?",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["pap_teleporters.md"],
+      "expected_section_titles": ["teleporter system"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "setup", "pt"]
+    },
+    {
+      "id": "giant-link-teleporter",
+      "query": "How do I link a teleporter to the mainframe?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["pap_teleporters.md"],
+      "expected_section_titles": ["how to link a teleporter"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "setup", "en"]
+    },
+    {
+      "id": "giant-unlock-pap",
+      "query": "Como desbloqueio o Pack-a-Punch depois de ligar a energia?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["pap_teleporters.md"],
+      "expected_section_titles": ["unlocking Pack-a-Punch"],
+      "tags": ["the_giant", "setup", "pt"]
+    },
+    {
+      "id": "giant-hidden-panel",
+      "query": "Where do I shoot the hidden Fly Trap panel?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["main_ee_annihilator.md"],
+      "expected_section_titles": ["step 1 - shoot the hidden panel"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "main_ee", "en"]
+    },
+    {
+      "id": "giant-annihilator-bears",
+      "query": "Onde estão os três teddy bears para liberar o Annihilator?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["main_ee_annihilator.md"],
+      "expected_section_titles": ["step 2 - shoot the 3 teddy bears"],
+      "minimum_images": 3,
+      "tags": ["the_giant", "main_ee", "pt"]
+    },
+    {
+      "id": "giant-collect-annihilator",
+      "query": "How do I collect the Annihilator after shooting the bears?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["main_ee_annihilator.md"],
+      "expected_section_titles": ["step 3 - collect the Annihilator"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "main_ee", "en"]
+    },
+    {
+      "id": "giant-music",
+      "query": "Como ativo Beauty of Annihilation?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["music_ee.md"],
+      "expected_section_titles": ["how to activate the song"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "side_ee", "pt"]
+    },
+    {
+      "id": "giant-music-locations",
+      "query": "Where are the three hidden music objects?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["music_ee.md"],
+      "expected_section_titles": ["location help"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "side_ee", "en"]
+    },
+    {
+      "id": "giant-extra-perk-monkeys",
+      "query": "Em quais teleporters jogo Monkey Bombs para o perk extra?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["extra_perk.md"],
+      "expected_section_titles": ["step 1 - throw Monkey Bombs into the teleporters"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "side_ee", "pt"]
+    },
+    {
+      "id": "giant-extra-perk-laser",
+      "query": "How do I fire the giant robot laser at the snow pile?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["extra_perk.md"],
+      "expected_section_titles": ["step 3 - fire the laser"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "side_ee", "en"]
+    },
+    {
+      "id": "giant-icarus",
+      "query": "Como vejo o avião Icarus no The Giant?",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["side_ee.md"],
+      "expected_section_titles": ["Icarus plane"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "side_ee", "pt"]
+    },
+    {
+      "id": "giant-robot-head",
+      "query": "Where can I see the giant robot head?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["side_ee.md"],
+      "expected_section_titles": ["giant robot head"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "side_ee", "en"]
+    },
+    {
+      "id": "giant-maxis-office",
+      "query": "Onde fica o escritório do Maxis?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["side_ee.md"],
+      "expected_section_titles": ["Maxis office"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "side_ee", "pt"]
+    },
+    {
+      "id": "giant-teddy-shadow",
+      "query": "How do I see the teddy bear shadow easter egg?",
+      "active_map_id": "the_giant",
+      "expected_map_id": "the_giant",
+      "expected_document_paths": ["side_ee.md"],
+      "expected_section_titles": ["teddy bear shadow"],
+      "minimum_images": 1,
+      "tags": ["the_giant", "side_ee", "en"]
+    },
+
+    {
+      "id": "zns-generators",
+      "query": "Como encho os dois geradores para entrar no bunker?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["power_bunker_pap.md"],
+      "expected_section_titles": ["power - fill the 2 generators", "bunker entry"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "setup", "pt"]
+    },
+    {
+      "id": "zns-underwater-power",
+      "query": "What do I do underwater to turn on permanent power?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["power_bunker_pap.md"],
+      "expected_section_titles": ["underwater bunker step"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "setup", "en"]
+    },
+    {
+      "id": "zns-pap-cocoon",
+      "query": "Qual parte do Pack-a-Punch cai do casulo?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["power_bunker_pap.md"],
+      "expected_section_titles": ["pack-a-punch part 2 - cocoon drop"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "setup", "pt"]
+    },
+    {
+      "id": "zns-rainbow-water",
+      "query": "Where and when do I collect rainbow water?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["buckets_water.md"],
+      "expected_section_titles": ["rainbow water"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "plants", "en"]
+    },
+    {
+      "id": "zns-water-types",
+      "query": "Onde pego água azul, verde e roxa?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["buckets_water.md"],
+      "expected_section_titles": ["normal water types"],
+      "minimum_images": 3,
+      "tags": ["zetsubou_no_shima", "plants", "pt"]
+    },
+    {
+      "id": "zns-fruit-plant",
+      "query": "How do I grow a fruit plant?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["plants.md"],
+      "expected_section_titles": ["fruit plant", "fertilized fruit plant"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "plants", "en"]
+    },
+    {
+      "id": "zns-clone-plant",
+      "query": "Como faço a planta clone que copia o jogador?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["plants.md"],
+      "expected_section_titles": ["mimic plant / clone plant"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "plants", "pt"]
+    },
+    {
+      "id": "zns-kt4-spider",
+      "query": "How do I get spider venom for the KT-4?",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["kt4.md"],
+      "expected_section_titles": ["part 1 - spider venom"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "wonder_weapon", "en"]
+    },
+    {
+      "id": "zns-kt4-flask",
+      "query": "De qual zumbi cai o frasco verde da KT-4?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["kt4.md"],
+      "expected_section_titles": ["part 2 - green glowing flask"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "zns-masamune-tooth",
+      "query": "Where do I get the spider tooth for the Masamune?",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["masamune.md"],
+      "expected_section_titles": ["part 1 - spider tooth"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "wonder_weapon", "en"]
+    },
+    {
+      "id": "zns-masamune-flask",
+      "query": "Como pego o frasco de Element 115 para a Masamune?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["masamune.md"],
+      "expected_section_titles": ["part 3 - Element 115 flask"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "zns-skull-altars",
+      "query": "Where are the four mini altars for the Skull of Nan Sapwe?",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["skull_of_nan_sapwe.md"],
+      "expected_section_titles": ["mini altar locations"],
+      "minimum_images": 3,
+      "tags": ["zetsubou_no_shima", "wonder_weapon", "en"]
+    },
+    {
+      "id": "zns-trials-shield",
+      "query": "Quais trials exigem o escudo elétrico?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["trials.md"],
+      "expected_section_titles": ["electric shield requirement"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "trials", "pt"]
+    },
+    {
+      "id": "zns-gas-mask-cable",
+      "query": "Where are the cable spawns for the Gas Mask?",
+      "active_map_id": "zetsubou_no_shima",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["gas_mask.md"],
+      "expected_section_titles": ["part 1 - cable"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "buildable", "en"]
+    },
+    {
+      "id": "zns-spider-transformation",
+      "query": "Como eu viro uma aranha usando a jaula do Lab A?",
+      "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["side_ee/spider_transformation.md"],
+      "expected_section_titles": ["step 3 - use the Lab A cage", "step 5 - transform into a spider"],
+      "minimum_images": 1,
+      "tags": ["zetsubou_no_shima", "side_ee", "pt"]
+    }
+  ]
+}

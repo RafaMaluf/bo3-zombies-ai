@@ -4,6 +4,7 @@ import math
 import re
 import unicodedata
 from collections import Counter, defaultdict
+from pathlib import Path
 
 from app.domain import (
     KnowledgeChunk,
@@ -110,6 +111,8 @@ TOPIC_EXPANSIONS = {
     "pack-a-punch": ("pap", "pack", "punch"),
     "easter egg": ("easter", "egg", "main", "ee"),
     "main quest": ("main", "quest", "easter", "egg"),
+    "base bow": ("wrath", "ancients", "bow"),
+    "crafting table": ("build", "table", "workbench"),
     "wonder weapon": ("wonder", "weapon"),
     "arma especial": ("wonder", "weapon"),
     "escudo": ("shield",),
@@ -120,26 +123,46 @@ TOPIC_EXPANSIONS = {
     "arco do lobo": ("wolf", "bow"),
     "arco do vazio": ("void", "bow"),
     "arco iris": ("rainbow",),
+    "agua azul": ("blue", "water", "bucket"),
+    "agua verde": ("green", "water", "bucket"),
+    "agua roxa": ("purple", "water", "bucket"),
 }
 TOKEN_EXPANSIONS = {
     "abrir": ("open", "unlock"),
+    "acendo": ("light", "ignite"),
     "agua": ("water",),
     "aguas": ("water",),
+    "altar": ("altar",),
+    "altares": ("altar", "altars"),
     "aranha": ("spider",),
     "aranhas": ("spider", "spiders"),
     "arco": ("bow",),
+    "atirar": ("shoot",),
     "ativar": ("activate",),
+    "azul": ("blue",),
     "balde": ("bucket",),
     "baldes": ("bucket", "buckets"),
+    "bandeira": ("flag",),
     "caveira": ("skull",),
     "caveiras": ("skull", "skulls"),
+    "coracao": ("heart",),
+    "coracoes": ("heart", "hearts"),
+    "crafting": ("build", "workbench"),
     "eletrica": ("electric", "lightning"),
     "eletrico": ("electric", "lightning"),
+    "esqueleto": ("skeleton",),
+    "esqueletos": ("skeleton", "skeletons"),
+    "ficam": ("location", "locations"),
     "fogo": ("fire",),
+    "fogueira": ("bonfire",),
+    "fogueiras": ("bonfire", "bonfires"),
+    "frasco": ("flask",),
     "fusivel": ("fuse",),
     "fusiveis": ("fuse", "fuses"),
     "garrafa": ("bottle",),
     "garrafas": ("bottle", "bottles"),
+    "incubar": ("incubate",),
+    "lareira": ("fireplace",),
     "liberar": ("unlock",),
     "lobo": ("wolf",),
     "manopla": ("gauntlet",),
@@ -147,6 +170,11 @@ TOKEN_EXPANSIONS = {
     "mascaras": ("mask", "masks", "helmet"),
     "musica": ("music", "song"),
     "musicas": ("music", "songs"),
+    "onde": ("where", "location"),
+    "ordem": ("order",),
+    "ovo": ("egg",),
+    "pego": ("get", "obtain"),
+    "pedra": ("rock",),
     "peca": ("part", "piece"),
     "pecas": ("parts", "pieces"),
     "planta": ("plant",),
@@ -156,14 +184,25 @@ TOKEN_EXPANSIONS = {
     "quatro": ("four", "4"),
     "ritual": ("ritual",),
     "rituais": ("ritual", "rituals"),
+    "roxa": ("purple",),
+    "roxo": ("purple",),
     "segunda": ("second", "part", "2"),
     "segundo": ("second", "part", "2"),
     "teletransportador": ("teleporter",),
     "teletransportadores": ("teleporter", "teleporters"),
     "terceira": ("third", "part", "3"),
     "terceiro": ("third", "part", "3"),
+    "teleporters": ("teleporter",),
     "transformar": ("transform", "transformation"),
+    "tumba": ("grave",),
+    "tumbas": ("grave", "graves"),
+    "ursinho": ("teddy", "bear"),
+    "ursinhos": ("teddy", "bear", "bears"),
+    "verde": ("green",),
     "vazio": ("void",),
+    "valvula": ("valve",),
+    "valvulas": ("valve", "valves"),
+    "vela": ("candle",),
     "virar": ("transform", "transformation"),
     "viro": ("transform", "transformation"),
     "unlock": ("get", "obtain"),
@@ -191,6 +230,7 @@ class SearchEngine:
         self.knowledge_base = knowledge_base
         self._chunks = tuple(knowledge_base.chunks.values())
         self._tokens: dict[str, list[str]] = {}
+        self._normalized_text: dict[str, str] = {}
         self._term_frequencies: dict[str, Counter[str]] = {}
         self._document_frequency: Counter[str] = Counter()
         self._average_length = 1.0
@@ -217,9 +257,11 @@ class SearchEngine:
                     f"{chunk.category} " * 3,
                     f"{chunk.section_title} " * 4,
                     f"{chunk.file_summary} " * 2,
+                    f"{chunk.path.replace('_', ' ').replace('/', ' ')} " * 3,
                     chunk.content,
                 ]
             )
+            self._normalized_text[chunk.id] = normalize_text(searchable_text)
             tokens = tokenize(searchable_text)
             self._tokens[chunk.id] = tokens
             frequencies = Counter(tokens)
@@ -273,7 +315,7 @@ class SearchEngine:
                 scored.append(ScoredChunk(chunk=chunk, score=score))
         scored.sort(key=lambda item: (-item.score, item.chunk.position))
 
-        unique_topic_map = self._unique_topic_map(original_query_tokens)
+        unique_topic_map = self._unique_topic_map(query, original_query_tokens)
         if not explicit_maps and not valid_active_map and unique_topic_map:
             scored = [item for item in scored if item.chunk.map_id == unique_topic_map]
 
@@ -409,8 +451,37 @@ class SearchEngine:
                 tokens.extend(expansion)
         return list(dict.fromkeys(tokens))
 
-    def _unique_topic_map(self, original_query_tokens: list[str]) -> str | None:
-        candidates: set[str] = set()
+    @staticmethod
+    def _singular_phrase_token(token: str) -> str:
+        if len(token) > 4 and token.endswith("s") and not token.endswith("ss"):
+            return token[:-1]
+        return token
+
+    def _unique_topic_map(
+        self,
+        query: str,
+        original_query_tokens: list[str],
+    ) -> str | None:
+        phrase_tokens = tokenize(query)
+        for width in (4, 3, 2):
+            if len(phrase_tokens) < width:
+                continue
+            for start in range(len(phrase_tokens) - width + 1):
+                window = phrase_tokens[start : start + width]
+                phrases = {
+                    " ".join(window),
+                    " ".join(self._singular_phrase_token(token) for token in window),
+                }
+                for phrase in phrases:
+                    matching_maps = {
+                        chunk.map_id
+                        for chunk in self._chunks
+                        if phrase in self._normalized_text[chunk.id]
+                    }
+                    if len(matching_maps) == 1:
+                        return next(iter(matching_maps))
+
+        candidate_scores: Counter[str] = Counter()
         ignored = TITLE_BOOST_STOP_WORDS | COMPREHENSIVE_TERMS | COMPARISON_TERMS
         for token in original_query_tokens:
             if token in ignored or token.isdigit() or len(token) < 3:
@@ -421,8 +492,13 @@ class SearchEngine:
                 if self._term_frequencies[chunk.id].get(token, 0) > 0
             }
             if len(matching_maps) == 1:
-                candidates.update(matching_maps)
-        return next(iter(candidates)) if len(candidates) == 1 else None
+                candidate_scores.update(matching_maps)
+        if not candidate_scores:
+            return None
+        ranked = candidate_scores.most_common(2)
+        if len(ranked) == 1 or ranked[0][1] > ranked[1][1]:
+            return ranked[0][0]
+        return None
 
     def _score_chunk(
         self,
@@ -454,12 +530,19 @@ class SearchEngine:
         normalized_query = " ".join(query_tokens)
         normalized_title = normalize_text(chunk.section_title)
         title_tokens = set(tokenize(normalized_title))
+        document_tokens = set(tokenize(Path(chunk.path).stem.replace("_", " ")))
+        original_token_set = set(original_query_tokens)
         score += sum(1.25 for token in query_tokens if token in title_tokens)
         score += sum(
             6.0
             for token in original_query_tokens
             if token in title_tokens and token not in TITLE_BOOST_STOP_WORDS and not token.isdigit()
         )
+        matched_document_tokens = document_tokens & original_token_set
+        if document_tokens and document_tokens <= original_token_set:
+            score += 10.0 + 2.0 * len(document_tokens)
+        else:
+            score += 3.0 * len(matched_document_tokens)
         if normalized_query and normalized_query in normalized_title:
             score += 3.0
         return round(score, 6)

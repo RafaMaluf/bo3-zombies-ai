@@ -1,0 +1,31 @@
+{
+  "map_id": "nacht_der_untoten",
+  "display_name": "Nacht der Untoten",
+  "aliases": [
+    "nacht",
+    "nacht der untoten"
+  ],
+  "summary": "Replace with a concise overview of the Black Ops III Zombies Chronicles version of the map.",
+  "documents": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Replace with the scope covered by this source.",
+      "source_url": "https://replace-with-the-guide-url.example/",
+      "title": "Nacht der Untoten overview",
+      "content_selector": "article",
+      "remove_selectors": [
+        ".advertisement",
+        ".related-posts"
+      ],
+      "exclude_image_url_patterns": [
+        "avatar",
+        "banner",
+        "logo"
+      ],
+      "min_image_width": 320,
+      "min_image_height": 180,
+      "max_images": 80
+    }
+  ]
+}

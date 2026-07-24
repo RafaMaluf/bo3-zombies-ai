@@ -1,166 +1,118 @@
-from typing import List, Dict
+from __future__ import annotations
 
-from app.config import MAPS_DIR
+from dataclasses import dataclass
 
-
-def build_selection_messages(
-    user_message: str,
-    catalog_text: str,
-    conversation_history: list[dict],
-    active_map_id: str | None,
-) -> list[dict]:
-    """
-    Build messages for the selection step.
-    Includes the actual index.json structure so model knows real file names.
-    """
-    
-    # Constrói o index com nomes e descrições reais
-    file_index = _build_file_index()
-    
-    system_prompt = f"""
-You are a routing assistant for a Black Ops 3 Zombies knowledge base.
-
-Your job is ONLY to choose which map files are relevant to answer the user's question.
-
-Rules:
-- Use only files listed in the FILE INDEX below.
-- Do NOT invent or hallucinate file names.
-- Select only files that exist in the index.
-- If the request is ambiguous, ask ONE short clarification question.
-- If the request is about one specific map, use query_mode = "single_map".
-- If the request compares multiple maps, use query_mode = "multi_map".
-- Prefer specific files over general.md when user mentions concrete items.
-- Use general.md only for broad map overview questions.
-- If active_map_id exists and message is a follow-up, prefer staying on that map.
-- **CRITICAL: Only select files that exist in the FILE INDEX. Match by exact path name.**
-- **IMPORTANT: The "path" field must be ONLY the filename (e.g., "general.md"), NOT including map_id.**
-
-FILE INDEX (all available files):
-{file_index}
-
-JSON format:
-{{
-  "need_clarification": true/false,
-  "clarification_question": "",
-  "query_mode": "single_map" or "multi_map",
-  "selected_files": [
-    {{"map_id": "der_eisendrache", "path": "general.md"}}
-  ]
-}}
-""".strip()
-
-    messages = [{"role": "system", "content": system_prompt}]
-
-    if conversation_history:
-        messages.extend(conversation_history)
-
-    user_content = f"""Active map id:
-{active_map_id or 'None'}
-
-Conversation history:
-{len(conversation_history)} messages
-
-Catalog:
-{catalog_text}
-
-User query: {user_message}"""
-
-    messages.append({"role": "user", "content": user_content})
-
-    return messages
+from app.domain import ImageAsset, ScoredChunk
+from app.knowledge_base import KnowledgeBase
+from app.schemas import ConversationMessage
 
 
-def _build_file_index() -> str:
-    """Build index with actual filenames and descriptions from index.json files."""
-    import json
-    
-    lines = []
-    
-    for map_dir in sorted(MAPS_DIR.iterdir()):
-        if not map_dir.is_dir():
-            continue
-        
-        index_file = map_dir / "index.json"
-        if not index_file.exists():
-            continue
-        
-        with index_file.open("r", encoding="utf-8") as f:
-            index_data = json.load(f)
-        
-        map_id = index_data.get("map_id")
-        display_name = index_data.get("display_name", map_id)
-        
-        lines.append(f"\n{display_name} ({map_id}):")
-        
-        # Usa a lista de arquivos do index.json
-        for file_info in index_data.get("files", []):
-            path = file_info.get("path")
-            summary = file_info.get("summary", "")
-            lines.append(f"  - {path}: {summary}")
-    
-    return "\n".join(lines)
+@dataclass(frozen=True, slots=True)
+class PromptBundle:
+    messages: list[dict[str, str]]
+    chunks: tuple[ScoredChunk, ...]
+    images: tuple[ImageAsset, ...]
 
-def build_answer_messages(
-    user_message: str,
-    combined_context: str,
-    selected_files: List,
-    available_images: List,
-    conversation_history: list[dict],
-) -> list[dict]:
-    """
-    Build messages for the answer generation step.
-    """
-    system_prompt = """
-You are a helpful Black Ops 3 Zombies expert assistant.
 
-Your job is to answer the user's question based on the provided context.
+SYSTEM_PROMPT = """
+You are Krono, a specialist assistant for Call of Duty: Black Ops III Zombies.
 
-Rules:
-- Answer based ONLY on the provided context.
-- If the answer is not in the context, say so.
-- Be concise but thorough.
-- If relevant images are available, mention them in your answer.
-- Format your response as JSON with fields: answer, need_clarification, clarification_question, relevant_images.
-- Return ONLY valid JSON, no explanations outside JSON.
-- **IMPORTANT: relevant_images must be an array of objects with map_id and path fields. Example: {"map_id": "der_eisendrache", "path": "images/shield/a1.jpg"}**
-- **Do NOT include the full path with map_id prefix in the path field. The path should start with "images/".**
+Answer the user's question using only the supplied knowledge-base excerpts.
+Keep exact step order, prerequisites, solo/co-op differences, item names and
+locations. Never invent a missing step. If the excerpts are insufficient,
+say so or request one concise clarification.
 
-JSON format:
+Reply in the same language as the user. Use compact Markdown that is easy to
+follow during a match. Prefer numbered steps for procedures.
+
+Images are represented by stable IDs and captions. Select only images that
+directly help the answer. For procedural or location-based questions, select
+at least one image whenever image options are available, preferably one image
+for each important step. Never invent an image ID.
+
+Return one valid JSON object and no text outside it:
 {
-  "answer": "Your detailed answer here",
+  "answer": "Markdown answer",
   "need_clarification": false,
   "clarification_question": "",
-  "relevant_images": [
-    {"map_id": "der_eisendrache", "path": "images/shield/a1.jpg"}
-  ]
+  "image_ids": ["img_example"]
 }
 """.strip()
 
-    messages = [{"role": "system", "content": system_prompt}]
 
-    if conversation_history:
-        messages.extend(conversation_history)
+def build_answer_prompt(
+    user_message: str,
+    history: list[ConversationMessage],
+    scored_chunks: tuple[ScoredChunk, ...],
+    knowledge_base: KnowledgeBase,
+    max_context_chars: int,
+    max_candidate_images: int,
+) -> PromptBundle:
+    context_parts: list[str] = []
+    included_chunks: list[ScoredChunk] = []
+    image_ids: list[str] = []
+    total_chars = 0
 
-    selected_files_str = "\n".join(
-        [f"- {sf.map_id}/{sf.path}" for sf in selected_files]
+    document_keys = {(item.chunk.map_id, item.chunk.path) for item in scored_chunks}
+    ordered_chunks = scored_chunks
+    if len(document_keys) == 1:
+        ordered_chunks = tuple(sorted(scored_chunks, key=lambda item: item.chunk.position))
+
+    for scored in ordered_chunks:
+        chunk = scored.chunk
+        context_part = "\n".join(
+            [
+                f"[SOURCE {chunk.id}]",
+                f"MAP: {chunk.map_name} ({chunk.map_id})",
+                f"FILE: {chunk.path}",
+                f"SECTION: {chunk.section_title}",
+                f"CATEGORY: {chunk.category}",
+                "",
+                chunk.content,
+            ]
+        ).strip()
+
+        if context_parts and total_chars + len(context_part) > max_context_chars:
+            break
+        if not context_parts and len(context_part) > max_context_chars:
+            context_part = context_part[:max_context_chars].rstrip() + "\n[TRUNCATED]"
+
+        context_parts.append(context_part)
+        included_chunks.append(scored)
+        total_chars += len(context_part)
+        for image_id in chunk.image_ids:
+            if image_id not in image_ids:
+                image_ids.append(image_id)
+
+    images: list[ImageAsset] = []
+    for image_id in image_ids[:max_candidate_images]:
+        asset = knowledge_base.get_image(image_id)
+        if asset is not None:
+            images.append(asset)
+
+    image_catalog = "\n".join(
+        (f"- {asset.id} | {asset.map_id} | {asset.section} | {asset.caption}") for asset in images
     )
-    available_images_str = "\n".join(
-        [f"- {img.map_id}: {img.path}" for img in available_images]
+    if not image_catalog:
+        image_catalog = "(No images are available for these excerpts.)"
+
+    user_content = "\n\n".join(
+        [
+            "KNOWLEDGE-BASE EXCERPTS",
+            "\n\n---\n\n".join(context_parts),
+            "AVAILABLE IMAGES",
+            image_catalog,
+            f"USER QUESTION\n{user_message}",
+        ]
     )
 
-    user_content = f"""Context from selected files:
-{selected_files_str}
-
-Available images:
-{available_images_str}
-
-Knowledge base content:
-{combined_context}
-
----
-
-User question: {user_message}"""
-
+    messages: list[dict[str, str]] = [{"role": "system", "content": SYSTEM_PROMPT}]
+    for message in history:
+        messages.append({"role": message.role, "content": message.content})
     messages.append({"role": "user", "content": user_content})
 
-    return messages
+    return PromptBundle(
+        messages=messages,
+        chunks=tuple(included_chunks),
+        images=tuple(images),
+    )

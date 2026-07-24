@@ -1,75 +1,112 @@
+from __future__ import annotations
+
 import re
-import uuid
-from typing import Dict, List
+import unicodedata
+from dataclasses import dataclass
+from pathlib import PurePosixPath
+
+SECTION_PATTERN = re.compile(r"^(##\s+.+)$", flags=re.MULTILINE)
+IMAGE_PATTERN = re.compile(
+    r"images/[A-Za-z0-9_./-]+\.(?:jpg|jpeg|png|webp|gif)",
+    flags=re.IGNORECASE,
+)
+IMAGE_ONLY_HEADING = re.compile(
+    r"^(?:related\s+)?images?$",
+    flags=re.IGNORECASE,
+)
+IMAGE_REFERENCE_LINE = re.compile(
+    r"^\s*(?:-\s*)?(?:related\s+images?\s*:\s*)?"
+    r"images/[A-Za-z0-9_./-]+\.(?:jpg|jpeg|png|webp|gif)\s*$",
+    flags=re.IGNORECASE,
+)
 
 
-MIN_KEYWORD_LENGTH = 4
-
-_STOP_WORDS = {
-    "the", "and", "for", "are", "but", "not", "you", "all", "can", "her",
-    "was", "one", "our", "out", "day", "get", "has", "him", "his", "how",
-    "its", "may", "new", "now", "old", "see", "two", "who", "did", "use",
-    "man", "she", "also", "from", "this", "that", "with", "have", "will",
-    "your", "when", "more", "been", "then", "each", "there", "their",
-    "what", "make", "like", "time", "just", "into", "than", "them", "some",
-    "these", "would", "other", "after", "first", "about", "which", "where",
-    "only", "over", "such", "same", "back", "through", "before", "being",
-    "between", "both", "during", "here", "should", "under", "while",
-}
+@dataclass(frozen=True, slots=True)
+class MarkdownSection:
+    title: str
+    content: str
+    image_paths: tuple[str, ...]
+    position: int
 
 
-def _extract_keywords(text: str) -> List[str]:
-    """Extract meaningful keywords from text (words > 4 chars, not stop words)."""
-    words = re.findall(r"[a-z0-9]+", text.lower())
-    seen: set = set()
-    keywords: List[str] = []
-    for word in words:
-        if len(word) > MIN_KEYWORD_LENGTH and word not in _STOP_WORDS and word not in seen:
-            seen.add(word)
-            keywords.append(word)
-    return keywords
+def slugify(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value)
+    ascii_value = normalized.encode("ascii", "ignore").decode("ascii")
+    slug = re.sub(r"[^a-z0-9]+", "-", ascii_value.lower()).strip("-")
+    return slug or "overview"
 
 
-def split_markdown_by_sections(content: str) -> List[Dict]:
-    """
-    Split a markdown document into chunks by ## (H2) sections.
+def normalize_image_path(path: str) -> str:
+    normalized = path.strip().replace("\\", "/")
+    normalized = str(PurePosixPath(normalized))
+    return normalized.removeprefix("./")
 
-    Each chunk contains:
-      - chunk_id: unique identifier (uuid4 hex)
-      - section_title: the ## heading text (empty string for pre-heading content)
-      - content: raw markdown content of that section
-      - keywords: list of meaningful words extracted from content
-      - word_count: number of words in content
-    """
-    # Split on lines that start with "## " (H2 headings only)
-    section_pattern = re.compile(r"^(## .+)$", re.MULTILINE)
-    parts = section_pattern.split(content)
 
-    chunks: List[Dict] = []
+def extract_image_paths(content: str) -> tuple[str, ...]:
+    seen: set[str] = set()
+    paths: list[str] = []
+    for match in IMAGE_PATTERN.finditer(content):
+        path = normalize_image_path(match.group(0))
+        if path not in seen:
+            seen.add(path)
+            paths.append(path)
+    return tuple(paths)
 
-    # parts alternates between: [pre-heading-text, heading, section-body, heading, section-body, ...]
-    # Index 0 is always any content before the first ##
+
+def _remove_image_reference_lines(content: str) -> str:
+    clean_lines: list[str] = []
+    for line in content.splitlines():
+        if IMAGE_REFERENCE_LINE.match(line):
+            continue
+        if line.strip().lower() in {"related image:", "related images:"}:
+            continue
+        clean_lines.append(line.rstrip())
+    return "\n".join(clean_lines).strip()
+
+
+def split_markdown_by_sections(content: str) -> list[MarkdownSection]:
+    parts = SECTION_PATTERN.split(content)
+    sections: list[MarkdownSection] = []
+    position = 0
+
     pre_heading = parts[0].strip()
-    if pre_heading:
-        chunks.append(_make_chunk("", pre_heading))
+    if pre_heading and not re.fullmatch(r"#\s+.+", pre_heading):
+        sections.append(
+            MarkdownSection(
+                title="overview",
+                content=_remove_image_reference_lines(pre_heading),
+                image_paths=extract_image_paths(pre_heading),
+                position=position,
+            )
+        )
+        position += 1
 
-    i = 1
-    while i < len(parts) - 1:
-        heading_line = parts[i].strip()          # e.g. "## overview"
-        section_title = heading_line.lstrip("#").strip()
-        body = parts[i + 1].strip() if i + 1 < len(parts) else ""
-        section_content = f"{heading_line}\n\n{body}".strip()
-        chunks.append(_make_chunk(section_title, section_content))
-        i += 2
+    index = 1
+    while index < len(parts) - 1:
+        heading_line = parts[index].strip()
+        title = heading_line.lstrip("#").strip()
+        body = parts[index + 1].strip()
+        index += 2
 
-    return chunks
+        # Many legacy documents end with a duplicate gallery containing every
+        # image in the file. Images are already attached to their real steps.
+        if IMAGE_ONLY_HEADING.match(title):
+            continue
 
+        image_paths = extract_image_paths(body)
+        clean_body = _remove_image_reference_lines(body)
+        section_content = f"## {title}"
+        if clean_body:
+            section_content = f"{section_content}\n\n{clean_body}"
 
-def _make_chunk(section_title: str, content: str) -> Dict:
-    return {
-        "chunk_id": uuid.uuid4().hex,
-        "section_title": section_title,
-        "content": content,
-        "keywords": _extract_keywords(content),
-        "word_count": len(content.split()),
-    }
+        sections.append(
+            MarkdownSection(
+                title=title,
+                content=section_content,
+                image_paths=image_paths,
+                position=position,
+            )
+        )
+        position += 1
+
+    return sections

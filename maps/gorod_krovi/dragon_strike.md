@@ -38,7 +38,7 @@ A **Ray Gun Mark 3** makes this step much easier, but it is not mandatory.
 
 Related images:
 - images/dragon_strike/1wheretointeract.jpg
-- images/dragon_strike/2alilockdown.jpg
+- images/dragon_strike/2alllockeddown.jpg
 - images/dragon_strike/3retrieve.jpg
 
 ## using the Dragon Strike
@@ -141,7 +141,7 @@ Related image: images/dragon_strike/5retrieveupgrade.jpg
 
 ## related images
 - images/dragon_strike/1wheretointeract.jpg
-- images/dragon_strike/2alilockdown.jpg
+- images/dragon_strike/2alllockeddown.jpg
 - images/dragon_strike/3retrieve.jpg
 - images/dragon_strike/4flag1.jpg
 - images/dragon_strike/4flag2.jpg

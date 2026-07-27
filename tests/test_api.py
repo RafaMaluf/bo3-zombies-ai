@@ -15,7 +15,15 @@ class ImageSelectingLLM:
     async def answer(self, messages: list[dict[str, str]]) -> LLMResponse:
         image_ids = re.findall(r"img_[a-f0-9]{16}", messages[-1]["content"])
         selected = [image_ids[0], image_ids[0], "img_not_allowed"] if image_ids else []
-        return LLMResponse(answer="Resposta de teste.", image_ids=selected)
+        answer = (
+            "Resposta de teste.\n\n"
+            "---\n"
+            "**Imagens de apoio**\n"
+            f"- Escudo: `{image_ids[0]}`"
+            if image_ids
+            else "Resposta de teste."
+        )
+        return LLMResponse(answer=answer, image_ids=selected)
 
 
 class NoImageLLM:
@@ -174,6 +182,36 @@ def test_generic_question_returns_map_clarification_without_calling_llm() -> Non
         payload = response.json()
         assert payload["need_clarification"]
         assert len(payload["suggested_map_ids"]) == 14
+
+
+def test_more_than_three_explicit_guides_are_capped_without_calling_llm() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = UnavailableLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": (
+                    "Como faço o G-Strike, o Maxis Drone, o One Inch Punch "
+                    "e o Shield?"
+                ),
+                "active_map_id": "origins",
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["need_clarification"]
+        assert payload["clarification_question"] == (
+            "Você pediu 4 guias de uma vez. Para manter a resposta objetiva, "
+            "escolha até 3."
+        )
+        assert payload["suggested_queries"] == [
+            "G Strike",
+            "Maxis Drone",
+            "One Inch Punch",
+            "Shield",
+        ]
+        assert payload["active_map_id"] == "origins"
 
 
 def test_ambiguous_follow_up_offers_valid_document_choices() -> None:

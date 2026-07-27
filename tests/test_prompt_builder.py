@@ -2,7 +2,7 @@ from pathlib import Path
 
 from app.knowledge_base import KnowledgeBase
 from app.main import _select_image_assets
-from app.prompt_builder import build_answer_prompt
+from app.prompt_builder import SYSTEM_PROMPT, build_answer_prompt
 from app.retrieval import SearchEngine
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -72,3 +72,31 @@ def test_single_document_context_is_ordered_like_the_guide() -> None:
     positions = [item.chunk.position for item in prompt.chunks]
     assert positions == sorted(positions)
     assert {item.chunk.path for item in prompt.chunks} == {"pap.md"}
+
+
+def test_multi_guide_prompt_contains_all_named_guides_and_language_rules() -> None:
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    query = "Como faço o G-Strike, o Maxis Drone e o One Inch Punch?"
+    result = SearchEngine(knowledge_base).search(
+        query,
+        active_map_id="origins",
+        limit=10,
+    )
+    prompt = build_answer_prompt(
+        user_message=query,
+        history=[],
+        scored_chunks=result.chunks,
+        knowledge_base=knowledge_base,
+        max_context_chars=28_000,
+        max_candidate_images=24,
+    )
+
+    assert {item.chunk.path for item in prompt.chunks} == {
+        "g_strike.md",
+        "maxis_drone.md",
+        "one_inch_punch.md",
+    }
+    normalized_system_prompt = " ".join(SYSTEM_PROMPT.split())
+    assert "answer every requested objective in one response" in normalized_system_prompt
+    assert "Never mix English grammar into a Portuguese sentence" in normalized_system_prompt
+    assert "never expose IDs" in normalized_system_prompt

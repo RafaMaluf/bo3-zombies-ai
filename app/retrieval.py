@@ -331,6 +331,67 @@ class SearchEngine:
                 found.append(map_id)
         return tuple(found)
 
+    def explicit_document_paths(
+        self,
+        query: str,
+        map_id: str | None,
+    ) -> tuple[str, ...]:
+        """Return guides whose filename is explicitly named in the query.
+
+        This is intentionally conservative. It recognizes concrete guide names
+        such as "G-Strike" and "Maxis Drone", but does not treat generic words
+        such as "main", "setup" or "power" as a multi-document request.
+        """
+        record = self.knowledge_base.maps.get(map_id or "")
+        if record is None:
+            return ()
+
+        normalized_query = normalize_text(query)
+        query_tokens = set(expanded_query_tokens(query))
+        generic_tokens = {
+            "ee",
+            "general",
+            "main",
+            "music",
+            "overview",
+            "pap",
+            "power",
+            "setup",
+            "side",
+        }
+        matches: list[tuple[int, int, str]] = []
+        for order, path in enumerate(record.document_paths):
+            label = normalize_text(Path(path).stem.replace("_", " ").replace("-", " "))
+            label_tokens = set(tokenize(label))
+            phrase_match = re.search(
+                rf"(?:^|\s){re.escape(label)}(?:$|\s)",
+                normalized_query,
+            )
+            semantic_match = (
+                bool(label_tokens)
+                and label_tokens <= query_tokens
+                and bool(label_tokens - generic_tokens)
+            )
+            if phrase_match or semantic_match:
+                position = phrase_match.start() if phrase_match else len(normalized_query) + order
+                matches.append((position, order, path))
+
+        matches.sort()
+        return tuple(path for _, _, path in matches)
+
+    @staticmethod
+    def is_multi_document_request(
+        query: str,
+        document_paths: tuple[str, ...],
+    ) -> bool:
+        if len(document_paths) < 2:
+            return False
+        if len(document_paths) >= 3:
+            return True
+        if any(separator in query for separator in (",", ";", "&", "+", "/")):
+            return True
+        return bool({"e", "and"} & set(normalize_text(query).split()))
+
     def search(
         self,
         query: str,
@@ -361,6 +422,17 @@ class SearchEngine:
         unique_topic_map = self._unique_topic_map(query, original_query_tokens)
         if not explicit_maps and not valid_active_map and unique_topic_map:
             scored = [item for item in scored if item.chunk.map_id == unique_topic_map]
+
+        document_map_id = valid_active_map
+        if document_map_id is None and len(explicit_maps) == 1:
+            document_map_id = explicit_maps[0]
+        if document_map_id is None:
+            document_map_id = unique_topic_map
+        explicit_documents = self.explicit_document_paths(query, document_map_id)
+        is_multi_document_query = (
+            len(explicit_documents) <= 3
+            and self.is_multi_document_request(query, explicit_documents)
+        )
 
         if not scored:
             suggestions = () if valid_active_map else tuple(sorted(allowed_maps))
@@ -409,7 +481,14 @@ class SearchEngine:
                 )
 
         selection_pool = scored
-        if not self._is_comparison_query(query) and len(explicit_maps) <= 1:
+        if is_multi_document_query:
+            requested_paths = set(explicit_documents)
+            selection_pool = [
+                item
+                for item in scored
+                if item.chunk.map_id == document_map_id and item.chunk.path in requested_paths
+            ]
+        elif not self._is_comparison_query(query) and len(explicit_maps) <= 1:
             best_by_file: dict[tuple[str, str], float] = {}
             for item in scored:
                 file_key = (item.chunk.map_id, item.chunk.path)
@@ -427,11 +506,34 @@ class SearchEngine:
                 item for item in scored if (item.chunk.map_id, item.chunk.path) == dominant_file
             ]
 
-        score_ratio = 0.0 if self._is_comprehensive_query(query) else 0.72
-        score_floor = selection_pool[0].score * score_ratio
-        selected_items = [item for item in selection_pool[:limit] if item.score >= score_floor]
-        if not selected_items:
-            selected_items = [selection_pool[0]]
+        if is_multi_document_query:
+            by_document = {
+                path: [item for item in selection_pool if item.chunk.path == path]
+                for path in explicit_documents
+            }
+            selected_items: list[ScoredChunk] = []
+            offset = 0
+            while len(selected_items) < limit:
+                added = False
+                for path in explicit_documents:
+                    candidates = by_document[path]
+                    if offset >= len(candidates):
+                        continue
+                    selected_items.append(candidates[offset])
+                    added = True
+                    if len(selected_items) >= limit:
+                        break
+                if not added:
+                    break
+                offset += 1
+        else:
+            score_ratio = 0.0 if self._is_comprehensive_query(query) else 0.72
+            score_floor = selection_pool[0].score * score_ratio
+            selected_items = [
+                item for item in selection_pool[:limit] if item.score >= score_floor
+            ]
+            if not selected_items:
+                selected_items = [selection_pool[0]]
 
         # A guide's overview and progression summary carry prerequisites and
         # connective steps that a highly specific score can otherwise omit.

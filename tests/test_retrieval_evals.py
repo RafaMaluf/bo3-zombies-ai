@@ -8,7 +8,7 @@ from scripts.retrieval_evals import EvaluationError, load_eval_suite
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def test_baseline_suite_has_fifteen_cases_per_map() -> None:
+def test_original_maps_suite_has_fifteen_cases_per_map() -> None:
     suite = load_eval_suite(ROOT / "evals" / "queries.json")
 
     assert len(suite.cases) == 90
@@ -24,6 +24,27 @@ def test_baseline_suite_has_fifteen_cases_per_map() -> None:
         "shadows_of_evil": 15,
         "the_giant": 15,
         "zetsubou_no_shima": 15,
+    }
+
+
+def test_chronicles_suite_has_six_cases_per_map() -> None:
+    suite = load_eval_suite(ROOT / "evals" / "chronicles_queries.json")
+
+    assert len(suite.cases) == 48
+    cases_per_map: dict[str, int] = {}
+    for case in suite.cases:
+        assert case.expected_map_id
+        cases_per_map[case.expected_map_id] = cases_per_map.get(case.expected_map_id, 0) + 1
+
+    assert cases_per_map == {
+        "ascension": 6,
+        "kino_der_toten": 6,
+        "moon": 6,
+        "nacht_der_untoten": 6,
+        "origins": 6,
+        "shangri_la": 6,
+        "shi_no_numa": 6,
+        "verruckt": 6,
     }
 
 

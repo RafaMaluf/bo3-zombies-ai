@@ -1,0 +1,20 @@
+{
+  "map_id": "ascension",
+  "display_name": "Ascension",
+  "aliases": ["ascension", "cosmodrome"],
+  "summary": "Zombies Chronicles version of Ascension, covering power, lunar landers, Pack-a-Punch, space monkeys, Gersh Devices, the main easter egg, side quests, and achievements.",
+  "documents": [
+    {
+      "path": "source_guide.md",
+      "category": "general",
+      "summary": "Source guide covering setup, Pack-a-Punch, the main easter egg, side easter eggs, and achievements on Ascension.",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=922320668",
+      "title": "Ascension source guide",
+      "content_selector": ".guide.subSections",
+      "include_image_url_patterns": ["images\\.steamusercontent\\.com"],
+      "min_image_width": 320,
+      "min_image_height": 180,
+      "max_images": 180
+    }
+  ]
+}

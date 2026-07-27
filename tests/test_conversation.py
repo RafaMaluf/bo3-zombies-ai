@@ -197,3 +197,45 @@ def test_source_anchored_query_uses_previous_answer_document() -> None:
 
     assert query == "e onde monta? Shield"
     assert {item.chunk.path for item in retrieval.chunks} == {"shield.md"}
+
+
+def test_staff_family_excludes_generic_setup_and_final_stage() -> None:
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    catalog = document_catalog(knowledge_base, "origins")
+
+    options = deterministic_follow_up_options(
+        "e os cajados?",
+        [ConversationMessage(role="assistant", content="Resposta anterior.")],
+        catalog,
+    )
+
+    assert [item.path for item in options] == [
+        "fire_staff.md",
+        "ice_staff.md",
+        "lightning_staff.md",
+        "wind_staff.md",
+    ]
+
+
+def test_other_staffs_are_siblings_of_the_previous_staff() -> None:
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    catalog = document_catalog(knowledge_base, "origins")
+    history = [
+        ConversationMessage(
+            role="assistant",
+            content="Guia do cajado de fogo.",
+            source_paths=["fire_staff.md"],
+        )
+    ]
+
+    options = deterministic_follow_up_options(
+        "e os outros?",
+        history,
+        catalog,
+    )
+
+    assert [item.path for item in options] == [
+        "ice_staff.md",
+        "lightning_staff.md",
+        "wind_staff.md",
+    ]

@@ -78,12 +78,12 @@ def test_health_maps_and_thumbnail_endpoints() -> None:
         health = client.get("/health")
         assert health.status_code == 200
         assert health.json()["status"] == "ok"
-        assert health.json()["maps"] == 6
+        assert health.json()["maps"] == 14
 
         maps = client.get("/maps")
         assert maps.status_code == 200
         map_payload = maps.json()
-        assert len(map_payload) == 6
+        assert len(map_payload) == 14
 
         cover_id = next(item["cover_image_id"] for item in map_payload if item["cover_image_id"])
         thumbnail = client.get(f"/media/{cover_id}?variant=thumb")
@@ -140,7 +140,7 @@ def test_generic_question_returns_map_clarification_without_calling_llm() -> Non
         assert response.status_code == 200
         payload = response.json()
         assert payload["need_clarification"]
-        assert len(payload["suggested_map_ids"]) == 6
+        assert len(payload["suggested_map_ids"]) == 14
 
 
 def test_ambiguous_follow_up_offers_valid_document_choices() -> None:
@@ -246,8 +246,10 @@ def test_chat_rejects_model_image_ids_outside_retrieved_context() -> None:
         assert response.status_code == 200
         payload = response.json()
         assert payload["answer"] == "Resposta de teste."
-        assert len(payload["relevant_images"]) == 1
-        assert payload["relevant_images"][0]["section"] == "part 3 - underground frame"
+        assert len(payload["relevant_images"]) == 3
+        assert {image["section"] for image in payload["relevant_images"]} == {
+            "part 3 - underground frame"
+        }
         assert {source["path"] for source in payload["sources"]} == {"shield.md"}
 
 
@@ -266,6 +268,25 @@ def test_chat_falls_back_to_one_image_per_procedure_section() -> None:
             "part 1 - double pipe item",
             "part 2 - griffin plate",
             "part 3 - underground frame",
+        }
+
+
+def test_chat_fills_visual_location_guide_from_one_section() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = NoImageLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": "Onde ficam as bonecas da Samantha?",
+                "active_map_id": "nacht_der_untoten",
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert len(payload["relevant_images"]) == 6
+        assert {image["section"] for image in payload["relevant_images"]} == {
+            "Side easter egg - Samantha's dolls"
         }
 
 

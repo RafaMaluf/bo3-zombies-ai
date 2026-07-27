@@ -24,6 +24,14 @@ associadas aos passos recuperados.
 - Zetsubou No Shima
 - Gorod Krovi
 - Revelations
+- Nacht der Untoten
+- Verrückt
+- Shi No Numa
+- Kino der Toten
+- Ascension
+- Shangri-La
+- Moon
+- Origins
 
 O comando de validação informa a contagem exata de documentos, chunks e
 imagens:
@@ -64,6 +72,7 @@ python -m pytest
 python -m pytest --cov=app --cov-report=term-missing
 python -m scripts.validate_kb
 python -m scripts.evaluate_retrieval
+python -m scripts.evaluate_retrieval --suite evals/chronicles_queries.json
 ```
 
 Para gerar previamente os thumbnails das imagens:

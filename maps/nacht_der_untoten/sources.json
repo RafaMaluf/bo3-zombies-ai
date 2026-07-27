@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-27T02:18:09.048892+00:00",
+  "sources": [
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941029268",
+      "document": "general.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:18:09.032846+00:00",
+      "sha256": "5f52443adef9e3685e934efc8e80092a89d4634c576c48c79546fca7a8d79cd0"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941029268",
+      "document": "samantha_dolls.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:18:09.032846+00:00",
+      "sha256": "5f52443adef9e3685e934efc8e80092a89d4634c576c48c79546fca7a8d79cd0"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941029268",
+      "document": "music_ee.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:18:09.032846+00:00",
+      "sha256": "5f52443adef9e3685e934efc8e80092a89d4634c576c48c79546fca7a8d79cd0"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941029268",
+      "document": "achievement.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:18:09.032846+00:00",
+      "sha256": "5f52443adef9e3685e934efc8e80092a89d4634c576c48c79546fca7a8d79cd0"
+    }
+  ],
+  "images": [
+    {
+      "path": "images/source-guide/96a348abd0e359ce25bf40bd87a95db3050521df-d489b7b5b3.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636166163/96A348ABD0E359CE25BF40BD87A95DB3050521DF/",
+      "document": "general.md",
+      "sha256": "d489b7b5b36ca5191a304801a17f8e17e80512ffc63f0fa5f2d55ace030ea1b1",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/33ed050c8a592dfee09dd59887fa7d3039bfbef8-95f7c61f72.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636176272/33ED050C8A592DFEE09DD59887FA7D3039BFBEF8/",
+      "document": "samantha_dolls.md",
+      "sha256": "95f7c61f72c6b6951b9fc4d0de8e54ec81a9806749bdcc4f4d4625ff302c84d6",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/737c66e52d9c82660912843f005dd8ee18d3246a-0b14e3399d.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636252370/737C66E52D9C82660912843F005DD8EE18D3246A/",
+      "document": "samantha_dolls.md",
+      "sha256": "0b14e3399d8dbc56632a6528af181ba3f4460206b8dee14743483569b0c9d3cd",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/b68c399a482e1f6f9fcb5e161461b32e05794353-0bb587d72e.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636253556/B68C399A482E1F6F9FCB5E161461B32E05794353/",
+      "document": "samantha_dolls.md",
+      "sha256": "0bb587d72e56dfec9d48c25bef1d42333855adbea6e8b1c55f76c01902311a48",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/f96609551d0fd3e2e5e9254ec7da3431e9332488-a0c7c60693.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636178908/F96609551D0FD3E2E5E9254EC7DA3431E9332488/",
+      "document": "samantha_dolls.md",
+      "sha256": "a0c7c6069316f1c02942291fc0d8b02804a4a47ae17d238cdd97df0eaa5d98f1",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/a7c8dd752918b182d4771682e0f8d0f0b4b1c8d4-93436d0590.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636191649/A7C8DD752918B182D4771682E0F8D0F0B4B1C8D4/",
+      "document": "samantha_dolls.md",
+      "sha256": "93436d0590dec9f3c7cd2e7b3d37d631b2e3265865aaefd4d15ec887df3fc3ad",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/968587410596679171ed62254ef869fd92b77d72-69b8ffb330.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636181218/968587410596679171ED62254EF869FD92B77D72/",
+      "document": "samantha_dolls.md",
+      "sha256": "69b8ffb33004ecff54a3e13b10c27a7d441b6b4497ea9df04588c079f692a012",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/41060454dd22bef8723e0348125fbe589e70529f-34c697a00e.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636184274/41060454DD22BEF8723E0348125FBE589E70529F/",
+      "document": "samantha_dolls.md",
+      "sha256": "34c697a00ecc0619b89d07ee92c34baa38e1ebbf90fe23926a6b324cdd158dd0",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/2b8aa8c7b82f133b1e7986cbc6a5c119d7640d0c-0fb57e0d26.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636186414/2B8AA8C7B82F133B1E7986CBC6A5C119D7640D0C/",
+      "document": "samantha_dolls.md",
+      "sha256": "0fb57e0d2682e83cf754e08a06fccbcd63d4c02e70327c736653845c4dc36651",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/61e797cb484a275e6b548899f48958cf0279f368-1c5d72a093.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636183069/61E797CB484A275E6B548899F48958CF0279F368/",
+      "document": "samantha_dolls.md",
+      "sha256": "1c5d72a0934f9e07e6ebe9823cd6a33d9e1243b1c7dfb7ae65fec777eed57a5b",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/ac8e49024da4bf18558cfb05a3381037094dcb70-a5a2539556.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636189310/AC8E49024DA4BF18558CFB05A3381037094DCB70/",
+      "document": "samantha_dolls.md",
+      "sha256": "a5a253955600f965c772204dd9e7eb45e17709c06cbd6d5c19d574b377558b3a",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/e1392c8f44a13d65b1a6cb8b214db660a83c7b45-f8a640b2b2.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636255299/E1392C8F44A13D65B1A6CB8B214DB660A83C7B45/",
+      "document": "samantha_dolls.md",
+      "sha256": "f8a640b2b2b75ffbb09b890decd67bd5988a3b2926587ea4547a8340034ca2d2",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/be694169187eb19a74f47d8b96e07c916cff2e3e-dd114f7ff2.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636256115/BE694169187EB19A74F47D8B96E07C916CFF2E3E/",
+      "document": "samantha_dolls.md",
+      "sha256": "dd114f7ff283d9221b642bc7d35aee2631d2c3e34fa650289fa1ebe34077ba8e",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/d36093d1e93aec42e83aa03a01ce50eb9aeca8a4-68ac01be67.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636256869/D36093D1E93AEC42E83AA03A01CE50EB9AECA8A4/",
+      "document": "samantha_dolls.md",
+      "sha256": "68ac01be67530427945abf0e442eeab0cc527c29311018a4250a9b8bf3440ff7",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/78a4664af8fb0b96fff6be165503fa7392fb6320-3d6f8cf523.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636258000/78A4664AF8FB0B96FFF6BE165503FA7392FB6320/",
+      "document": "samantha_dolls.md",
+      "sha256": "3d6f8cf5230635535f8d2b048eea47f7ddb8fe3365211cad70b472b71b1f4f27",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/3597b4f2c10e50dc0cee6ddb7d1558945687e9d0-ffe5190f19.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636170296/3597B4F2C10E50DC0CEE6DDB7D1558945687E9D0/",
+      "document": "music_ee.md",
+      "sha256": "ffe5190f191cdfb28f0e7bee871fdc18b993fbdd7cff3a1f2bc332a3971a2a43",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    }
+  ],
+  "supplemental_sources": [
+    "https://www.reddit.com/r/CODZombies/wiki/nacht-der-untoten/"
+  ]
+}

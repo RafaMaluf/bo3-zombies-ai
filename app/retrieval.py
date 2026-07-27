@@ -43,6 +43,8 @@ COMPREHENSIVE_TERMS = {
     "full",
     "montar",
     "monto",
+    "passos",
+    "steps",
     "todos",
     "todas",
     "4",
@@ -96,13 +98,17 @@ TITLE_BOOST_STOP_WORDS = {
     "build",
     "collect",
     "consigo",
+    "easter",
+    "egg",
     "faco",
     "find",
     "get",
     "liberar",
     "make",
+    "main",
     "obtain",
     "pego",
+    "quest",
     "unlock",
     "where",
 }
@@ -115,6 +121,10 @@ TOPIC_EXPANSIONS = {
     "crafting table": ("build", "table", "workbench"),
     "wonder weapon": ("wonder", "weapon"),
     "arma especial": ("wonder", "weapon"),
+    "cajado de fogo": ("fire", "staff"),
+    "cajado de gelo": ("ice", "staff"),
+    "cajado de raio": ("lightning", "staff"),
+    "cajado de vento": ("wind", "staff"),
     "escudo": ("shield",),
     "energia": ("power",),
     "ligar a energia": ("power",),
@@ -126,6 +136,9 @@ TOPIC_EXPANSIONS = {
     "agua azul": ("blue", "water", "bucket"),
     "agua verde": ("green", "water", "bucket"),
     "agua roxa": ("purple", "water", "bucket"),
+    "piramide de almas": ("pyramid", "souls", "main", "quest"),
+    "q e d": ("qed", "quantum", "entanglement", "device"),
+    "samantha says": ("computer", "colors", "pyramid", "souls", "main", "quest"),
 }
 TOKEN_EXPANSIONS = {
     "abrir": ("open", "unlock"),
@@ -136,6 +149,8 @@ TOKEN_EXPANSIONS = {
     "altares": ("altar", "altars"),
     "aranha": ("spider",),
     "aranhas": ("spider", "spiders"),
+    "armadilha": ("trap",),
+    "armadilhas": ("trap", "traps"),
     "arco": ("bow",),
     "arcos": ("bow", "bows"),
     "atirar": ("shoot",),
@@ -144,11 +159,14 @@ TOKEN_EXPANSIONS = {
     "balde": ("bucket",),
     "baldes": ("bucket", "buckets"),
     "bandeira": ("flag",),
+    "cajado": ("staff",),
+    "cajados": ("staff", "staffs"),
     "caveira": ("skull",),
     "caveiras": ("skull", "skulls"),
     "coracao": ("heart",),
     "coracoes": ("heart", "hearts"),
     "crafting": ("build", "workbench"),
+    "dinamite": ("dynamite",),
     "eletrica": ("electric", "lightning"),
     "eletrico": ("electric", "lightning"),
     "esqueleto": ("skeleton",),
@@ -166,9 +184,13 @@ TOKEN_EXPANSIONS = {
     "lareira": ("fireplace",),
     "liberar": ("unlock",),
     "lobo": ("wolf",),
+    "macaco": ("monkey",),
+    "macacos": ("monkey", "monkeys"),
     "manopla": ("gauntlet",),
     "mascara": ("mask", "helmet"),
     "mascaras": ("mask", "masks", "helmet"),
+    "meteorito": ("meteorite",),
+    "meteoritos": ("meteorite", "meteorites"),
     "musica": ("music", "song"),
     "musicas": ("music", "songs"),
     "onde": ("where", "location"),
@@ -185,6 +207,8 @@ TOKEN_EXPANSIONS = {
     "quatro": ("four", "4"),
     "ritual": ("ritual",),
     "rituais": ("ritual", "rituals"),
+    "robo": ("robot",),
+    "robos": ("robot", "robots"),
     "roxa": ("purple",),
     "roxo": ("purple",),
     "segunda": ("second", "part", "2"),
@@ -201,6 +225,7 @@ TOKEN_EXPANSIONS = {
     "ursinhos": ("teddy", "bear", "bears"),
     "verde": ("green",),
     "vazio": ("void",),
+    "vento": ("wind",),
     "valvula": ("valve",),
     "valvulas": ("valve", "valves"),
     "vela": ("candle",),
@@ -309,10 +334,10 @@ class SearchEngine:
         explicit_maps = self.explicit_map_ids(query)
         valid_active_map = active_map_id if active_map_id in self.knowledge_base.maps else None
 
-        if explicit_maps:
-            allowed_maps = set(explicit_maps)
-        elif valid_active_map:
+        if valid_active_map:
             allowed_maps = {valid_active_map}
+        elif explicit_maps:
+            allowed_maps = set(explicit_maps)
         else:
             allowed_maps = set(self.knowledge_base.maps)
 
@@ -367,13 +392,14 @@ class SearchEngine:
             second_score = map_scores[ranked_maps[1]]
             unique_topic = top_score >= (second_score * 1.8 + 1.0)
             if not unique_topic:
+                unranked_maps = sorted(allowed_maps - set(ranked_maps))
                 return RetrievalResult(
                     chunks=(),
                     active_map_id=None,
                     explicit_map_ids=(),
                     needs_clarification=True,
                     clarification_question="Sobre qual mapa você está falando?",
-                    suggested_map_ids=tuple(ranked_maps[:6]),
+                    suggested_map_ids=tuple([*ranked_maps, *unranked_maps]),
                 )
 
         selection_pool = scored

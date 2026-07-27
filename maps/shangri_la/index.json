@@ -1,0 +1,42 @@
+{
+  "map_id": "shangri_la",
+  "display_name": "Shangri-La",
+  "aliases": [
+    "shangri-la",
+    "shangri la",
+    "shang"
+  ],
+  "summary": "Zombies Chronicles version of Shangri-La, covering power, pressure-plate Pack-a-Punch, the 31-79 JGb215, the main easter egg, side quests, and achievements.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overview of Shangri-La, its quest, traps, special zombies, and 31-79 JGb215 wonder weapon."
+    },
+    {
+      "path": "power_pap.md",
+      "category": "pap",
+      "summary": "How to turn on both power switches and coordinate the four pressure plates to access Pack-a-Punch."
+    },
+    {
+      "path": "main_ee.md",
+      "category": "main_ee",
+      "summary": "Complete four-player Time Travel Will Tell quest, including eclipse mode, matching symbols, waterslide, gas, spikes, tiles, dynamite, and focusing stone."
+    },
+    {
+      "path": "music_ee.md",
+      "category": "music_ee",
+      "summary": "Locations of the three meteorite fragments used to activate Pareidolia."
+    },
+    {
+      "path": "samantha_hide_and_seek.md",
+      "category": "side_ee",
+      "summary": "How to activate and complete the timed Samantha doll hide-and-seek quest."
+    },
+    {
+      "path": "achievements.md",
+      "category": "achievement",
+      "summary": "Requirements and practical steps for Shangri-La achievements."
+    }
+  ]
+}

@@ -91,7 +91,24 @@ def _select_image_assets(
         if len(selected) >= limit:
             return selected
 
-    if selected or not available_assets:
+    target_count = min(limit, 6)
+    if selected:
+        selected_documents = {asset.document_path for asset in selected}
+        selected_sections = {(asset.document_path, asset.section) for asset in selected}
+        for asset in available_assets:
+            if (
+                asset.id in seen_ids
+                or asset.document_path not in selected_documents
+                or (asset.document_path, asset.section) not in selected_sections
+            ):
+                continue
+            selected.append(asset)
+            seen_ids.add(asset.id)
+            if len(selected) >= target_count:
+                break
+        return selected
+
+    if not available_assets:
         return selected
 
     # Models occasionally omit images even for visual procedures. Fall back
@@ -107,7 +124,18 @@ def _select_image_assets(
             continue
         selected.append(asset)
         seen_sections.add(section_key)
-        if len(selected) >= min(limit, 6):
+        seen_ids.add(asset.id)
+        if len(selected) >= target_count:
+            break
+
+    # A location guide can keep every screenshot in one section. Once section
+    # diversity is covered, fill the remaining slots from the same document.
+    for asset in available_assets:
+        if asset.document_path != preferred_document or asset.id in seen_ids:
+            continue
+        selected.append(asset)
+        seen_ids.add(asset.id)
+        if len(selected) >= target_count:
             break
     return selected
 

@@ -436,9 +436,58 @@ def _render_document(
     blocks: list[str] = [f"# {title}"]
     seen_first_heading = False
 
+    def append_steam_description(tag: Tag) -> None:
+        inline_parts: list[str] = []
+
+        def flush_inline() -> None:
+            if not inline_parts:
+                return
+            text = "".join(inline_parts)
+            inline_parts.clear()
+            for paragraph in re.split(r"\n\s*\n", text):
+                cleaned = _clean_text(paragraph)
+                if cleaned:
+                    blocks.append(cleaned)
+
+        for child in tag.children:
+            if isinstance(child, NavigableString):
+                inline_parts.append(str(child))
+                continue
+            if not isinstance(child, Tag):
+                continue
+            name = child.name.lower()
+            if name == "br":
+                inline_parts.append("\n")
+                continue
+            if name in {"ul", "ol", "table", "pre", "blockquote"}:
+                flush_inline()
+                render(child)
+                continue
+            if name == "img" or child.find("img") is not None:
+                flush_inline()
+                for image in child.find_all("img") if name != "img" else [child]:
+                    render(image)
+                continue
+            if name == "div" and "clear" in str(child.get("style", "")).lower():
+                flush_inline()
+                continue
+            text = _inline_text(child)
+            if text:
+                inline_parts.append(f" {text} ")
+        flush_inline()
+
     def render(tag: Tag) -> None:
         nonlocal seen_first_heading
         name = tag.name.lower()
+        classes = set(tag.get("class") or [])
+        if "subSectionTitle" in classes:
+            heading = _clean_text(tag.get_text(" ", strip=True))
+            if heading:
+                blocks.append(f"## {heading}")
+            return
+        if "subSectionDesc" in classes:
+            append_steam_description(tag)
+            return
         if name in {"h1", "h2", "h3", "h4", "h5", "h6"}:
             heading = _clean_text(tag.get_text(" ", strip=True))
             if not heading:

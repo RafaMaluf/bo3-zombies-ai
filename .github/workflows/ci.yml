@@ -36,3 +36,9 @@ jobs:
 
       - name: Evaluate retrieval quality
         run: python -m scripts.evaluate_retrieval
+
+      - name: Evaluate Zombies Chronicles retrieval quality
+        run: >-
+          python -m scripts.evaluate_retrieval
+          --suite evals/chronicles_queries.json
+          --report .cache/reports/chronicles-retrieval-eval.json

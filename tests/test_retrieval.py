@@ -33,7 +33,7 @@ def test_generic_pack_a_punch_question_requests_a_map(search_engine: SearchEngin
     )
 
     assert result.needs_clarification
-    assert len(result.suggested_map_ids) > 1
+    assert set(result.suggested_map_ids) == set(search_engine.knowledge_base.maps)
 
 
 def test_missing_topic_in_active_map_does_not_suggest_same_map(
@@ -60,6 +60,21 @@ def test_active_map_keeps_follow_up_in_context(search_engine: SearchEngine) -> N
     assert result.active_map_id == "der_eisendrache"
     assert all(scored.chunk.map_id == "der_eisendrache" for scored in result.chunks)
     assert result.chunks[0].chunk.section_title == "part 3 - underground frame"
+
+
+def test_active_map_wins_when_an_area_name_is_also_another_map(
+    search_engine: SearchEngine,
+) -> None:
+    result = search_engine.search(
+        "Onde fica a peça do Dragon Shield na área de Origins?",
+        active_map_id="revelations",
+        limit=6,
+    )
+
+    assert not result.needs_clarification
+    assert result.active_map_id == "revelations"
+    assert result.chunks[0].chunk.path == "shield.md"
+    assert result.chunks[0].chunk.section_title == "part 1 - origins area piece"
 
 
 def test_portuguese_ordinal_finds_the_correct_part_and_images(

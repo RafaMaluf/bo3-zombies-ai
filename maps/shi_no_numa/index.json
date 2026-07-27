@@ -1,0 +1,32 @@
+{
+  "map_id": "shi_no_numa",
+  "display_name": "Shi No Numa",
+  "aliases": [
+    "shi no numa",
+    "shi",
+    "swamp"
+  ],
+  "summary": "Zombies Chronicles version of Shi No Numa, covering perk huts, traps, the zipline, Wunderwaffe DG-2, Samantha dolls, secret songs, and achievements.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Random perk huts, lack of power and Pack-a-Punch, Wunderwaffe DG-2, electric traps, Flogger, and zipline."
+    },
+    {
+      "path": "samantha_dolls.md",
+      "category": "side_ee",
+      "summary": "How to shoot four Fishing Hut plates with the starting pistol, destroy the dolls, and claim the Max Ammo reward."
+    },
+    {
+      "path": "music_ee.md",
+      "category": "music_ee",
+      "summary": "How to activate The One using the telephone in the Comm Room."
+    },
+    {
+      "path": "traps_achievement.md",
+      "category": "achievement",
+      "summary": "How to use the Flogger and electric traps in one round for the It's a Trap! achievement."
+    }
+  ]
+}

@@ -13,10 +13,10 @@ def test_current_knowledge_base_is_consistent() -> None:
 
     assert not knowledge_base.errors
     assert not knowledge_base.warnings
-    assert knowledge_base.stats["maps"] == 6
-    assert knowledge_base.stats["documents"] == 99
-    assert knowledge_base.stats["chunks"] > 250
-    assert knowledge_base.stats["images"] == 626
+    assert knowledge_base.stats["maps"] == 14
+    assert knowledge_base.stats["documents"] == 166
+    assert knowledge_base.stats["chunks"] > 590
+    assert knowledge_base.stats["images"] == 1084
 
 
 def test_every_registered_image_stays_inside_its_map() -> None:

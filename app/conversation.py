@@ -40,6 +40,15 @@ REFERENTIAL_TERMS = {
     "tambem",
     "também",
 }
+GENERIC_VARIANT_LABEL_TERMS = {
+    "all",
+    "base",
+    "crafting",
+    "final",
+    "overview",
+    "setup",
+    "stage",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -294,7 +303,7 @@ def _topic_document_options(
     scored.sort(key=lambda pair: (-pair[0], pair[1].path))
     cutoff = scored[0][0] * 0.65
     options = [item for score, item in scored if score >= cutoff and item.category != "general"]
-    return options[:8]
+    return _prefer_specific_variants(options)[:8]
 
 
 def _sibling_document_options(
@@ -324,7 +333,7 @@ def _sibling_document_options(
         and source_label_tokens.intersection(tokenize(item.label))
     ]
     if strong_matches:
-        return strong_matches[:8]
+        return _prefer_specific_variants(strong_matches)[:8]
 
     same_category = [
         item
@@ -334,6 +343,17 @@ def _sibling_document_options(
     if len(same_category) <= 5:
         return same_category
     return []
+
+
+def _prefer_specific_variants(
+    options: list[DocumentReference],
+) -> list[DocumentReference]:
+    if len(options) < 3:
+        return options
+    specific = [
+        item for item in options if not (set(tokenize(item.label)) & GENERIC_VARIANT_LABEL_TERMS)
+    ]
+    return specific if len(specific) >= 2 else options
 
 
 def _document_label(path: str) -> str:

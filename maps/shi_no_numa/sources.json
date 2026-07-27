@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-27T02:19:16.725200+00:00",
+  "sources": [
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941103877&l=english",
+      "document": "general.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:19:16.703589+00:00",
+      "sha256": "f8b2a70f14a589cddb8dd8d6d63f901d3c4436cb760b1efadda1bdedf9bf652e"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941103877&l=english",
+      "document": "samantha_dolls.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:19:16.703589+00:00",
+      "sha256": "f8b2a70f14a589cddb8dd8d6d63f901d3c4436cb760b1efadda1bdedf9bf652e"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941103877&l=english",
+      "document": "music_ee.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:19:16.703589+00:00",
+      "sha256": "f8b2a70f14a589cddb8dd8d6d63f901d3c4436cb760b1efadda1bdedf9bf652e"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941103877&l=english",
+      "document": "traps_achievement.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:19:16.703589+00:00",
+      "sha256": "f8b2a70f14a589cddb8dd8d6d63f901d3c4436cb760b1efadda1bdedf9bf652e"
+    }
+  ],
+  "images": [
+    {
+      "path": "images/source-guide/c05054f984b2acb7042b63d98d44879dcb06acdc-c304a51251.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/853843409176546874/C05054F984B2ACB7042B63D98D44879DCB06ACDC/",
+      "document": "general.md",
+      "sha256": "c304a512518249c59869f6ec033e8b072da1632e914c06a56035c7ca12547f32",
+      "width": 392,
+      "height": 305,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/85bfd6742cbec22b9a3e8538203adca54a114c3b-61db33f8bb.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637903369/85BFD6742CBEC22B9A3E8538203ADCA54A114C3B/",
+      "document": "samantha_dolls.md",
+      "sha256": "61db33f8bb2906bb0f287a3dc8795e1508b3b111ea10ce7d689a1d28f601d6f7",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/225fe04e0bf61a2ddb8b4038ed909efb7bd6a3f7-73c1415b0c.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637904185/225FE04E0BF61A2DDB8B4038ED909EFB7BD6A3F7/",
+      "document": "samantha_dolls.md",
+      "sha256": "73c1415b0c306b934957e6b844997391c56049a519193f0e20092ed5dbc59c6e",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/0f24016745dd86963d9d65811be9ae6020e3cfa6-2ae55988ef.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637905816/0F24016745DD86963D9D65811BE9AE6020E3CFA6/",
+      "document": "samantha_dolls.md",
+      "sha256": "2ae55988efbdba1aaf3b0bab408d3f7857c661d70cdcd91ce460901be2561287",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/45a6fbc79b7bc2872a31672851837a2fd2d71e97-9636e09441.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637907574/45A6FBC79B7BC2872A31672851837A2FD2D71E97/",
+      "document": "samantha_dolls.md",
+      "sha256": "9636e094417b10533616460e04ea5cf601c2fac4b8cade94e009cdf16bed8d1b",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/dd9c30ca5a4df76c930e7824c526a69b2f942f4d-00d709cc0c.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637910736/DD9C30CA5A4DF76C930E7824C526A69B2F942F4D/",
+      "document": "samantha_dolls.md",
+      "sha256": "00d709cc0c8d47df49fd335dbdebd127d13bad42d1fe83023633b4cd32aad4a6",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/c4b42606454b1ebc5eb74b38903768949eebb701-d9cfd9e537.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637833551/C4B42606454B1EBC5EB74B38903768949EEBB701/",
+      "document": "samantha_dolls.md",
+      "sha256": "d9cfd9e537ca4682c2072b91b642390cedba612a8bf7f5207fb087b3883e4c8d",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/3ad147a4383255e6d2a0c8bacf09447aab2de21f-59c0a3bcc6.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637911583/3AD147A4383255E6D2A0C8BACF09447AAB2DE21F/",
+      "document": "samantha_dolls.md",
+      "sha256": "59c0a3bcc6fb80597fde7a7821aff88d4d3509448d20680f1181b09a63a15b6d",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/a2abb6497ac850ed1c8cecdb49c8e552b5446412-29c8464b55.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637913494/A2ABB6497AC850ED1C8CECDB49C8E552B5446412/",
+      "document": "samantha_dolls.md",
+      "sha256": "29c8464b5562af4dd982661a4df4c990681fb3966948a905f42ce1378823c10b",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/e229b7c4705cc86614873d0a3c27c2828fd22abb-8c3a2aa9a6.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637810121/E229B7C4705CC86614873D0A3C27C2828FD22ABB/",
+      "document": "music_ee.md",
+      "sha256": "8c3a2aa9a6aafe9fd97062ec46a858d305068f022e40f6353671358b786b9832",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/7e929f76e35ae65670629bc1535d3a581d6b4dbc-ec397347ff.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637926990/7E929F76E35AE65670629BC1535D3A581D6B4DBC/",
+      "document": "traps_achievement.md",
+      "sha256": "ec397347fff503bda4f44dec100eb8b09921bf9c1d36ab6420b95d9dac99a168",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/f25a356de0fc975191e062e91abd3703f6b54fec-67469ce5ad.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752637927546/F25A356DE0FC975191E062E91ABD3703F6B54FEC/",
+      "document": "traps_achievement.md",
+      "sha256": "67469ce5ad8de05c9d7c8e7a4c06fcb6d1615e6e6026061ccfb966bc069cce94",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    }
+  ],
+  "supplemental_sources": [
+    "https://www.reddit.com/r/CODZombies/wiki/shi-no-numa/"
+  ]
+}

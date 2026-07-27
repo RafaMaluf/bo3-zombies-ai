@@ -1,0 +1,20 @@
+{
+  "map_id": "verruckt",
+  "display_name": "Verrückt",
+  "aliases": ["verruckt", "verrückt", "asylum"],
+  "summary": "Zombies Chronicles version of Verrückt, covering power, perks, traps, Wunderfizz, weapons, Samantha dolls, secret songs, and achievements.",
+  "documents": [
+    {
+      "path": "source_guide.md",
+      "category": "general",
+      "summary": "Source guide covering setup, side easter eggs, and achievements on Verrückt.",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941065776",
+      "title": "Verrückt source guide",
+      "content_selector": ".guide.subSections",
+      "include_image_url_patterns": ["images\\.steamusercontent\\.com"],
+      "min_image_width": 320,
+      "min_image_height": 180,
+      "max_images": 100
+    }
+  ]
+}

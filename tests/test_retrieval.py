@@ -103,6 +103,45 @@ def test_dominant_document_removes_loose_rocket_matches(search_engine: SearchEng
     assert {scored.chunk.path for scored in result.chunks} == {"shield.md"}
 
 
+def test_three_explicit_guides_are_retrieved_together(
+    search_engine: SearchEngine,
+) -> None:
+    query = "Como faço o G-Strike, o Maxis Drone e o One Inch Punch?"
+
+    assert search_engine.explicit_document_paths(query, "origins") == (
+        "g_strike.md",
+        "maxis_drone.md",
+        "one_inch_punch.md",
+    )
+
+    result = search_engine.search(
+        query,
+        active_map_id="origins",
+        limit=10,
+    )
+
+    assert not result.needs_clarification
+    assert {item.chunk.path for item in result.chunks} == {
+        "g_strike.md",
+        "maxis_drone.md",
+        "one_inch_punch.md",
+    }
+
+
+def test_related_document_name_is_not_treated_as_a_multi_guide_list(
+    search_engine: SearchEngine,
+) -> None:
+    result = search_engine.search(
+        "Quais trials exigem o escudo elétrico?",
+        active_map_id="zetsubou_no_shima",
+        limit=10,
+    )
+
+    assert not result.needs_clarification
+    assert {item.chunk.path for item in result.chunks} == {"trials.md"}
+    assert result.chunks[0].chunk.section_title == "electric shield requirement"
+
+
 def test_portuguese_topic_expansion_finds_shield(search_engine: SearchEngine) -> None:
     result = search_engine.search(
         "como eu monto o escudo no gorod krovi?",

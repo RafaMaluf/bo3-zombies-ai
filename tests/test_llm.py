@@ -10,8 +10,10 @@ class FakeCompletions:
     def __init__(self, response: object = None, error: Exception | None = None) -> None:
         self.response = response
         self.error = error
+        self.last_kwargs: dict[str, object] = {}
 
-    async def create(self, **_: object) -> object:
+    async def create(self, **kwargs: object) -> object:
+        self.last_kwargs = kwargs
         if self.error is not None:
             raise self.error
         return self.response
@@ -50,6 +52,30 @@ async def test_json_fence_is_accepted() -> None:
     result = await _service_with_response(response).answer([{"role": "user", "content": "test"}])
 
     assert result.answer == "Ready"
+
+
+@pytest.mark.asyncio
+async def test_gpt_oss_uses_low_reasoning_effort() -> None:
+    response = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(
+                    content='{"answer":"Pronto","need_clarification":false,"image_ids":[]}'
+                )
+            )
+        ]
+    )
+    completions = FakeCompletions(response=response)
+    service = LLMService(
+        Settings(groq_api_key="test", groq_model="openai/gpt-oss-120b")
+    )
+    service._client = SimpleNamespace(
+        chat=SimpleNamespace(completions=completions)
+    )
+
+    await service.answer([{"role": "user", "content": "teste"}])
+
+    assert completions.last_kwargs["reasoning_effort"] == "low"
 
 
 @pytest.mark.asyncio

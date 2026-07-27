@@ -91,11 +91,16 @@ class LLMService:
             )
 
         try:
+            request_options: dict[str, object] = {
+                "model": self.settings.groq_model,
+                "messages": messages,
+                "temperature": 0.1,
+                "response_format": {"type": "json_object"},
+            }
+            if self.settings.groq_model.startswith("openai/gpt-oss"):
+                request_options["reasoning_effort"] = "low"
             response = await self._client.chat.completions.create(
-                model=self.settings.groq_model,
-                messages=messages,
-                temperature=0.1,
-                response_format={"type": "json_object"},
+                **request_options,
             )
         except Exception as error:
             raise LLMResponseError(f"Model request failed: {error}") from error

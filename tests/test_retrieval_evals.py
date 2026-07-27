@@ -27,10 +27,10 @@ def test_original_maps_suite_has_fifteen_cases_per_map() -> None:
     }
 
 
-def test_chronicles_suite_has_six_cases_per_map() -> None:
+def test_chronicles_suite_covers_every_map() -> None:
     suite = load_eval_suite(ROOT / "evals" / "chronicles_queries.json")
 
-    assert len(suite.cases) == 48
+    assert len(suite.cases) == 49
     cases_per_map: dict[str, int] = {}
     for case in suite.cases:
         assert case.expected_map_id
@@ -42,7 +42,7 @@ def test_chronicles_suite_has_six_cases_per_map() -> None:
         "moon": 6,
         "nacht_der_untoten": 6,
         "origins": 6,
-        "shangri_la": 6,
+        "shangri_la": 7,
         "shi_no_numa": 6,
         "verruckt": 6,
     }

@@ -1,6 +1,7 @@
 {
   "map_id": "origins",
   "display_name": "Origins",
+  "release_order": 14,
   "aliases": ["origins", "dig site", "excavation site 64"],
   "summary": "Zombies Chronicles version of Origins, covering generators, Pack-a-Punch, four elemental staffs and upgrades, buildables, G-Strike, One Inch Punch, the main easter egg, songs, and achievements.",
   "documents": [

@@ -1,6 +1,7 @@
 {
   "map_id": "origins",
   "display_name": "Origins",
+  "release_order": 14,
   "aliases": [
     "origins",
     "dig site",

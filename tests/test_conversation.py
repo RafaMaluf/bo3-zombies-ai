@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from app.conversation import (
     build_resolution_messages,
     clarification_for_options,
@@ -64,6 +66,49 @@ def test_referential_follow_up_requests_resolution() -> None:
         "der_eisendrache",
         specific_retrieval,
     )
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "pode com menos?",
+        "pode com 2?",
+        "com 2?",
+        "e solo?",
+    ],
+)
+def test_elliptical_constraints_request_context_resolution(message: str) -> None:
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    retrieval = SearchEngine(knowledge_base).search(
+        message,
+        active_map_id="shangri_la",
+        limit=10,
+    )
+    history = [
+        ConversationMessage(
+            role="assistant",
+            content="O Easter Egg principal exige quatro jogadores.",
+            source_paths=["main_ee.md"],
+        )
+    ]
+
+    assert should_resolve_follow_up(
+        message,
+        history,
+        "shangri_la",
+        retrieval,
+    )
+    query = source_anchored_query(
+        message,
+        history,
+        document_catalog(knowledge_base, "shangri_la"),
+    )
+    anchored = SearchEngine(knowledge_base).search(
+        query,
+        active_map_id="shangri_la",
+        limit=10,
+    )
+    assert {item.chunk.path for item in anchored.chunks} == {"main_ee.md"}
 
 
 def test_resolution_prompt_uses_catalog_and_previous_sources() -> None:

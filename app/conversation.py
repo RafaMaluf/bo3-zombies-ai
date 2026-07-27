@@ -40,6 +40,31 @@ REFERENTIAL_TERMS = {
     "tambem",
     "também",
 }
+ELLIPTICAL_OPENERS = {
+    "can",
+    "could",
+    "da",
+    "does",
+    "funciona",
+    "pode",
+    "podem",
+    "posso",
+    "precisa",
+    "serve",
+    "tem",
+    "would",
+}
+ELLIPTICAL_TERMS = {
+    "dupla",
+    "less",
+    "mais",
+    "menos",
+    "more",
+    "solo",
+    "sozinho",
+    "sozinha",
+    "trio",
+}
 GENERIC_VARIANT_LABEL_TERMS = {
     "all",
     "base",
@@ -69,6 +94,10 @@ document catalog to determine what the user means.
 Rules:
 - Resolve ellipsis and references such as "and the others?", "what about it?",
   "where is the third one?", and equivalent wording in any language.
+- Treat short yes/no or constraint follow-ups that omit their object, such as
+  "can it be done with fewer?" or "with two?", as referring to the latest
+  sourced objective. Preserve that document instead of switching to another
+  guide that happens to share a generic term.
 - If one document or intent is clear, produce a self-contained resolved_query.
 - If the user asks about a broad family with multiple distinct guides, request
   one concise clarification and return the matching document paths.
@@ -119,7 +148,12 @@ def should_resolve_follow_up(
     words = normalize_text(message).split()
     if not words or len(words) > 8:
         return False
-    return words[0] in REFERENTIAL_OPENERS or bool(set(words) & REFERENTIAL_TERMS)
+    word_set = set(words)
+    return (
+        words[0] in REFERENTIAL_OPENERS | ELLIPTICAL_OPENERS
+        or bool(word_set & (REFERENTIAL_TERMS | ELLIPTICAL_TERMS))
+        or (len(words) <= 4 and any(word.isdigit() for word in words))
+    )
 
 
 def document_catalog(

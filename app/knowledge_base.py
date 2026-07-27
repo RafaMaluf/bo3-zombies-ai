@@ -48,7 +48,14 @@ def _humanize_filename(
     # Old screenshots often have names such as "14fusesinserted". In those
     # cases the section heading is much more useful than pretending the
     # filename is a proper caption.
-    filename_is_useful = len(stem.split()) >= 2 and len(stem) >= 6
+    is_content_hash = bool(
+        re.fullmatch(
+            r"[a-f0-9]{20,}(?:-[a-f0-9]{8,})+",
+            Path(path).stem,
+            flags=re.IGNORECASE,
+        )
+    )
+    filename_is_useful = not is_content_hash and len(stem.split()) >= 2 and len(stem) >= 6
     if not filename_is_useful:
         caption = section_title.strip() or "Gameplay reference"
         if image_count > 1:
@@ -95,7 +102,14 @@ class KnowledgeBase:
 
     def map_summaries(self) -> list[MapSummary]:
         summaries: list[MapSummary] = []
-        for record in sorted(self.maps.values(), key=lambda item: item.display_name):
+        for record in sorted(
+            self.maps.values(),
+            key=lambda item: (
+                item.release_order is None,
+                item.release_order or 0,
+                item.display_name,
+            ),
+        ):
             cover_candidates = [
                 self.images[image_id]
                 for image_id in sorted(record.image_ids)
@@ -109,6 +123,7 @@ class KnowledgeBase:
                 MapSummary(
                     map_id=record.map_id,
                     display_name=record.display_name,
+                    release_order=record.release_order,
                     summary=record.summary,
                     aliases=list(record.aliases),
                     document_count=len(record.document_paths),
@@ -212,6 +227,24 @@ class KnowledgeBase:
             )
             return
 
+        raw_release_order = index_data.get("release_order")
+        if raw_release_order is None:
+            release_order = None
+        elif (
+            isinstance(raw_release_order, bool)
+            or not isinstance(raw_release_order, int)
+            or raw_release_order < 1
+        ):
+            self._issue(
+                "error",
+                "invalid-release-order",
+                "release_order must be a positive integer when provided.",
+                index_path,
+            )
+            return
+        else:
+            release_order = raw_release_order
+
         aliases = self._build_aliases(map_id, display_name, index_data.get("aliases", []))
         file_entries = index_data.get("files", [])
         if not isinstance(file_entries, list):
@@ -227,6 +260,7 @@ class KnowledgeBase:
         record = MapRecord(
             map_id=map_id,
             display_name=display_name,
+            release_order=release_order,
             summary=str(index_data.get("summary", "")).strip(),
             aliases=aliases,
             directory=map_dir.resolve(),

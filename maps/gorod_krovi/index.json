@@ -1,6 +1,7 @@
 {
   "map_id": "gorod_krovi",
   "display_name": "Gorod Krovi",
+  "release_order": 5,
   "aliases": ["gorod krovi", "gk"],
   "summary": "Dragon-heavy Black Ops 3 Zombies map set in Stalingrad, focused on dragon travel, code cylinders, Groph Pods, the Guard of Fafnir, the Siegfried Gauntlet, Dragon Strike, trials, and the Love and War easter egg.",
   "files": [

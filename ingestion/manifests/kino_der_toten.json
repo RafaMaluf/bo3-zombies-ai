@@ -1,6 +1,7 @@
 {
   "map_id": "kino_der_toten",
   "display_name": "Kino der Toten",
+  "release_order": 10,
   "aliases": ["kino", "kino der toten", "theater"],
   "summary": "Zombies Chronicles version of Kino der Toten, covering power, teleporter Pack-a-Punch, film reels, traps, Thundergun, Samantha dolls, songs, and achievements.",
   "documents": [

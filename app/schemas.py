@@ -37,6 +37,7 @@ class RelevantImage(BaseModel):
 class MapSummary(BaseModel):
     map_id: str
     display_name: str
+    release_order: int | None = None
     summary: str
     aliases: list[str]
     document_count: int

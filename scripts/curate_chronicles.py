@@ -95,6 +95,20 @@ building also costs 1000 points and launches zombies away. The zipline links
 Doctor's Quarters to the central building but does not count as a trap.
 """
 
+SHANG_PLAYER_REQUIREMENT = """
+## Player-count requirement
+
+The supported player counts are:
+
+- 4 players in an unmodified Black Ops III / Zombies Chronicles match.
+- 1 player in solo when a compatible Solo Easter Egg mod is enabled. Solo is not supported by the vanilla map.
+- Never 2 or 3 players; the simultaneous co-op steps cannot be completed with those group sizes.
+
+When someone asks whether the quest works with fewer than four players, the
+complete answer is: only solo with the mod. This guide describes the
+four-player vanilla route.
+"""
+
 
 PLANS: dict[str, MapPlan] = {
     "nacht_der_untoten": MapPlan(
@@ -337,10 +351,11 @@ PLANS: dict[str, MapPlan] = {
                 "main_ee.md",
                 "Shangri-La main easter egg",
                 "main_ee",
-                "Complete four-player Time Travel Will Tell quest, including eclipse mode, matching symbols, waterslide, gas, spikes, tiles, dynamite, and focusing stone.",
+                "The main quest supports 4 players in vanilla or 1 player with a Solo Easter Egg mod, never 2 or 3; includes the complete four-player Time Travel Will Tell route.",
                 "Main easter egg quest - Part 1",
                 "Main easter egg quest - Part 2",
                 "TL;DR Cheatsheet for the main easter egg",
+                prefix=SHANG_PLAYER_REQUIREMENT,
             ),
             document(
                 "music_ee.md",
@@ -364,6 +379,7 @@ PLANS: dict[str, MapPlan] = {
                 "Achievements",
             ),
         ),
+        supplemental_sources=("https://www.speedrun.com/bo3zombies/resources/fiusc",),
     ),
     "moon": MapPlan(
         documents=(

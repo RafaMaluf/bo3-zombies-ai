@@ -1,6 +1,7 @@
 {
   "map_id": "ascension",
   "display_name": "Ascension",
+  "release_order": 11,
   "aliases": ["ascension", "cosmodrome"],
   "summary": "Zombies Chronicles version of Ascension, covering power, lunar landers, Pack-a-Punch, space monkeys, Gersh Devices, the main easter egg, side quests, and achievements.",
   "documents": [

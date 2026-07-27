@@ -22,6 +22,7 @@ def _write_manifest(path: Path, *, document_path: str = "guide.md") -> None:
             {
                 "map_id": "test_map",
                 "display_name": "Test Map",
+                "release_order": 99,
                 "aliases": ["tm"],
                 "summary": "A generated test map.",
                 "documents": [
@@ -98,6 +99,8 @@ def test_ingestion_builds_valid_map_deduplicates_and_normalizes_images(
     assert provenance["sources"][0]["url"] == "https://guides.example/map"
     assert provenance["images"][0]["path"].endswith(".webp")
     assert provenance["images"][0]["source_url"].endswith("/screens/power.png")
+    index = json.loads((result.destination / "index.json").read_text(encoding="utf-8"))
+    assert index["release_order"] == 99
 
     knowledge_base = KnowledgeBase(tmp_path / "maps", verify_images=True)
     assert not knowledge_base.issues

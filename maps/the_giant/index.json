@@ -1,6 +1,7 @@
 {
   "map_id": "the_giant",
   "display_name": "The Giant",
+  "release_order": 2,
   "aliases": ["the giant", "giant"],
   "summary": "Remake of Der Riese with a simple classic layout focused on power, teleporters, Pack-a-Punch, the Fly Trap / Paradoxical Prologue easter egg, the Annihilator reward, a music easter egg, an extra perk side easter egg, and a few small visual side easter eggs.",
   "files": [

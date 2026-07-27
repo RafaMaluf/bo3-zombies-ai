@@ -1,6 +1,7 @@
 {
   "map_id": "shadows_of_evil",
   "display_name": "Shadows of Evil",
+  "release_order": 1,
   "aliases": ["soe", "shadows", "shadows of evil"],
   "summary": "District-based Black Ops 3 Zombies map built around Beast Mode, rituals, the underground Rift, Gateworms, Pack-a-Punch unlock, the Apothicon Sword, Civil Protector, Rocket Shield, Apothicon Servant, Harvest Pods, and a large set of side easter eggs.",
   "files": [

@@ -1,6 +1,7 @@
 {
   "map_id": "kino_der_toten",
   "display_name": "Kino der Toten",
+  "release_order": 10,
   "aliases": [
     "kino",
     "kino der toten",

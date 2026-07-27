@@ -1,6 +1,7 @@
 {
   "map_id": "moon",
   "display_name": "Moon",
+  "release_order": 13,
   "aliases": [
     "moon",
     "griffin station",

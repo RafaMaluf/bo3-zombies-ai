@@ -63,6 +63,7 @@ class DocumentSpec:
 class MapManifest:
     map_id: str
     display_name: str
+    release_order: int | None
     aliases: tuple[str, ...]
     summary: str
     documents: tuple[DocumentSpec, ...]
@@ -144,6 +145,17 @@ def load_manifest(path: Path) -> MapManifest:
     summary = str(payload.get("summary", "")).strip()
     if not display_name or not summary:
         raise IngestionError("display_name and summary are required.")
+    raw_release_order = payload.get("release_order")
+    if raw_release_order is None:
+        release_order = None
+    elif (
+        isinstance(raw_release_order, bool)
+        or not isinstance(raw_release_order, int)
+        or raw_release_order < 1
+    ):
+        raise IngestionError("release_order must be a positive integer when provided.")
+    else:
+        release_order = raw_release_order
 
     raw_documents = payload.get("documents")
     if not isinstance(raw_documents, list) or not raw_documents:
@@ -202,6 +214,7 @@ def load_manifest(path: Path) -> MapManifest:
     return MapManifest(
         map_id=map_id,
         display_name=display_name,
+        release_order=release_order,
         aliases=_string_list(payload.get("aliases"), "aliases"),
         summary=summary,
         documents=tuple(documents),
@@ -641,6 +654,8 @@ def build_map(
         "summary": manifest.summary,
         "files": index_files,
     }
+    if manifest.release_order is not None:
+        index["release_order"] = manifest.release_order
     (map_dir / "index.json").write_text(
         json.dumps(index, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

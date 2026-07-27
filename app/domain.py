@@ -41,6 +41,7 @@ class KnowledgeChunk:
 class MapRecord:
     map_id: str
     display_name: str
+    release_order: int | None
     summary: str
     aliases: tuple[str, ...]
     directory: Path

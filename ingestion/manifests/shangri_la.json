@@ -1,6 +1,7 @@
 {
   "map_id": "shangri_la",
   "display_name": "Shangri-La",
+  "release_order": 12,
   "aliases": ["shangri-la", "shangri la", "shang"],
   "summary": "Zombies Chronicles version of Shangri-La, covering power, pressure-plate Pack-a-Punch, the 31-79 JGb215, the main easter egg, side quests, and achievements.",
   "documents": [

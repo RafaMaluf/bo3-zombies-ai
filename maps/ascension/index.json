@@ -1,6 +1,7 @@
 {
   "map_id": "ascension",
   "display_name": "Ascension",
+  "release_order": 11,
   "aliases": [
     "ascension",
     "cosmodrome"

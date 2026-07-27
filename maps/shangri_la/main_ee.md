@@ -1,5 +1,17 @@
 # Shangri-La main easter egg
 
+## Player-count requirement
+
+The supported player counts are:
+
+- 4 players in an unmodified Black Ops III / Zombies Chronicles match.
+- 1 player in solo when a compatible Solo Easter Egg mod is enabled. Solo is not supported by the vanilla map.
+- Never 2 or 3 players; the simultaneous co-op steps cannot be completed with those group sizes.
+
+When someone asks whether the quest works with fewer than four players, the
+complete answer is: only solo with the mod. This guide describes the
+four-player vanilla route.
+
 ## Main easter egg quest - Part 1
 
 The goal of this Easter egg is to acquire the focusing stone, a meteorite of element 115. To obtain it, you will need to help Brock and Garry, two adventurers dead in the jungle, but stuck in a time Loop.

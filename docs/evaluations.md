@@ -4,7 +4,7 @@ The deterministic local-search baseline is split into two suites:
 
 - `evals/queries.json` contains 90 bilingual questions for the six original
   Black Ops III maps;
-- `evals/chronicles_queries.json` contains 48 bilingual questions for the
+- `evals/chronicles_queries.json` contains 49 bilingual questions for the
   eight Zombies Chronicles maps.
 
 No Groq key or model call is involved.

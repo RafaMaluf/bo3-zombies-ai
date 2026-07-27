@@ -1,6 +1,7 @@
 {
   "map_id": "shangri_la",
   "display_name": "Shangri-La",
+  "release_order": 12,
   "aliases": [
     "shangri-la",
     "shangri la",
@@ -21,7 +22,7 @@
     {
       "path": "main_ee.md",
       "category": "main_ee",
-      "summary": "Complete four-player Time Travel Will Tell quest, including eclipse mode, matching symbols, waterslide, gas, spikes, tiles, dynamite, and focusing stone."
+      "summary": "The main quest supports 4 players in vanilla or 1 player with a Solo Easter Egg mod, never 2 or 3; includes the complete four-player Time Travel Will Tell route."
     },
     {
       "path": "music_ee.md",

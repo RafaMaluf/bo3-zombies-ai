@@ -1,6 +1,7 @@
 {
   "map_id": "zetsubou_no_shima",
   "display_name": "Zetsubou No Shima",
+  "release_order": 4,
   "aliases": ["zetsubou no shima", "zetsubou", "zns"],
   "summary": "Swamp and bunker-based Black Ops 3 Zombies map built around buckets, water colors, plant growth, bunker progression, Pack-a-Punch, the Skull of Nan Sapwe, KT-4, Masamune, trials, a simple but setup-heavy main easter egg, and many side easter eggs.",
   "files": [

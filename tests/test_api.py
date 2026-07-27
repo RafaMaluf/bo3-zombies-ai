@@ -73,6 +73,22 @@ class FailingResolverLLM:
         return LLMResponse(answer="O escudo é montado na bancada.")
 
 
+class PlayerCountFollowUpLLM:
+    async def resolve_query(
+        self,
+        _: list[dict[str, str]],
+    ) -> QueryResolution:
+        raise LLMResponseError("No usable resolution.")
+
+    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+        return LLMResponse(
+            answer=(
+                "No jogo sem mod, o Easter Egg principal exige 4 jogadores. "
+                "Solo requer um mod compatível; com 2 ou 3 não funciona."
+            )
+        )
+
+
 def test_health_maps_and_thumbnail_endpoints() -> None:
     with TestClient(app) as client:
         health = client.get("/health")
@@ -84,6 +100,23 @@ def test_health_maps_and_thumbnail_endpoints() -> None:
         assert maps.status_code == 200
         map_payload = maps.json()
         assert len(map_payload) == 14
+        assert [item["map_id"] for item in map_payload] == [
+            "shadows_of_evil",
+            "the_giant",
+            "der_eisendrache",
+            "zetsubou_no_shima",
+            "gorod_krovi",
+            "revelations",
+            "nacht_der_untoten",
+            "verruckt",
+            "shi_no_numa",
+            "kino_der_toten",
+            "ascension",
+            "shangri_la",
+            "moon",
+            "origins",
+        ]
+        assert [item["release_order"] for item in map_payload] == list(range(1, 15))
 
         cover_id = next(item["cover_image_id"] for item in map_payload if item["cover_image_id"])
         thumbnail = client.get(f"/media/{cover_id}?variant=thumb")
@@ -230,6 +263,35 @@ def test_referential_follow_up_uses_previous_source_when_resolution_fails() -> N
         payload = response.json()
         assert payload["answer"] == "O escudo é montado na bancada."
         assert {source["path"] for source in payload["sources"]} == {"shield.md"}
+
+
+def test_elliptical_player_count_follow_up_keeps_previous_main_quest_source() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = PlayerCountFollowUpLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": "pode com 2?",
+                "active_map_id": "shangri_la",
+                "conversation_history": [
+                    {
+                        "role": "user",
+                        "content": "Em quantas pessoas consigo fazer o EE principal?",
+                    },
+                    {
+                        "role": "assistant",
+                        "content": "O Easter Egg principal exige quatro jogadores.",
+                        "source_paths": ["main_ee.md"],
+                    },
+                ],
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert not payload["need_clarification"]
+        assert {source["path"] for source in payload["sources"]} == {"main_ee.md"}
+        assert "4 jogadores" in payload["answer"]
 
 
 def test_chat_rejects_model_image_ids_outside_retrieved_context() -> None:

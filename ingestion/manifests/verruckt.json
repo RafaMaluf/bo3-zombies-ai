@@ -1,6 +1,7 @@
 {
   "map_id": "verruckt",
   "display_name": "Verrückt",
+  "release_order": 8,
   "aliases": ["verruckt", "verrückt", "asylum"],
   "summary": "Zombies Chronicles version of Verrückt, covering power, perks, traps, Wunderfizz, weapons, Samantha dolls, secret songs, and achievements.",
   "documents": [

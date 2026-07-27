@@ -1,6 +1,7 @@
 {
   "map_id": "der_eisendrache",
   "display_name": "Der Eisendrache",
+  "release_order": 3,
   "aliases": ["der eisendrache", "de", "der eisen"],
   "summary": "Castle-based Black Ops 3 Zombies map focused on power, rotating Pack-a-Punch, the Wrath of the Ancients, the 4 elemental bow upgrades, the Rocket Shield, the Ragnarok DG-4, a full main easter egg quest, and several side easter eggs.",
   "files": [

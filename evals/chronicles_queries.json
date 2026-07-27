@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Deterministic retrieval suite for the eight Zombies Chronicles maps. Six bilingual, player-style questions per map exercise map inference, document ranking, section ranking, and image attachment without calling an LLM.",
+  "description": "Deterministic retrieval suite for the eight Zombies Chronicles maps. Bilingual, player-style questions exercise map inference, document ranking, section ranking, and image attachment without calling an LLM.",
   "thresholds": {
     "pass_rate": 0.9,
     "map_accuracy": 1.0,
@@ -285,6 +285,14 @@
       "expected_section_titles": ["Main easter egg quest - Part 1"],
       "minimum_images": 1,
       "tags": ["shangri_la", "main_ee", "en"]
+    },
+    {
+      "id": "shang-ee-player-count",
+      "query": "Dá para fazer o easter egg principal de Shangri-La com 2 jogadores?",
+      "expected_map_id": "shangri_la",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["Player-count requirement"],
+      "tags": ["shangri_la", "main_ee", "player_count", "pt"]
     },
     {
       "id": "shang-ee-dynamite",

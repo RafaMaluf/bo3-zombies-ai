@@ -143,9 +143,26 @@ def test_frontend_redirect_and_assets() -> None:
         assert redirect.status_code in {302, 307}
         assert redirect.headers["location"] == "/app/"
 
-        assert client.get("/app/").status_code == 200
-        assert client.get("/app/style.css").headers["content-type"].startswith("text/css")
-        assert client.get("/app/app.js").headers["content-type"].startswith("text/javascript")
+        index = client.get("/app/")
+        stylesheet = client.get("/app/style.css")
+        script = client.get("/app/app.js")
+
+        assert index.status_code == 200
+        assert stylesheet.headers["content-type"].startswith("text/css")
+        assert script.headers["content-type"].startswith("text/javascript")
+        for response in (index, stylesheet, script):
+            assert response.headers["cache-control"] == (
+                "no-cache, max-age=0, must-revalidate"
+            )
+
+        cached_stylesheet = client.get(
+            "/app/style.css",
+            headers={"If-None-Match": stylesheet.headers["etag"]},
+        )
+        assert cached_stylesheet.status_code == 304
+        assert cached_stylesheet.headers["cache-control"] == (
+            "no-cache, max-age=0, must-revalidate"
+        )
         assert client.get("/static/der_eisendrache/general.md").status_code == 404
 
 

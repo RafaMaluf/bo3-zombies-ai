@@ -75,6 +75,15 @@ if settings.allowed_origins:
     )
 
 
+@app.middleware("http")
+async def require_frontend_revalidation(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if path == "/app" or path.startswith("/app/"):
+        response.headers["Cache-Control"] = "no-cache, max-age=0, must-revalidate"
+    return response
+
+
 def _kb(request: Request) -> KnowledgeBase:
     return request.app.state.knowledge_base
 

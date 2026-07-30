@@ -1,0 +1,47 @@
+{
+  "map_id": "ascension",
+  "display_name": "Ascension",
+  "release_order": 11,
+  "aliases": [
+    "ascension",
+    "cosmodrome"
+  ],
+  "summary": "Zombies Chronicles version of Ascension, covering power, lunar landers, Pack-a-Punch, space monkeys, Gersh Devices, the main easter egg, side quests, and achievements.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overview of Ascension, its lunar landers, special equipment, quests, and special rounds."
+    },
+    {
+      "path": "power_pap.md",
+      "category": "pap",
+      "summary": "How to turn on power, use all lunar landers, launch the rocket, and open Pack-a-Punch."
+    },
+    {
+      "path": "main_ee.md",
+      "category": "main_ee",
+      "summary": "Complete four-player Ascension main quest, including Gersh devices, pressure plates, LUNA letters, nodes, and final weapons."
+    },
+    {
+      "path": "samantha_sorrow.md",
+      "category": "side_ee",
+      "summary": "How to use Gersh Devices, find the dolls, and earn the Samantha's Sorrow reward."
+    },
+    {
+      "path": "music_ee.md",
+      "category": "music_ee",
+      "summary": "Locations of the three teddy bears used to activate Abracadavre."
+    },
+    {
+      "path": "space_monkeys.md",
+      "category": "special_round",
+      "summary": "How Ascension's space monkey rounds work, how perks are attacked, and how to earn a free perk."
+    },
+    {
+      "path": "achievements.md",
+      "category": "achievement",
+      "summary": "Requirements and practical steps for Ascension achievements."
+    }
+  ]
+}

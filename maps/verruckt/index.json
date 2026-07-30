@@ -1,0 +1,33 @@
+{
+  "map_id": "verruckt",
+  "display_name": "Verrückt",
+  "release_order": 8,
+  "aliases": [
+    "verruckt",
+    "verrückt",
+    "asylum"
+  ],
+  "summary": "Zombies Chronicles version of Verrückt, covering power, perks, traps, Wunderfizz, weapons, Samantha dolls, secret songs, and achievements.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Power, split-spawn layout, lack of native Pack-a-Punch, electric traps, Wunderfizz, and Wunderwaffe DG-2."
+    },
+    {
+      "path": "samantha_dolls.md",
+      "category": "side_ee",
+      "summary": "How to enter the 9-3-5 toilet sequence, find ten timed Samantha dolls, and claim the reward."
+    },
+    {
+      "path": "music_ee.md",
+      "category": "music_ee",
+      "summary": "How to activate Lullaby for a Dead Man using the toilet in the bathroom beside the power room."
+    },
+    {
+      "path": "achievement.md",
+      "category": "achievement",
+      "summary": "How to complete the Acted Alone achievement."
+    }
+  ]
+}

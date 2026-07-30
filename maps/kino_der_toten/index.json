@@ -1,0 +1,53 @@
+{
+  "map_id": "kino_der_toten",
+  "display_name": "Kino der Toten",
+  "release_order": 10,
+  "aliases": [
+    "kino",
+    "kino der toten",
+    "theater"
+  ],
+  "summary": "Zombies Chronicles version of Kino der Toten, covering power, teleporter Pack-a-Punch, film reels, traps, Thundergun, Samantha dolls, songs, and achievements.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overview of the Zombies Chronicles version of Kino der Toten."
+    },
+    {
+      "path": "power_pap.md",
+      "category": "pap",
+      "summary": "How to reach the stage, turn on power, link the teleporter, enter the projector room, and use Pack-a-Punch."
+    },
+    {
+      "path": "film_reels.md",
+      "category": "side_ee",
+      "summary": "Where to find the film reels in the random teleporter rooms and how to play them in the projector room."
+    },
+    {
+      "path": "paintings.md",
+      "category": "side_ee",
+      "summary": "Where to find and interact with the character paintings and the hidden blank portrait."
+    },
+    {
+      "path": "rocket_figurine.md",
+      "category": "side_ee",
+      "summary": "How to reveal and collect the rocket figurine near the stage."
+    },
+    {
+      "path": "samantha_sorrow.md",
+      "category": "side_ee",
+      "summary": "How to complete the Samantha doll hunt and receive the Max Ammo reward on Kino der Toten."
+    },
+    {
+      "path": "music_ee.md",
+      "category": "music_ee",
+      "summary": "Locations of the three meteorite fragments used to activate the song 115."
+    },
+    {
+      "path": "achievement.md",
+      "category": "achievement",
+      "summary": "How to complete the Kino der Toten map achievement."
+    }
+  ]
+}

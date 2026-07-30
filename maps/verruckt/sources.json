@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-27T02:18:50.983827+00:00",
+  "sources": [
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941065776",
+      "document": "general.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:18:50.970173+00:00",
+      "sha256": "f6d1a8c6bcb7f624f393d36e2776c17ce9b31779415bce4a00393393779fe659"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941065776",
+      "document": "samantha_dolls.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:18:50.970173+00:00",
+      "sha256": "f6d1a8c6bcb7f624f393d36e2776c17ce9b31779415bce4a00393393779fe659"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941065776",
+      "document": "music_ee.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:18:50.970173+00:00",
+      "sha256": "f6d1a8c6bcb7f624f393d36e2776c17ce9b31779415bce4a00393393779fe659"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941065776",
+      "document": "achievement.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:18:50.970173+00:00",
+      "sha256": "f6d1a8c6bcb7f624f393d36e2776c17ce9b31779415bce4a00393393779fe659"
+    }
+  ],
+  "images": [
+    {
+      "path": "images/source-guide/0e15d652df799037134ccdcea029b3aee19975b4-33a23c21eb.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636273797/0E15D652DF799037134CCDCEA029B3AEE19975B4/",
+      "document": "general.md",
+      "sha256": "33a23c21eb4b2a6e19674cc5397b14b6f99ae42f2cb4e330ffe562dd612b3a9d",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/5aa25adeabd24a6de59ef589f1738a2ac8f105fa-cb8c7a34fb.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636343091/5AA25ADEABD24A6DE59EF589F1738A2AC8F105FA/",
+      "document": "samantha_dolls.md",
+      "sha256": "cb8c7a34fb2dbb87637a5b8d83fd20e9cd9de20a9dcfd96f7bc8dfc89a87f4aa",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/35a3546d809d1b46f4af595d701bca515ec3860c-e392e9702d.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636343887/35A3546D809D1B46F4AF595D701BCA515EC3860C/",
+      "document": "samantha_dolls.md",
+      "sha256": "e392e9702d3acab9eb64af566cdcbf8e877cb4718a3f6a1faeaab2b891a66ad5",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/eefc5e844d6305ae526d5f609980be0b050053d2-e02fbf3dab.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294608995/EEFC5E844D6305AE526D5F609980BE0B050053D2/",
+      "document": "samantha_dolls.md",
+      "sha256": "e02fbf3dabdd92439521dca27719ce6fc0c38b1dee3d4aa84ab5d257ac3bfdf7",
+      "width": 1344,
+      "height": 756,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/9ad84a3cabc4d5c629d26a3a8f00a71b0fb9ec8f-fa4220f1f4.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294611451/9AD84A3CABC4D5C629D26A3A8F00A71B0FB9EC8F/",
+      "document": "samantha_dolls.md",
+      "sha256": "fa4220f1f4109a58b24fd74b6e1d315ed90d13ce6641bab3261f787d935e33f2",
+      "width": 1152,
+      "height": 648,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/7dd27d1de5abae5f51f93b0766aea447971db50c-801e5c97cc.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294613370/7DD27D1DE5ABAE5F51F93B0766AEA447971DB50C/",
+      "document": "samantha_dolls.md",
+      "sha256": "801e5c97ccdabe2db65b8bb40a2e9116055e39fd7464b2e5ce0214cf9aec2973",
+      "width": 1344,
+      "height": 756,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/1f4fd74e2d676d1c698e649f256d20af0968ca38-42b3b80491.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294614747/1F4FD74E2D676D1C698E649F256D20AF0968CA38/",
+      "document": "samantha_dolls.md",
+      "sha256": "42b3b80491bf148e9de1f3654462428ca9ba53376bf8e5baf4a3b2b65f495ec1",
+      "width": 1344,
+      "height": 756,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/a356991fae31bc0b039a78a292c615471fec801c-b15acd08a5.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294616025/A356991FAE31BC0B039A78A292C615471FEC801C/",
+      "document": "samantha_dolls.md",
+      "sha256": "b15acd08a57d2f4b4bc2a25637a55b039c8446dee06019f6c87ddafc53d54cb1",
+      "width": 1344,
+      "height": 756,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/0f7ce533a102c8f37ec7319f9c744ed3eea9bfdc-53a63314b3.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294617367/0F7CE533A102C8F37EC7319F9C744ED3EEA9BFDC/",
+      "document": "samantha_dolls.md",
+      "sha256": "53a63314b39dcef4d47fc564195ca1ece2939a7dabd7375c5b5db0843d039f5e",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/d0b5ee8beff80867f9033a8eda538a6b6be20f62-89b5f61227.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294619401/D0B5EE8BEFF80867F9033A8EDA538A6B6BE20F62/",
+      "document": "samantha_dolls.md",
+      "sha256": "89b5f61227c3effb1910d7a53f4807bb5e3779f957f9ef78685823ef34d52ba6",
+      "width": 1344,
+      "height": 756,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/6e7213510e0e830e47634aeeadaa40ba64386a3e-a2a4356707.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294621453/6E7213510E0E830E47634AEEADAA40BA64386A3E/",
+      "document": "samantha_dolls.md",
+      "sha256": "a2a4356707a51558e751f18306b5be3891842af3257c5cc22d1558a18b9176a9",
+      "width": 1344,
+      "height": 756,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/3560f7c78667c1b7364a6b403ecc0e108bf9f023-69c3ff9956.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294622778/3560F7C78667C1B7364A6B403ECC0E108BF9F023/",
+      "document": "samantha_dolls.md",
+      "sha256": "69c3ff9956c19fb5fcea703abeaa9d59be89a987f30df3b56ed3ffaadaff940f",
+      "width": 1344,
+      "height": 756,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/952034c6a0738dda9a29ecf16a20c1af13420b84-33b25ff3d0.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294623737/952034C6A0738DDA9A29ECF16A20C1AF13420B84/",
+      "document": "samantha_dolls.md",
+      "sha256": "33b25ff3d0d1128a99bbe169144459adfef0c2b78eccec2e7d85a7945754e986",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/d664d9f2af58fd276b62ae9e8720af8fba04a9a6-eb50e82eb6.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636366287/D664D9F2AF58FD276B62AE9E8720AF8FBA04A9A6/",
+      "document": "samantha_dolls.md",
+      "sha256": "eb50e82eb626be4085e7d5334036f05c8cb0707e2a5a39b7c69003131e909344",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/557141e0742aeed2e943f0972ce090bf0af7b763-afc87569b8.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480752636276346/557141E0742AEED2E943F0972CE090BF0AF7B763/",
+      "document": "music_ee.md",
+      "sha256": "afc87569b80b5f759c5ba8d68fedcfc2e3546f51a2fead29c7c119686d7a7c74",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    }
+  ],
+  "supplemental_sources": [
+    "https://www.reddit.com/r/CODZombies/wiki/verruckt/"
+  ]
+}

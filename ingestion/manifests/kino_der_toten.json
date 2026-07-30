@@ -1,0 +1,21 @@
+{
+  "map_id": "kino_der_toten",
+  "display_name": "Kino der Toten",
+  "release_order": 10,
+  "aliases": ["kino", "kino der toten", "theater"],
+  "summary": "Zombies Chronicles version of Kino der Toten, covering power, teleporter Pack-a-Punch, film reels, traps, Thundergun, Samantha dolls, songs, and achievements.",
+  "documents": [
+    {
+      "path": "source_guide.md",
+      "category": "general",
+      "summary": "Source guide covering setup, Pack-a-Punch, film reels, side easter eggs, and achievements on Kino der Toten.",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=945390433",
+      "title": "Kino der Toten source guide",
+      "content_selector": ".guide.subSections",
+      "include_image_url_patterns": ["images\\.steamusercontent\\.com"],
+      "min_image_width": 320,
+      "min_image_height": 180,
+      "max_images": 140
+    }
+  ]
+}

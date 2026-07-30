@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from app.conversation import (
     build_resolution_messages,
     clarification_for_options,
@@ -64,6 +66,49 @@ def test_referential_follow_up_requests_resolution() -> None:
         "der_eisendrache",
         specific_retrieval,
     )
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "pode com menos?",
+        "pode com 2?",
+        "com 2?",
+        "e solo?",
+    ],
+)
+def test_elliptical_constraints_request_context_resolution(message: str) -> None:
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    retrieval = SearchEngine(knowledge_base).search(
+        message,
+        active_map_id="shangri_la",
+        limit=10,
+    )
+    history = [
+        ConversationMessage(
+            role="assistant",
+            content="O Easter Egg principal exige quatro jogadores.",
+            source_paths=["main_ee.md"],
+        )
+    ]
+
+    assert should_resolve_follow_up(
+        message,
+        history,
+        "shangri_la",
+        retrieval,
+    )
+    query = source_anchored_query(
+        message,
+        history,
+        document_catalog(knowledge_base, "shangri_la"),
+    )
+    anchored = SearchEngine(knowledge_base).search(
+        query,
+        active_map_id="shangri_la",
+        limit=10,
+    )
+    assert {item.chunk.path for item in anchored.chunks} == {"main_ee.md"}
 
 
 def test_resolution_prompt_uses_catalog_and_previous_sources() -> None:
@@ -197,3 +242,45 @@ def test_source_anchored_query_uses_previous_answer_document() -> None:
 
     assert query == "e onde monta? Shield"
     assert {item.chunk.path for item in retrieval.chunks} == {"shield.md"}
+
+
+def test_staff_family_excludes_generic_setup_and_final_stage() -> None:
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    catalog = document_catalog(knowledge_base, "origins")
+
+    options = deterministic_follow_up_options(
+        "e os cajados?",
+        [ConversationMessage(role="assistant", content="Resposta anterior.")],
+        catalog,
+    )
+
+    assert [item.path for item in options] == [
+        "fire_staff.md",
+        "ice_staff.md",
+        "lightning_staff.md",
+        "wind_staff.md",
+    ]
+
+
+def test_other_staffs_are_siblings_of_the_previous_staff() -> None:
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    catalog = document_catalog(knowledge_base, "origins")
+    history = [
+        ConversationMessage(
+            role="assistant",
+            content="Guia do cajado de fogo.",
+            source_paths=["fire_staff.md"],
+        )
+    ]
+
+    options = deterministic_follow_up_options(
+        "e os outros?",
+        history,
+        catalog,
+    )
+
+    assert [item.path for item in options] == [
+        "ice_staff.md",
+        "lightning_staff.md",
+        "wind_staff.md",
+    ]

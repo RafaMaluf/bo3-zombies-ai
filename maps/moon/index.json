@@ -1,0 +1,73 @@
+{
+  "map_id": "moon",
+  "display_name": "Moon",
+  "release_order": 13,
+  "aliases": [
+    "moon",
+    "griffin station",
+    "area 51"
+  ],
+  "summary": "Zombies Chronicles version of Moon, covering Area 51, power, PES and Hacker, excavators, teleporter Pack-a-Punch, Wave Gun, QEDs, the main easter egg, and side quests.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overview of Area 51, Griffin Station, excavators, equipment, wonder weapons, quests, and low-gravity systems."
+    },
+    {
+      "path": "power_pap.md",
+      "category": "pap",
+      "summary": "How to leave Area 51, turn on power at Griffin Station, return to No Man's Land, and use Pack-a-Punch."
+    },
+    {
+      "path": "main_ee.md",
+      "category": "main_ee",
+      "summary": "Complete Moon main quest, including computer colors, Hacker terminals, excavator tunnel, pyramid souls, Samantha Says, plates, QED steps, and rockets."
+    },
+    {
+      "path": "hacker.md",
+      "category": "equipment",
+      "summary": "Hacker spawn locations and all of its uses, including doors, windows, power-ups, mystery box, perks, excavators, and Pack-a-Punch protection."
+    },
+    {
+      "path": "pes.md",
+      "category": "equipment",
+      "summary": "Where to obtain the P.E.S. suit and when it is required for oxygen."
+    },
+    {
+      "path": "qed.md",
+      "category": "equipment",
+      "summary": "How to obtain and use Quantum Entanglement Devices and what kinds of effects they can produce."
+    },
+    {
+      "path": "samantha_sorrow.md",
+      "category": "side_ee",
+      "summary": "How to complete Moon's Samantha doll quest and claim the reward."
+    },
+    {
+      "path": "space_dog.md",
+      "category": "side_ee",
+      "summary": "How to spawn and feed the space dog around Moon."
+    },
+    {
+      "path": "music_ee_1.md",
+      "category": "music_ee",
+      "summary": "How to activate Moon's first secret song."
+    },
+    {
+      "path": "music_ee_2.md",
+      "category": "music_ee",
+      "summary": "How to activate Moon's second secret song."
+    },
+    {
+      "path": "music_ee_3.md",
+      "category": "music_ee",
+      "summary": "How to activate Moon's third secret song."
+    },
+    {
+      "path": "achievements.md",
+      "category": "achievement",
+      "summary": "Requirements and practical steps for Moon achievements."
+    }
+  ]
+}

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import mimetypes
+import re
 from contextlib import asynccontextmanager
 from typing import Literal
 
@@ -37,6 +39,9 @@ from app.schemas import (
 )
 
 logger = logging.getLogger("krono")
+mimetypes.add_type("text/javascript", ".js")
+mimetypes.add_type("image/webp", ".webp")
+IMAGE_ID_PATTERN = re.compile(r"`?img_[a-f0-9]{16}`?", flags=re.IGNORECASE)
 
 
 @asynccontextmanager
@@ -91,7 +96,24 @@ def _select_image_assets(
         if len(selected) >= limit:
             return selected
 
-    if selected or not available_assets:
+    target_count = min(limit, 6)
+    if selected:
+        selected_documents = {asset.document_path for asset in selected}
+        selected_sections = {(asset.document_path, asset.section) for asset in selected}
+        for asset in available_assets:
+            if (
+                asset.id in seen_ids
+                or asset.document_path not in selected_documents
+                or (asset.document_path, asset.section) not in selected_sections
+            ):
+                continue
+            selected.append(asset)
+            seen_ids.add(asset.id)
+            if len(selected) >= target_count:
+                break
+        return selected
+
+    if not available_assets:
         return selected
 
     # Models occasionally omit images even for visual procedures. Fall back
@@ -107,9 +129,42 @@ def _select_image_assets(
             continue
         selected.append(asset)
         seen_sections.add(section_key)
-        if len(selected) >= min(limit, 6):
+        seen_ids.add(asset.id)
+        if len(selected) >= target_count:
+            break
+
+    # A location guide can keep every screenshot in one section. Once section
+    # diversity is covered, fill the remaining slots from the same document.
+    for asset in available_assets:
+        if asset.document_path != preferred_document or asset.id in seen_ids:
+            continue
+        selected.append(asset)
+        seen_ids.add(asset.id)
+        if len(selected) >= target_count:
             break
     return selected
+
+
+def _strip_internal_image_references(answer: str) -> str:
+    lines = [
+        line
+        for line in answer.splitlines()
+        if not IMAGE_ID_PATTERN.search(line)
+    ]
+    orphaned_tail_markers = {
+        "---",
+        "images",
+        "imagens",
+        "imagens de apoio",
+        "supporting images",
+    }
+    while lines:
+        marker = lines[-1].strip().strip("*# ").casefold()
+        if not marker or marker in orphaned_tail_markers:
+            lines.pop()
+            continue
+        break
+    return "\n".join(lines).rstrip()
 
 
 @app.get("/", include_in_schema=False)
@@ -171,6 +226,36 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         req.message,
         settings.max_history_messages,
     )
+    request_map_id = (
+        req.active_map_id if req.active_map_id in knowledge_base.maps else None
+    )
+    if request_map_id is None:
+        explicit_maps = search_engine.explicit_map_ids(req.message)
+        if len(explicit_maps) == 1:
+            request_map_id = explicit_maps[0]
+
+    requested_paths = search_engine.explicit_document_paths(
+        req.message,
+        request_map_id,
+    )
+    if len(requested_paths) > settings.max_multi_documents:
+        labels_by_path = {
+            reference.path: reference.label
+            for reference in document_catalog(knowledge_base, request_map_id or "")
+        }
+        return ChatResponse(
+            need_clarification=True,
+            clarification_question=(
+                f"Você pediu {len(requested_paths)} guias de uma vez. "
+                f"Para manter a resposta objetiva, escolha até "
+                f"{settings.max_multi_documents}."
+            ),
+            suggested_queries=[
+                labels_by_path.get(path, path) for path in requested_paths
+            ],
+            active_map_id=request_map_id,
+        )
+
     retrieval = search_engine.search(
         query=req.message,
         active_map_id=req.active_map_id,
@@ -323,7 +408,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
     ]
 
     return ChatResponse(
-        answer=generated.answer,
+        answer=_strip_internal_image_references(generated.answer),
         need_clarification=generated.need_clarification,
         clarification_question=generated.clarification_question,
         sources=sources,

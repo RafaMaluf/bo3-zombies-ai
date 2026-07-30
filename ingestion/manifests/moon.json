@@ -1,0 +1,21 @@
+{
+  "map_id": "moon",
+  "display_name": "Moon",
+  "release_order": 13,
+  "aliases": ["moon", "griffin station", "area 51"],
+  "summary": "Zombies Chronicles version of Moon, covering Area 51, power, PES and Hacker, excavators, teleporter Pack-a-Punch, Wave Gun, QEDs, the main easter egg, and side quests.",
+  "documents": [
+    {
+      "path": "source_guide.md",
+      "category": "general",
+      "summary": "Source guide covering setup, equipment, Pack-a-Punch, the main easter egg, side easter eggs, and achievements on Moon.",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "title": "Moon source guide",
+      "content_selector": ".guide.subSections",
+      "include_image_url_patterns": ["images\\.steamusercontent\\.com"],
+      "min_image_width": 320,
+      "min_image_height": 180,
+      "max_images": 240
+    }
+  ]
+}

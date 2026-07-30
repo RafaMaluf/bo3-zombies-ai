@@ -1,6 +1,7 @@
 {
   "map_id": "revelations",
   "display_name": "Revelations",
+  "release_order": 6,
   "aliases": ["revelations", "rev"],
   "summary": "Final Black Ops 3 Aether map built from connected fragments of older maps, focused on ritual portal setup, Pack-a-Punch inside the Apothicon, the Apothicon Servant upgrade, Dragon Shield, Keeper Protector, masks, and a long main easter egg involving reels, bones, eggs, runes, the Summoning Key, and the Shadowman fight.",
   "files": [

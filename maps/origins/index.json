@@ -1,0 +1,123 @@
+{
+  "map_id": "origins",
+  "display_name": "Origins",
+  "release_order": 14,
+  "aliases": [
+    "origins",
+    "dig site",
+    "excavation site 64"
+  ],
+  "summary": "Zombies Chronicles version of Origins, covering generators, Pack-a-Punch, four elemental staffs and upgrades, buildables, G-Strike, One Inch Punch, the main easter egg, songs, and achievements.",
+  "files": [
+    {
+      "path": "general.md",
+      "category": "general",
+      "summary": "Overview of Origins, generators, staffs, buildables, challenges, quests, and special systems."
+    },
+    {
+      "path": "power_pap.md",
+      "category": "pap",
+      "summary": "Locations of all six generators, how to activate and defend them, and how they unlock Pack-a-Punch."
+    },
+    {
+      "path": "staff_setup.md",
+      "category": "wonder_weapon",
+      "summary": "How to find the black disk and gramophone, open the excavation stairs, and prepare the four staff altars."
+    },
+    {
+      "path": "fire_staff.md",
+      "category": "wonder_weapon",
+      "summary": "How to collect the Fire Staff parts, disk and crystal, craft it, solve both upgrade puzzles, and prepare Kagutsuchi's Blood."
+    },
+    {
+      "path": "ice_staff.md",
+      "category": "wonder_weapon",
+      "summary": "How to collect the Ice Staff parts, disk and crystal, craft it, solve both upgrade puzzles, and prepare Ull's Arrow."
+    },
+    {
+      "path": "lightning_staff.md",
+      "category": "wonder_weapon",
+      "summary": "How to collect the Lightning Staff parts, disk and crystal, craft it, solve both upgrade puzzles, and prepare Kimat's Bite."
+    },
+    {
+      "path": "wind_staff.md",
+      "category": "wonder_weapon",
+      "summary": "How to collect the Wind Staff parts, disk and crystal, craft it, solve both upgrade puzzles, and prepare Boreas' Fury."
+    },
+    {
+      "path": "staff_final_upgrade.md",
+      "category": "wonder_weapon",
+      "summary": "How to align the excavation rings, shoot the orb, place a prepared staff in the Crazy Place, and charge it with zombie souls."
+    },
+    {
+      "path": "main_ee.md",
+      "category": "main_ee",
+      "summary": "Complete Little Lost Girl, including upgraded staffs, robot pedestals, G-Strike seal, Odin strike, elemental fists, Maxis Drone, Crazy Place, and final portal."
+    },
+    {
+      "path": "g_strike.md",
+      "category": "equipment",
+      "summary": "How to purify the stone tablet with melee kills and convert Monkey Bombs into G-Strike beacons."
+    },
+    {
+      "path": "maxis_drone.md",
+      "category": "equipment",
+      "summary": "Locations of all three Maxis Drone parts and where to build it."
+    },
+    {
+      "path": "one_inch_punch.md",
+      "category": "equipment",
+      "summary": "How to fill the four robot-foot soul chests and claim the One Inch Punch from the reward chest."
+    },
+    {
+      "path": "shield.md",
+      "category": "equipment",
+      "summary": "Locations of all three Zombie Shield parts and the available crafting tables."
+    },
+    {
+      "path": "shovel_upgrades.md",
+      "category": "equipment",
+      "summary": "How digging works, how to earn the Golden Shovel and Golden Helmet, and how red dig sites appear."
+    },
+    {
+      "path": "challenges.md",
+      "category": "challenge",
+      "summary": "Challenge objectives, progress tracking, and rewards available from the challenge chests."
+    },
+    {
+      "path": "music_ee_1.md",
+      "category": "music_ee",
+      "summary": "Locations used to activate Archangel."
+    },
+    {
+      "path": "music_ee_2.md",
+      "category": "music_ee",
+      "summary": "How to activate Shepherd of Fire."
+    },
+    {
+      "path": "music_ee_3.md",
+      "category": "music_ee",
+      "summary": "How to activate Aether."
+    },
+    {
+      "path": "samantha_sorrow.md",
+      "category": "side_ee",
+      "summary": "How to complete the Samantha doll side quest and claim its reward."
+    },
+    {
+      "path": "free_magna_collider.md",
+      "category": "side_ee",
+      "summary": "How to obtain the free Magna Collider weapon."
+    },
+    {
+      "path": "free_zombie_blood.md",
+      "category": "side_ee",
+      "summary": "How to trigger the free Zombie Blood power-up."
+    },
+    {
+      "path": "achievements.md",
+      "category": "achievement",
+      "summary": "Requirements and practical steps for Origins achievements."
+    }
+  ]
+}

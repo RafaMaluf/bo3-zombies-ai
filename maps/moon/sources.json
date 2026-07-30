@@ -1,0 +1,939 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-27T02:23:15.605661+00:00",
+  "sources": [
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "general.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "power_pap.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "main_ee.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "hacker.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "pes.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "qed.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "samantha_sorrow.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "space_dog.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "music_ee_1.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "music_ee_2.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "music_ee_3.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    },
+    {
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=935312551",
+      "document": "achievements.md",
+      "selector": ".guide.subSections",
+      "captured_at": "2026-07-27T02:23:15.583517+00:00",
+      "sha256": "a5437f4896e1065d1dd42128f172b7a039ce812fc28171d8ac658b02f7c660fe"
+    }
+  ],
+  "images": [
+    {
+      "path": "images/source-guide/0c46bbaa08e13d5c27a5f6d8a9f5e9d88e21253b-abf1f3dd8a.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294204620/0C46BBAA08E13D5C27A5F6D8A9F5E9D88E21253B/",
+      "document": "general.md",
+      "sha256": "abf1f3dd8a5522fbd1c28afbb2d6b5cf7fa55071a842ec0ccbe88c75300a749a",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/6cbcb03c97830dbe36c43a278ff7a00545f4e9e5-fc29298246.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294304614/6CBCB03C97830DBE36C43A278FF7A00545F4E9E5/",
+      "document": "power_pap.md",
+      "sha256": "fc29298246fa5909cb0a11e7b015baa450741723b1ce03b22216f1fee3c54aae",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/027d6d6bed7b82029a84e009e9bc2595b4d8c529-a5ab1c1776.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294305449/027D6D6BED7B82029A84E009E9BC2595B4D8C529/",
+      "document": "power_pap.md",
+      "sha256": "a5ab1c17763df7841b6a93bbaa3c2466b9ae9011859fcc77b7e848a0aa913c28",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/6150c01bc43de0c2af291b5d692197e2057ca210-ee412a5441.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294306502/6150C01BC43DE0C2AF291B5D692197E2057CA210/",
+      "document": "power_pap.md",
+      "sha256": "ee412a5441c69d7f7be133bde5f0d7104c6552a4e722491507e6236f185e1401",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/c70e1df8bf57bed9e1642fafad9cd95b6f9a1ec0-766ab79caa.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294307041/C70E1DF8BF57BED9E1642FAFAD9CD95B6F9A1EC0/",
+      "document": "power_pap.md",
+      "sha256": "766ab79caafc142b2c8f63ef33df33129a671b34c273227d01b2932503cb796a",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/de2a38473b29c5194f57ab835a6feaece8b1ef3d-243c8bee63.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294309877/DE2A38473B29C5194F57AB835A6FEAECE8B1EF3D/",
+      "document": "power_pap.md",
+      "sha256": "243c8bee638e3d1000592839865d2f5159cc4686b9531997df8c4ca481d0398e",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/801d2674d63b818045be5d847e8ba225c9fa3269-4445f5b0c3.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294584348/801D2674D63B818045BE5D847E8BA225C9FA3269/",
+      "document": "main_ee.md",
+      "sha256": "4445f5b0c3889925626754c684bbbdb8aa2753cb22a15341a9e464e4eb018f6d",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/a1d0183ee9e719aeeee1fa46c1d04ce11d87f047-c6e97f0ca7.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294583159/A1D0183EE9E719AEEEE1FA46C1D04CE11D87F047/",
+      "document": "main_ee.md",
+      "sha256": "c6e97f0ca7501c03e5ae78773df3c396b08b45b0bd4a7575f6caf370d8a6db59",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/51b6620c3d1a6b1430c1925c76a39666205e580e-f0df6f7789.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296426063/51B6620C3D1A6B1430C1925C76A39666205E580E/",
+      "document": "main_ee.md",
+      "sha256": "f0df6f7789a6a85c88c7516ea103dbcaf4cee15ca39a3fe35b2e6c1e6b799782",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/640e357d94037104658210a30b321987fe72aa68-c024615264.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294633158/640E357D94037104658210A30B321987FE72AA68/",
+      "document": "main_ee.md",
+      "sha256": "c024615264c7a974c2b8a8f929b385360995e010d072c812cbd2d7cae80e5e34",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/0371aa31ad8e921aee2f1aed7fb7e68f7f86d56a-e6561edde1.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294634444/0371AA31AD8E921AEE2F1AED7FB7E68F7F86D56A/",
+      "document": "main_ee.md",
+      "sha256": "e6561edde1f4625ff2c498323cd8d9b70f4aa66ceebbe9837906d6bd4e752040",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/1c7bbb701abca8eff8d008de103a3155d00ad424-068813086d.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294635929/1C7BBB701ABCA8EFF8D008DE103A3155D00AD424/",
+      "document": "main_ee.md",
+      "sha256": "068813086dc36da57c0358e77ee378e80a7b0eec7a9980d0289b1bd5c74dadcb",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/7afd95bc7faf3161a39f83ca0b67c506c6ccc7f6-76f47fb5a2.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296437147/7AFD95BC7FAF3161A39F83CA0B67C506C6CCC7F6/",
+      "document": "main_ee.md",
+      "sha256": "76f47fb5a261700bd716b8c38fe7fa21e8d1627e745bea7f84a0555a57664791",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/5a77e927d78499a0483eafbf9cedc221d0b9db3f-62b3f4c90e.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296440349/5A77E927D78499A0483EAFBF9CEDC221D0B9DB3F/",
+      "document": "main_ee.md",
+      "sha256": "62b3f4c90e763168c8d956d18a7a5f3b4eb1a588e89002d3c8669d1a1e214a75",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/5a724b8dba0870d04ba4dd7c43989dbf82281910-414fcf12b6.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296442756/5A724B8DBA0870D04BA4DD7C43989DBF82281910/",
+      "document": "main_ee.md",
+      "sha256": "414fcf12b660cd78e7c34a19f464b20161de66fa33fc38699435b9683e0acc2d",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/c5edb41cb8988588fdc795bb4873b7aaecb2cd42-d5dd56365e.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296357466/C5EDB41CB8988588FDC795BB4873B7AAECB2CD42/",
+      "document": "main_ee.md",
+      "sha256": "d5dd56365ee59952d98fb26760a3ae16a400485a2d8613a021f5e83febfde9db",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/16fed6b5ca81bade8aecd1d66a91cd4f0e33efb0-c9ac379d25.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296374283/16FED6B5CA81BADE8AECD1D66A91CD4F0E33EFB0/",
+      "document": "main_ee.md",
+      "sha256": "c9ac379d25d8b9fcf51bf3d824e8f016531b7733cb9757b9d3309e679260ff42",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/1e3546ac3f75a98fff1fa1eaf20edcf47aa21ebc-3a5d778cc9.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296378802/1E3546AC3F75A98FFF1FA1EAF20EDCF47AA21EBC/",
+      "document": "main_ee.md",
+      "sha256": "3a5d778cc9ee9f6cc7fa45830cd07ef5c392592ba1fcb3528531071373680014",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/562b25690ed470e976e8c1f1cb4f3a2932c4f9bb-63b70e6b99.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296376209/562B25690ED470E976E8C1F1CB4F3A2932C4F9BB/",
+      "document": "main_ee.md",
+      "sha256": "63b70e6b998089b454e128433bf098beae28197fc6d18ce19439ecebf79d45e8",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/8e2702c237b505a1296e9ba5a9f16613b7b2a59e-739a9dddb2.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296450869/8E2702C237B505A1296E9BA5A9F16613B7B2A59E/",
+      "document": "main_ee.md",
+      "sha256": "739a9dddb20a8e37802af5ea8169cab76c6f12f49c14766e04e180299fa8a735",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/af16e76447caf786b0da33aedfa279a160f8ccec-7a1e433e51.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297544196/AF16E76447CAF786B0DA33AEDFA279A160F8CCEC/",
+      "document": "main_ee.md",
+      "sha256": "7a1e433e51980887417440134b2804e8b476ce9a48cf9b88a874e4a5009f0777",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/ff5d2f73508a0442b73cd9efeb2abee2ff30f379-72a3f30ee3.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296877817/FF5D2F73508A0442B73CD9EFEB2ABEE2FF30F379/",
+      "document": "main_ee.md",
+      "sha256": "72a3f30ee332c59a66e1054d5d2f4a5f62854028dba405042a99c7435523000b",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/efe87f7d61a5619c561445a1c73620bcdec854e0-1ccd1171d1.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296883290/EFE87F7D61A5619C561445A1C73620BCDEC854E0/",
+      "document": "main_ee.md",
+      "sha256": "1ccd1171d1dc558903b2e078757d890fb8ea5c141cac589db30cccdcfb252ed3",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/8a334b2f84ab704efb9be6ac42ad931cb9c2a564-a3495816e1.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296884319/8A334B2F84AB704EFB9BE6AC42AD931CB9C2A564/",
+      "document": "main_ee.md",
+      "sha256": "a3495816e1b3d0f6f473f402014e5d38bb8e21039ede08e56f54c77b6ebb80c8",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/4eb60c56c5de7b1f76829857bc065d90994813d8-1bcddb8967.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296885289/4EB60C56C5DE7B1F76829857BC065D90994813D8/",
+      "document": "main_ee.md",
+      "sha256": "1bcddb896742c29cb27666519cdbbf6f8572e196049c56a30783e965336d6ee5",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/9ef31aafac778922df3617c705872bdcf68a0026-8ebfc453a5.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990296886028/9EF31AAFAC778922DF3617C705872BDCF68A0026/",
+      "document": "main_ee.md",
+      "sha256": "8ebfc453a58255171d24400c57172f462f63dda754f013d3b3a14b7af2dc04a6",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/8f3cd03ae30b0e7b9ca3e4318d72de15b91dd866-923c1ff4ee.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297207089/8F3CD03AE30B0E7B9CA3E4318D72DE15B91DD866/",
+      "document": "main_ee.md",
+      "sha256": "923c1ff4eee6dfd6b44bc9b8cb470bd6ce1dfb43bba80ed4dbc7235adb6d30ca",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/f27fc19d92837c3e61bfabc2c96cf23c2a1b28b3-5e1a4abf81.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297208800/F27FC19D92837C3E61BFABC2C96CF23C2A1B28B3/",
+      "document": "main_ee.md",
+      "sha256": "5e1a4abf816ce9a86e3040456c9242df0d2161bee19b759072dd0f1310f817c8",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/36cf8741bc35c1a46b3f5e3a122e072f5877b711-6755e16414.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294209353/36CF8741BC35C1A46B3F5E3A122E072F5877B711/",
+      "document": "main_ee.md",
+      "sha256": "6755e16414e8336722bb597db8a50a369db0f29c812d109672118cd28eab25a5",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/2ef93bbbc423de631fe83f3c142c48f4b863ed26-7ef6a467d0.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297237310/2EF93BBBC423DE631FE83F3C142C48F4B863ED26/",
+      "document": "main_ee.md",
+      "sha256": "7ef6a467d0b4f4b422628da74d65fb013d0c3f5c4cafd670a3eea9f96a7fdd81",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/24e63e90291d4fe64fdabbd6a4ecbca3dea353b0-70bb0c59d3.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297238712/24E63E90291D4FE64FDABBD6A4ECBCA3DEA353B0/",
+      "document": "main_ee.md",
+      "sha256": "70bb0c59d35a650b21a0548a2f3609e29aaa6dbb7c34bfe0b71d5a81ac462421",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/b055cae8b2ed46b1e7eef64f5d51dce2fa8590a9-ad46331541.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297407579/B055CAE8B2ED46B1E7EEF64F5D51DCE2FA8590A9/",
+      "document": "main_ee.md",
+      "sha256": "ad46331541cc5937593643609c190998ce000fc6734b1e2ffb5631dbafae35cf",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/94125e6a48f39416c0690eaad5b39c6650235a10-f5932d23d6.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297412875/94125E6A48F39416C0690EAAD5B39C6650235A10/",
+      "document": "main_ee.md",
+      "sha256": "f5932d23d6b6fd1ae6d3c3ba7f05dfe800908bb93929e7f4e00fc1a829831f0c",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/27f6991eeaba90076d830b13a8e98432214f4a77-73c6e2059d.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297530749/27F6991EEABA90076D830B13A8E98432214F4A77/",
+      "document": "main_ee.md",
+      "sha256": "73c6e2059dda92f1bc4c652814a8ff2bc3ee5e0d3db58e026081c85acd4d2a6b",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/d3f76f9fd25934922a2676ed451727c0b3fb9512-d19a0e0d10.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297531477/D3F76F9FD25934922A2676ED451727C0B3FB9512/",
+      "document": "main_ee.md",
+      "sha256": "d19a0e0d10fe83b3a73f3b3f9158cf15db54a7925445ee7e1ad72c9dcf0290ac",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/e9ede1b983761abe635e1b1bf8ce2d52e35e4604-d0ba9a4b2e.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297532420/E9EDE1B983761ABE635E1B1BF8CE2D52E35E4604/",
+      "document": "main_ee.md",
+      "sha256": "d0ba9a4b2e2f87e308a0af034f51722ac7907a857ea8340ada80140e7a5439c7",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/a9cd3cbe65ce9921af429a515c20c6e3b24b9a69-82ad40e533.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297532826/A9CD3CBE65CE9921AF429A515C20C6E3B24B9A69/",
+      "document": "main_ee.md",
+      "sha256": "82ad40e53352d20804a0858d56fc2304482e45f16925c62d8db28663cbf69ee8",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/571924e72f2c90f8ebe8d127c2d46acc920fd0b6-b4a8dd5c57.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297533187/571924E72F2C90F8EBE8D127C2D46ACC920FD0B6/",
+      "document": "main_ee.md",
+      "sha256": "b4a8dd5c570da9cb54a46195f449c370d3949eb2f3cb00cb73cfa11931056014",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/a16b744115947c0534ade4a483dbb1810a5f8ef7-595b5c7cb3.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297551388/A16B744115947C0534ADE4A483DBB1810A5F8EF7/",
+      "document": "main_ee.md",
+      "sha256": "595b5c7cb32dbafe06b601f0ae2d48abba68cda5a4882a83ac86a0dc9b7e7d33",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/c9dd57296ed6e8205fd1bce19738e6a6b027ae75-b81b99ef62.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297546409/C9DD57296ED6E8205FD1BCE19738E6A6B027AE75/",
+      "document": "main_ee.md",
+      "sha256": "b81b99ef625cd3aba284ba5b082cd228b4e533279218b05e81ff4894df6c9334",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/001a2fdfd13baf87ca9d2ea9cbb4e8bdefbc798e-2a28cfd4cc.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297554858/001A2FDFD13BAF87CA9D2EA9CBB4E8BDEFBC798E/",
+      "document": "main_ee.md",
+      "sha256": "2a28cfd4cc46b0bb56acc9692b7650004a8a89a8b8f77dff44ec1e64a2613823",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/c78c6ba5af59e97bcfa7c0e20d525a3f463060a0-f2ab5e9da9.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297555428/C78C6BA5AF59E97BCFA7C0E20D525A3F463060A0/",
+      "document": "main_ee.md",
+      "sha256": "f2ab5e9da94cd646374935eb2290dd2f0c51e9383be68bbdcc7c8d8f49a35a4f",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/34afbf842fb90c155885507f6c84f0112bb97d85-9b3ac7406e.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297564613/34AFBF842FB90C155885507F6C84F0112BB97D85/",
+      "document": "main_ee.md",
+      "sha256": "9b3ac7406eb2199da0104019a5ee1d191d619aee80a1e312187677b07b82e8c9",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/f04495eed646f03b29f5f8c7e8da741e2d2f2b9b-c38f19bdb6.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297623493/F04495EED646F03B29F5F8C7E8DA741E2D2F2B9B/",
+      "document": "main_ee.md",
+      "sha256": "c38f19bdb626887e1a5d21177146b49ba3e8d0593f48f3a4928c9e176a423860",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/3efa8bd64aa50fbc74a614862a9de7cfe958aabe-76a96b3921.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297624410/3EFA8BD64AA50FBC74A614862A9DE7CFE958AABE/",
+      "document": "main_ee.md",
+      "sha256": "76a96b3921cf099c6be557ae5b295f189eeda51136b16fcf9eda183386ba3cdd",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/d0b7de1f58933bf75b07cf73766331a86c5d9355-dc3a32e990.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297641520/D0B7DE1F58933BF75B07CF73766331A86C5D9355/",
+      "document": "main_ee.md",
+      "sha256": "dc3a32e99060073dded020f1494731d25e0ead3f546a36fc2faa0d70b9637e6b",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/67337c5bd15e21bcab317c6418d76e49092f4aed-9b820f1e30.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297636675/67337C5BD15E21BCAB317C6418D76E49092F4AED/",
+      "document": "main_ee.md",
+      "sha256": "9b820f1e30df599bdda14e3550a962d3d9a163fc0085691d41aa6f4de6aad370",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/5f2820dc13dab6cde89b118256236272124e8e4e-86648ff46f.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297639741/5F2820DC13DAB6CDE89B118256236272124E8E4E/",
+      "document": "main_ee.md",
+      "sha256": "86648ff46fdfa3de49bd440986d9e3dc0dbbc3dc0f39b539fd82253c6eee2c96",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/f1a9d39585ca5fccfa0789e076e07c45ebddf926-a4b5f7dab0.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297648908/F1A9D39585CA5FCCFA0789E076E07C45EBDDF926/",
+      "document": "main_ee.md",
+      "sha256": "a4b5f7dab0b24273abbf37746b32bb88fcf4234274ac44f960795195b35b6805",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/7d5232828218bcd4a78c4ae0f661991d5ba6f655-e00974522c.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297650175/7D5232828218BCD4A78C4AE0F661991D5BA6F655/",
+      "document": "main_ee.md",
+      "sha256": "e00974522c1b928b2372d7bcc37265cbbc56cee6bb5bfbd651d2d924dd81f04c",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/90f27d44c4b9612ddf86852a1f1e2782bba16314-6e0c7f979e.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297652207/90F27D44C4B9612DDF86852A1F1E2782BBA16314/",
+      "document": "main_ee.md",
+      "sha256": "6e0c7f979e40b620962c254af8c3f0748b62ce16ce0ec90009e5bb03f1f9c6e9",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/c37eb7997cb16fff1c7d4db8a5d074cf6f02f08a-1dfc084b8f.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297652819/C37EB7997CB16FFF1C7D4DB8A5D074CF6F02F08A/",
+      "document": "main_ee.md",
+      "sha256": "1dfc084b8f0407f77bfde3dfcdda87a795d0ee5a5b422e910b8d3d5055be1f7d",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/0785b1af0c13ddd6d2ebd4c5abbeb405ac9cc704-59472ccfdd.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297653395/0785B1AF0C13DDD6D2EBD4C5ABBEB405AC9CC704/",
+      "document": "main_ee.md",
+      "sha256": "59472ccfdd8d5f7710aba90b72966f2b8ed08330d7aca38aa734ebb0d07711c1",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/0ef61e4fcafae326aef0c378f7c41a6e5e8d4082-ee38da7d9a.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297653938/0EF61E4FCAFAE326AEF0C378F7C41A6E5E8D4082/",
+      "document": "main_ee.md",
+      "sha256": "ee38da7d9ae9845961348d21afb5213bb6d262e385fb003e6252c19d87468d44",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/23adc402dddf6acdfe2e2b0a96a630d1d5aaa372-daa72450c4.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297658537/23ADC402DDDF6ACDFE2E2B0A96A630D1D5AAA372/",
+      "document": "main_ee.md",
+      "sha256": "daa72450c434d2fba8d4c00f8029c194f7dc2d7d624fea488a60a707dea79eef",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/a5d4ada07b6042cc5f6c732ac5744aa2721d104d-99edeb77ce.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990297657928/A5D4ADA07B6042CC5F6C732AC5744AA2721D104D/",
+      "document": "main_ee.md",
+      "sha256": "99edeb77ce39799a804891885a1fad4d342236ae4cd4636555b7085d4e49da08",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/f02372a173724280c77aa635ee64025f95f97250-7d66ea871f.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/1504719690103572692/F02372A173724280C77AA635EE64025F95F97250/",
+      "document": "main_ee.md",
+      "sha256": "7d66ea871f6708839abedb155cc559e1fe8453f2028b422d921cbec5486b9e1d",
+      "width": 693,
+      "height": 1600,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/4b5ccbb32ef60a25d5c2497225ceb590beaf6d08-dca54d842c.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294438958/4B5CCBB32EF60A25D5C2497225CEB590BEAF6D08/",
+      "document": "hacker.md",
+      "sha256": "dca54d842ce2e2fa72411e2b0cffe185c92b04d37e406c28721a7906205022c1",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/2a598fe4926bfe41fdba978662aeea0c9dcbe7bb-8e82a58ee5.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294452284/2A598FE4926BFE41FDBA978662AEEA0C9DCBE7BB/",
+      "document": "hacker.md",
+      "sha256": "8e82a58ee590dcf6a5956165fcdce9d3b0bcb3e3efb9b6947af8d86ab37f3c59",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/5dc6ab1486e80adb653bbc1fa55ed21f60e38303-88db3ca8e1.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294451064/5DC6AB1486E80ADB653BBC1FA55ED21F60E38303/",
+      "document": "hacker.md",
+      "sha256": "88db3ca8e18617d5d8a832772e704f33514c924b7716b28c49da51df85d95cff",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/754f7d453684a4ed4b558b47d4c02218c1e18d18-55bd46748a.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294453323/754F7D453684A4ED4B558B47D4C02218C1E18D18/",
+      "document": "hacker.md",
+      "sha256": "55bd46748a72fb2e0a67e834481bfd1e7f5d130a5cce21c3afeee6800d02e7b2",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/20d66f8f2c40b64f4f9e72e7b2721a8f2efcaf37-865179862d.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294459624/20D66F8F2C40B64F4F9E72E7B2721A8F2EFCAF37/",
+      "document": "hacker.md",
+      "sha256": "865179862d4bb706783301c6b143e1cc37b2777f7430e2c59b40aedb54e0ccbe",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/db437e5391e74c8e3b059c01635e7dbe9e5392d9-49b9bfa90a.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294461219/DB437E5391E74C8E3B059C01635E7DBE9E5392D9/",
+      "document": "hacker.md",
+      "sha256": "49b9bfa90a2599ae4e16a18b304de5eb6a5c4a8d7f480545c6e5f6ef9cacd322",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/858ca4cb0270680cc961131ea4d8548ce9656380-7f2aa822ea.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294462871/858CA4CB0270680CC961131EA4D8548CE9656380/",
+      "document": "hacker.md",
+      "sha256": "7f2aa822ead8abfe7d812db946507e63e6afe02ca7c45b68624cc9327d7693af",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/5cad39363d7f6b033c69a571e99f5d94d78891a9-3448bf3bd1.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294432666/5CAD39363D7F6B033C69A571E99F5D94D78891A9/",
+      "document": "pes.md",
+      "sha256": "3448bf3bd1125d3e65cf7c5459da4a91081606f3b928410496642d11f303d7c8",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/ed2f0218035d2f50f39dc94637c91839b543fdf9-e593b06249.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294428795/ED2F0218035D2F50F39DC94637C91839B543FDF9/",
+      "document": "qed.md",
+      "sha256": "e593b062494fc47a8efb09bb1c5fc75bf9712c64a5a16441b2d50e9e312e7a14",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/0ab059b9b4de165776862437ff4389e27330730c-fb72398dbb.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294314669/0AB059B9B4DE165776862437FF4389E27330730C/",
+      "document": "samantha_sorrow.md",
+      "sha256": "fb72398dbb73ccada4c7550d3b2676068f2ebc48d3d581f95b853427cf5acaea",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/078c2dd1b81ec48aa191257dcfe07963504e2bf4-630180abc7.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/790792935304079714/078C2DD1B81EC48AA191257DCFE07963504E2BF4/",
+      "document": "samantha_sorrow.md",
+      "sha256": "630180abc756280ac177ca4d3fd85ffc8cc44eba77597d5709bee47638a827bd",
+      "width": 675,
+      "height": 581,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/7d10a8acce2ea6bd6a0c34484daba63a1a75fe7f-d9a02efd65.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294318048/7D10A8ACCE2EA6BD6A0C34484DABA63A1A75FE7F/",
+      "document": "samantha_sorrow.md",
+      "sha256": "d9a02efd650bf723f1ff4f7a9ce925874bd17e3c4f7b3654f5202fb3bdc4b05c",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/1903990a72dcdad3b7771eefd421cbbb47aec65e-48ba8b7ad9.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294318770/1903990A72DCDAD3B7771EEFD421CBBB47AEC65E/",
+      "document": "samantha_sorrow.md",
+      "sha256": "48ba8b7ad989515a4249768a1f1763842239b091898dd8655b1babb7fd944eed",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/549f9df3dc3492ff523f5c10d2b58f48dadba73f-9dbb55be63.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294319503/549F9DF3DC3492FF523F5C10D2B58F48DADBA73F/",
+      "document": "samantha_sorrow.md",
+      "sha256": "9dbb55be6355ae97b7593ccd4aea7f47a40c364430190c11f0cfec03cc3a87bf",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/abc2cf9632b24f876e65e3a835fac4f78908e410-41e9cd79f5.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294320064/ABC2CF9632B24F876E65E3A835FAC4F78908E410/",
+      "document": "samantha_sorrow.md",
+      "sha256": "41e9cd79f5f1d34edad78b6c79c7e85ee8fa717c3cc0cd11aa8761edb0a29875",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/30f36fd7cde48d7320e0bde1f9e01af73a0e9e47-c3e366fda0.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294219055/30F36FD7CDE48D7320E0BDE1F9E01AF73A0E9E47/",
+      "document": "space_dog.md",
+      "sha256": "c3e366fda0b780149602a6b626fcaaaa4ebfe509ad33a3322a88936eedd1c170",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/50bf0969dec1ccb33515628c7cf3c011dfb91a0d-c751574b37.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294228331/50BF0969DEC1CCB33515628C7CF3C011DFB91A0D/",
+      "document": "space_dog.md",
+      "sha256": "c751574b37136f290d0ebfc4090273d0d759b7205c386c391a992b28a6ca9c8e",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/7503c2b76352a46c1ffb94d4cee060b5eab2f1d5-02cdcc056b.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294234055/7503C2B76352A46C1FFB94D4CEE060B5EAB2F1D5/",
+      "document": "space_dog.md",
+      "sha256": "02cdcc056bb9ccb3d5d711e96ad9717c36bf537a0e1937352e60bd07bcefbbf6",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/9a9fe62d218bc881c3422ef782bf1bac5731af8b-1418b48fed.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294237312/9A9FE62D218BC881C3422EF782BF1BAC5731AF8B/",
+      "document": "space_dog.md",
+      "sha256": "1418b48fed4b067df9bca0916399dd5ede7230db2d2b26fb2182b93aa97904ec",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/1202cd197ad37082f971b909ea6e426e9bc26960-fb73e4f815.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294239070/1202CD197AD37082F971B909EA6E426E9BC26960/",
+      "document": "space_dog.md",
+      "sha256": "fb73e4f8155e7af5cc8bfaf7174007b6cea1ca8a8776446030bab1eab5685fee",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/73212c03a4ed053bbfc099a346622b89989fea2f-163c0f8d93.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294240629/73212C03A4ED053BBFC099A346622B89989FEA2F/",
+      "document": "space_dog.md",
+      "sha256": "163c0f8d9358537f001346c640aa1503a0b457245f95e00ba60c934fb8e38f5a",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/af2a72f4f6d153442ad2d227949d2b9161f235f9-7b3b4244a2.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294244114/AF2A72F4F6D153442AD2D227949D2B9161F235F9/",
+      "document": "space_dog.md",
+      "sha256": "7b3b4244a223eb8416b9212b2c29a828c78d1cd849d1b8d0f4437645689c2792",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/942b1670b6b7d1856354985d62952ca10648729c-a3f54da9e7.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294311176/942B1670B6B7D1856354985D62952CA10648729C/",
+      "document": "space_dog.md",
+      "sha256": "a3f54da9e72e9b4c57b5cc26834720fc3e51293c1b0752d945c5c3feb472f9e0",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/ace7691542fdfa65f1f292337f7cbdbdd7b39e8c-cc6ba48b3e.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294246286/ACE7691542FDFA65F1F292337F7CBDBDD7B39E8C/",
+      "document": "space_dog.md",
+      "sha256": "cc6ba48b3e6e135d3d85254f43ed0b0a73c68d0f2f7921a1a50ea19610ee2263",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/d8973d5e90b40034a31f9e86069cc71e431b041c-1308fd720a.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294248531/D8973D5E90B40034A31F9E86069CC71E431B041C/",
+      "document": "space_dog.md",
+      "sha256": "1308fd720a52f1a22a4f12070e83babf1bf9373583e401fe1a3cf86480c49f82",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/ef4df0bee0df76fab140ebb832228222b5ffa602-3c5d0ec193.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294250502/EF4DF0BEE0DF76FAB140EBB832228222B5FFA602/",
+      "document": "space_dog.md",
+      "sha256": "3c5d0ec193c9a0a2a04c6bda8983c1ee24d24dd8d9a66d03428a314baee644c9",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/638d7a948057bcd2c500e808cde2181abe6b3a33-ebd5e767f9.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294258828/638D7A948057BCD2C500E808CDE2181ABE6B3A33/",
+      "document": "space_dog.md",
+      "sha256": "ebd5e767f9ff4d5445d6c32123f7cff8a95017126500e7e75788c6978ba80fee",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/ae888192fbfc25450cbaeefda4dc6c510e58002c-7786a00221.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294259341/AE888192FBFC25450CBAEEFDA4DC6C510E58002C/",
+      "document": "space_dog.md",
+      "sha256": "7786a002214151ac5824269c972c9d343aa91517af998625b4cf5ffa56b767b6",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/4d4379553702e3442bf9603c554755376df40130-b395effab7.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294325456/4D4379553702E3442BF9603C554755376DF40130/",
+      "document": "music_ee_1.md",
+      "sha256": "b395effab7dbd9f69e1103559d840160e2abda1fd4f166d1eaf3fc6fee98cfcf",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/cf53a18d7e850fec2d259fd4cbaa2472b03041a7-c8de33dee5.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294326731/CF53A18D7E850FEC2D259FD4CBAA2472B03041A7/",
+      "document": "music_ee_1.md",
+      "sha256": "c8de33dee5eaafa010ad699429c6194e1fdd6fa4e4f7e957e9a2d06142f910e9",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/a9fd1771df39baf3e84c41056ebd92a0b491e167-c992a8d270.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294330122/A9FD1771DF39BAF3E84C41056EBD92A0B491E167/",
+      "document": "music_ee_1.md",
+      "sha256": "c992a8d27078db864b9184654bc63cb59087a20ae63947d7fbbe2125c40ba53a",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/e837a7c7df871c26bb11982ff19b5356ef69f556-7655dd3741.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/1504719740985604859/E837A7C7DF871C26BB11982FF19B5356EF69F556/",
+      "document": "music_ee_2.md",
+      "sha256": "7655dd374138b6bd03f92d237e75c1a761302522ba455fd7d673ea2bc66bb953",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/22cecf886cdd7cb94279b1eb2c0222eff754e70a-4c4e7ec4db.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/1504719740985607834/22CECF886CDD7CB94279B1EB2C0222EFF754E70A/",
+      "document": "music_ee_2.md",
+      "sha256": "4c4e7ec4db686137680dcca8e34eb71f3268a1c8c2be909c425e6a9e62b48742",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/e69cdaf2878aa5424e5ec6a90ecd219b3c6078ec-2dc5cb0d4e.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/1504719740985610648/E69CDAF2878AA5424E5EC6A90ECD219B3C6078EC/",
+      "document": "music_ee_2.md",
+      "sha256": "2dc5cb0d4e98326f5b252bd04cd9daeaaec737519c0185bed569f6a1fba2613f",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/e6018c99318bd69cb28ffde18accd86068b5217d-c19325d8ef.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294573101/E6018C99318BD69CB28FFDE18ACCD86068B5217D/",
+      "document": "achievements.md",
+      "sha256": "c19325d8efd9105da22359e85d260d2fdb8bc2693161d2a8c4fc5156737cad91",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/176b4292f25735d4769dfe54b01a78ccfe257192-6bf21811ff.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294573715/176B4292F25735D4769DFE54B01A78CCFE257192/",
+      "document": "achievements.md",
+      "sha256": "6bf21811ff1d18ddfc44b1830ebcaa828d8e886b0242ce413101fea9ee71c351",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    },
+    {
+      "path": "images/source-guide/0edd7cfd3da9119d82f102e8ff0ad3c8c1e3884e-b067bc8e36.webp",
+      "source_url": "https://images.steamusercontent.com/ugc/868480990294575338/0EDD7CFD3DA9119D82F102E8FF0AD3C8C1E3884E/",
+      "document": "achievements.md",
+      "sha256": "b067bc8e364c4b8871b464ba715614db3f3b7ff54ae7d489e00012d9c1baef1a",
+      "width": 1600,
+      "height": 900,
+      "caption": ""
+    }
+  ],
+  "supplemental_sources": []
+}

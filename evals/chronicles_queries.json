@@ -1,0 +1,441 @@
+{
+  "version": 1,
+  "description": "Deterministic retrieval suite for the eight Zombies Chronicles maps. Bilingual, player-style questions exercise map inference, document ranking, section ranking, and image attachment without calling an LLM.",
+  "thresholds": {
+    "pass_rate": 0.9,
+    "map_accuracy": 1.0,
+    "document_hit_at_1": 0.95,
+    "section_hit_at_3": 0.9,
+    "image_hit_at_3": 0.9,
+    "clarification_accuracy": 1.0
+  },
+  "cases": [
+    {
+      "id": "nacht-no-pap",
+      "query": "Nacht der Untoten tem Pack-a-Punch ou energia?",
+      "expected_map_id": "nacht_der_untoten",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Zombies Chronicles setup"],
+      "tags": ["nacht_der_untoten", "setup", "pt"]
+    },
+    {
+      "id": "nacht-layout",
+      "query": "How many rooms are there in Nacht der Untoten and how much do the doors cost?",
+      "expected_map_id": "nacht_der_untoten",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Zombies Chronicles setup"],
+      "tags": ["nacht_der_untoten", "layout", "en"]
+    },
+    {
+      "id": "nacht-dolls",
+      "query": "Onde ficam os oito bonecos da Samantha em Nacht?",
+      "expected_map_id": "nacht_der_untoten",
+      "expected_document_paths": ["samantha_dolls.md"],
+      "expected_section_titles": ["Side easter egg - Samantha's dolls"],
+      "minimum_images": 3,
+      "tags": ["nacht_der_untoten", "side_ee", "pt"]
+    },
+    {
+      "id": "nacht-song",
+      "query": "How do I activate the Undone song on Nacht?",
+      "expected_map_id": "nacht_der_untoten",
+      "expected_document_paths": ["music_ee.md"],
+      "expected_section_titles": ["Side easter egg - Secret Song"],
+      "minimum_images": 1,
+      "tags": ["nacht_der_untoten", "music", "en"]
+    },
+    {
+      "id": "nacht-achievement",
+      "query": "Como faço o achievement I said we're CLOSED em Nacht?",
+      "expected_map_id": "nacht_der_untoten",
+      "expected_document_paths": ["achievement.md"],
+      "expected_section_titles": ["Achievement"],
+      "tags": ["nacht_der_untoten", "achievement", "pt"]
+    },
+    {
+      "id": "nacht-thundergun",
+      "query": "Where do I get the Thundergun in Nacht der Untoten?",
+      "expected_map_id": "nacht_der_untoten",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Zombies Chronicles setup"],
+      "tags": ["nacht_der_untoten", "wonder_weapon", "en"]
+    },
+    {
+      "id": "verruckt-power",
+      "query": "Como ligo a energia e junto os dois lados em Verrückt?",
+      "expected_map_id": "verruckt",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Power, layout and Pack-a-Punch"],
+      "tags": ["verruckt", "setup", "pt"]
+    },
+    {
+      "id": "verruckt-no-pap",
+      "query": "Does Verruckt have a native Pack-a-Punch machine?",
+      "expected_map_id": "verruckt",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Power, layout and Pack-a-Punch"],
+      "tags": ["verruckt", "pap", "en"]
+    },
+    {
+      "id": "verruckt-traps",
+      "query": "Onde ficam as três armadilhas elétricas de Verrückt?",
+      "expected_map_id": "verruckt",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Traps and Wonder Weapon"],
+      "tags": ["verruckt", "traps", "pt"]
+    },
+    {
+      "id": "verruckt-wunderwaffe",
+      "query": "How do I obtain the Wunderwaffe DG-2 on Verruckt?",
+      "expected_map_id": "verruckt",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Traps and Wonder Weapon"],
+      "tags": ["verruckt", "wonder_weapon", "en"]
+    },
+    {
+      "id": "verruckt-dolls",
+      "query": "Qual é a sequência 9 3 5 e onde estão as bonecas em Verrückt?",
+      "expected_map_id": "verruckt",
+      "expected_document_paths": ["samantha_dolls.md"],
+      "expected_section_titles": ["Secret easter egg - Samantha's dolls"],
+      "minimum_images": 3,
+      "tags": ["verruckt", "side_ee", "pt"]
+    },
+    {
+      "id": "verruckt-song",
+      "query": "How do I play Lullaby for a Dead Man in Verruckt?",
+      "expected_map_id": "verruckt",
+      "expected_document_paths": ["music_ee.md"],
+      "expected_section_titles": ["Side easter egg - Secret song"],
+      "minimum_images": 1,
+      "tags": ["verruckt", "music", "en"]
+    },
+    {
+      "id": "shi-no-pap",
+      "query": "Shi No Numa tem energia ou Pack-a-Punch nativo?",
+      "expected_map_id": "shi_no_numa",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Layout, perks and Pack-a-Punch"],
+      "tags": ["shi_no_numa", "setup", "pt"]
+    },
+    {
+      "id": "shi-random-perks",
+      "query": "How do the random perk huts work on Shi No Numa?",
+      "expected_map_id": "shi_no_numa",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Layout, perks and Pack-a-Punch"],
+      "tags": ["shi_no_numa", "perks", "en"]
+    },
+    {
+      "id": "shi-traps",
+      "query": "Onde ficam o Flogger e as armadilhas elétricas em Shi No Numa?",
+      "expected_map_id": "shi_no_numa",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Traps and transport"],
+      "tags": ["shi_no_numa", "traps", "pt"]
+    },
+    {
+      "id": "shi-wunderwaffe",
+      "query": "Where can I get the Wunderwaffe DG-2 in Shi No Numa Chronicles?",
+      "expected_map_id": "shi_no_numa",
+      "expected_document_paths": ["general.md"],
+      "expected_section_titles": ["Layout, perks and Pack-a-Punch"],
+      "tags": ["shi_no_numa", "wonder_weapon", "en"]
+    },
+    {
+      "id": "shi-dolls",
+      "query": "Como faço o easter egg das bonecas no Fishing Hut em Shi?",
+      "expected_map_id": "shi_no_numa",
+      "expected_document_paths": ["samantha_dolls.md"],
+      "expected_section_titles": ["Side easter egg - Samantha's dolls"],
+      "minimum_images": 3,
+      "tags": ["shi_no_numa", "side_ee", "pt"]
+    },
+    {
+      "id": "shi-song",
+      "query": "How do I activate The One using the Comm Room phone?",
+      "expected_map_id": "shi_no_numa",
+      "expected_document_paths": ["music_ee.md"],
+      "expected_section_titles": ["Side easter egg - Secret song"],
+      "minimum_images": 1,
+      "tags": ["shi_no_numa", "music", "en"]
+    },
+    {
+      "id": "kino-pap",
+      "query": "Como ligo o teleporter e chego no Pack-a-Punch do Kino?",
+      "expected_map_id": "kino_der_toten",
+      "expected_document_paths": ["power_pap.md"],
+      "expected_section_titles": ["Activating the power - Getting to the Pack-a-Punch"],
+      "minimum_images": 1,
+      "tags": ["kino_der_toten", "pap", "pt"]
+    },
+    {
+      "id": "kino-reels",
+      "query": "Where are the film reels and how do I use the projector in Kino?",
+      "expected_map_id": "kino_der_toten",
+      "expected_document_paths": ["film_reels.md"],
+      "expected_section_titles": ["Side easter egg - Movie projector"],
+      "minimum_images": 3,
+      "tags": ["kino_der_toten", "side_ee", "en"]
+    },
+    {
+      "id": "kino-paintings",
+      "query": "Onde ficam os quadros dos personagens e o retrato vazio no Kino?",
+      "expected_map_id": "kino_der_toten",
+      "expected_document_paths": ["paintings.md"],
+      "expected_section_titles": ["Side easter egg - Paintings"],
+      "minimum_images": 1,
+      "tags": ["kino_der_toten", "side_ee", "pt"]
+    },
+    {
+      "id": "kino-rocket",
+      "query": "How do I reveal the hidden rocket shield figurine on Kino der Toten?",
+      "expected_map_id": "kino_der_toten",
+      "expected_document_paths": ["rocket_figurine.md"],
+      "expected_section_titles": ["Side easter egg - Rocket figurine"],
+      "minimum_images": 1,
+      "tags": ["kino_der_toten", "side_ee", "en"]
+    },
+    {
+      "id": "kino-samantha",
+      "query": "Como completo o Samantha's Sorrow no Kino?",
+      "expected_map_id": "kino_der_toten",
+      "expected_document_paths": ["samantha_sorrow.md"],
+      "expected_section_titles": ["Side easter egg - Samantha's Sorrow"],
+      "minimum_images": 3,
+      "tags": ["kino_der_toten", "side_ee", "pt"]
+    },
+    {
+      "id": "kino-song",
+      "query": "Where are the three meteorite fragments for the song 115?",
+      "expected_map_id": "kino_der_toten",
+      "expected_document_paths": ["music_ee.md"],
+      "expected_section_titles": ["Side easter egg - Secret Song"],
+      "minimum_images": 3,
+      "tags": ["kino_der_toten", "music", "en"]
+    },
+    {
+      "id": "ascension-pap",
+      "query": "Como uso os Lunar Landers para liberar o Pack-a-Punch em Ascension?",
+      "expected_map_id": "ascension",
+      "expected_document_paths": ["power_pap.md"],
+      "expected_section_titles": ["Preparation - Activating Power & Accessing Pack-a-Punch"],
+      "minimum_images": 3,
+      "tags": ["ascension", "pap", "pt"]
+    },
+    {
+      "id": "ascension-main-ee",
+      "query": "How do I collect the LUNA letters during the Ascension main easter egg?",
+      "expected_map_id": "ascension",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["Main easter egg quest"],
+      "minimum_images": 1,
+      "tags": ["ascension", "main_ee", "en"]
+    },
+    {
+      "id": "ascension-samantha",
+      "query": "Onde jogo os Gersh Devices para começar Samantha's Sorrow em Ascension?",
+      "expected_map_id": "ascension",
+      "expected_document_paths": ["samantha_sorrow.md"],
+      "expected_section_titles": ["Side easter egg - Samantha's sorrow"],
+      "minimum_images": 3,
+      "tags": ["ascension", "side_ee", "pt"]
+    },
+    {
+      "id": "ascension-song",
+      "query": "Where are the teddy bears for Abracadavre on Ascension?",
+      "expected_map_id": "ascension",
+      "expected_document_paths": ["music_ee.md"],
+      "expected_section_titles": ["Side easter egg - Teddy bears"],
+      "minimum_images": 3,
+      "tags": ["ascension", "music", "en"]
+    },
+    {
+      "id": "ascension-monkeys",
+      "query": "Como ganho uma garrafa de perk defendendo as máquinas dos macacos?",
+      "active_map_id": "ascension",
+      "expected_map_id": "ascension",
+      "expected_document_paths": ["space_monkeys.md"],
+      "expected_section_titles": ["Information - Special rounds"],
+      "minimum_images": 1,
+      "tags": ["ascension", "special_round", "pt"]
+    },
+    {
+      "id": "ascension-achievements",
+      "query": "What achievements can I complete on Ascension Chronicles?",
+      "expected_map_id": "ascension",
+      "expected_document_paths": ["achievements.md"],
+      "expected_section_titles": ["Achievements"],
+      "tags": ["ascension", "achievement", "en"]
+    },
+    {
+      "id": "shang-pap",
+      "query": "Como libero o Pack-a-Punch com as placas de pressão em Shangri-La?",
+      "expected_map_id": "shangri_la",
+      "expected_document_paths": ["power_pap.md"],
+      "expected_section_titles": ["Preparation - Activating Power - Accessing Pack-a-Punch"],
+      "minimum_images": 3,
+      "tags": ["shangri_la", "pap", "pt"]
+    },
+    {
+      "id": "shang-ee-symbols",
+      "query": "How do I match the twelve symbols during the Shangri-La easter egg?",
+      "expected_map_id": "shangri_la",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["Main easter egg quest - Part 1"],
+      "minimum_images": 1,
+      "tags": ["shangri_la", "main_ee", "en"]
+    },
+    {
+      "id": "shang-ee-player-count",
+      "query": "Dá para fazer o easter egg principal de Shangri-La com 2 jogadores?",
+      "expected_map_id": "shangri_la",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["Player-count requirement"],
+      "tags": ["shangri_la", "main_ee", "player_count", "pt"]
+    },
+    {
+      "id": "shang-ee-dynamite",
+      "query": "Em qual etapa eu pego a dinamite e derrubo o meteorito em Shangri-La?",
+      "expected_map_id": "shangri_la",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["Step 9 - drop and catch the dynamite", "Step 10 - shrink the meteorite and collect the Focusing Stone"],
+      "minimum_images": 1,
+      "tags": ["shangri_la", "main_ee", "pt"]
+    },
+    {
+      "id": "shang-song",
+      "query": "Where are the meteorite fragments for Pareidolia on Shangri-La?",
+      "expected_map_id": "shangri_la",
+      "expected_document_paths": ["music_ee.md"],
+      "expected_section_titles": ["Side easter egg - Secret song"],
+      "minimum_images": 3,
+      "tags": ["shangri_la", "music", "en"]
+    },
+    {
+      "id": "shang-samantha",
+      "query": "Como faço o Samantha Hide and Seek em Shangri-La?",
+      "expected_map_id": "shangri_la",
+      "expected_document_paths": ["samantha_hide_and_seek.md"],
+      "expected_section_titles": ["Side easter egg - Samantha Hide and Seek"],
+      "minimum_images": 3,
+      "tags": ["shangri_la", "side_ee", "pt"]
+    },
+    {
+      "id": "shang-achievements",
+      "query": "What achievements are documented for Shangri-La Chronicles?",
+      "expected_map_id": "shangri_la",
+      "expected_document_paths": ["achievements.md"],
+      "expected_section_titles": ["Achievements"],
+      "tags": ["shangri_la", "achievement", "en"]
+    },
+    {
+      "id": "moon-pap",
+      "query": "Como volto para a Area 51 e uso o Pack-a-Punch em Moon?",
+      "expected_map_id": "moon",
+      "expected_document_paths": ["power_pap.md"],
+      "expected_section_titles": ["Preparation - Activating the Power - Accessing Pack-a-Punch"],
+      "minimum_images": 1,
+      "tags": ["moon", "pap", "pt"]
+    },
+    {
+      "id": "moon-hacker",
+      "query": "Where can the Hacker spawn and how do I stop an excavator?",
+      "expected_map_id": "moon",
+      "expected_document_paths": ["hacker.md"],
+      "expected_section_titles": ["Equipment - Hacker Tool"],
+      "minimum_images": 3,
+      "tags": ["moon", "equipment", "en"]
+    },
+    {
+      "id": "moon-pes",
+      "query": "Onde pego o traje P.E.S. para não sufocar em Moon?",
+      "expected_map_id": "moon",
+      "expected_document_paths": ["pes.md"],
+      "expected_section_titles": ["Equipment - P.E.S"],
+      "minimum_images": 1,
+      "tags": ["moon", "equipment", "pt"]
+    },
+    {
+      "id": "moon-qed",
+      "query": "What can the Q.E.D. do and where do I get it on Moon?",
+      "expected_map_id": "moon",
+      "expected_document_paths": ["qed.md"],
+      "expected_section_titles": ["Equipment - Q.E.D"],
+      "minimum_images": 1,
+      "tags": ["moon", "equipment", "en"]
+    },
+    {
+      "id": "moon-main-ee",
+      "query": "Como faço o Samantha Says e encho a pirâmide de almas no easter egg de Moon?",
+      "expected_map_id": "moon",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["Main easter egg quest - Part 1", "Main easter egg quest - Part 2"],
+      "minimum_images": 1,
+      "tags": ["moon", "main_ee", "pt"]
+    },
+    {
+      "id": "moon-space-dog",
+      "query": "How do I spawn and feed the space dog on Moon?",
+      "expected_map_id": "moon",
+      "expected_document_paths": ["space_dog.md"],
+      "expected_section_titles": ["Side easter egg - Space Dog"],
+      "minimum_images": 3,
+      "tags": ["moon", "side_ee", "en"]
+    },
+    {
+      "id": "origins-pap",
+      "query": "Como ativo os seis geradores e libero o Pack-a-Punch em Origins?",
+      "expected_map_id": "origins",
+      "expected_document_paths": ["power_pap.md"],
+      "expected_section_titles": ["Preparation - Accessing Pack-a-Punch"],
+      "minimum_images": 3,
+      "tags": ["origins", "pap", "pt"]
+    },
+    {
+      "id": "origins-fire-staff",
+      "query": "How do I build and upgrade the Fire Staff into Kagutsuchi's Blood?",
+      "expected_map_id": "origins",
+      "expected_document_paths": ["fire_staff.md"],
+      "expected_section_titles": ["Preparation - Fire Staff", "Preparation - Kagutsuchi's blood (Upgraded fire staff)"],
+      "minimum_images": 3,
+      "tags": ["origins", "wonder_weapon", "en"]
+    },
+    {
+      "id": "origins-ice-staff",
+      "query": "Onde encontro as peças do cajado de gelo e como faço o Ull's Arrow?",
+      "expected_map_id": "origins",
+      "expected_document_paths": ["ice_staff.md"],
+      "expected_section_titles": ["Preparation - Ice staff", "Preparation - Ull's Arrow (Upgraded ice staff)"],
+      "minimum_images": 3,
+      "tags": ["origins", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "origins-lightning-staff",
+      "query": "How do I get the tank parts and upgrade the Lightning Staff?",
+      "expected_map_id": "origins",
+      "expected_document_paths": ["lightning_staff.md"],
+      "expected_section_titles": ["Preparation - Lightning staff", "Preparation - Kimat's bite (Upgraded lightning staff)"],
+      "minimum_images": 3,
+      "tags": ["origins", "wonder_weapon", "en"]
+    },
+    {
+      "id": "origins-wind-staff",
+      "query": "Como pego as peças dentro dos robôs e melhoro o cajado de vento?",
+      "expected_map_id": "origins",
+      "expected_document_paths": ["wind_staff.md"],
+      "expected_section_titles": ["Preparation - Wind staff", "Preparation - Borea's Fury (Upgraded wind staff)"],
+      "minimum_images": 3,
+      "tags": ["origins", "wonder_weapon", "pt"]
+    },
+    {
+      "id": "origins-main-ee",
+      "query": "What are the steps for the Little Lost Girl main easter egg on Origins?",
+      "expected_map_id": "origins",
+      "expected_document_paths": ["main_ee.md"],
+      "expected_section_titles": ["Main easter egg quest"],
+      "minimum_images": 3,
+      "tags": ["origins", "main_ee", "en"]
+    }
+  ]
+}

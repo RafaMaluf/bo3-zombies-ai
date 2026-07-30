@@ -43,6 +43,8 @@ COMPREHENSIVE_TERMS = {
     "full",
     "montar",
     "monto",
+    "passos",
+    "steps",
     "todos",
     "todas",
     "4",
@@ -96,13 +98,17 @@ TITLE_BOOST_STOP_WORDS = {
     "build",
     "collect",
     "consigo",
+    "easter",
+    "egg",
     "faco",
     "find",
     "get",
     "liberar",
     "make",
+    "main",
     "obtain",
     "pego",
+    "quest",
     "unlock",
     "where",
 }
@@ -115,6 +121,10 @@ TOPIC_EXPANSIONS = {
     "crafting table": ("build", "table", "workbench"),
     "wonder weapon": ("wonder", "weapon"),
     "arma especial": ("wonder", "weapon"),
+    "cajado de fogo": ("fire", "staff"),
+    "cajado de gelo": ("ice", "staff"),
+    "cajado de raio": ("lightning", "staff"),
+    "cajado de vento": ("wind", "staff"),
     "escudo": ("shield",),
     "energia": ("power",),
     "ligar a energia": ("power",),
@@ -126,6 +136,9 @@ TOPIC_EXPANSIONS = {
     "agua azul": ("blue", "water", "bucket"),
     "agua verde": ("green", "water", "bucket"),
     "agua roxa": ("purple", "water", "bucket"),
+    "piramide de almas": ("pyramid", "souls", "main", "quest"),
+    "q e d": ("qed", "quantum", "entanglement", "device"),
+    "samantha says": ("computer", "colors", "pyramid", "souls", "main", "quest"),
 }
 TOKEN_EXPANSIONS = {
     "abrir": ("open", "unlock"),
@@ -136,6 +149,8 @@ TOKEN_EXPANSIONS = {
     "altares": ("altar", "altars"),
     "aranha": ("spider",),
     "aranhas": ("spider", "spiders"),
+    "armadilha": ("trap",),
+    "armadilhas": ("trap", "traps"),
     "arco": ("bow",),
     "arcos": ("bow", "bows"),
     "atirar": ("shoot",),
@@ -144,11 +159,14 @@ TOKEN_EXPANSIONS = {
     "balde": ("bucket",),
     "baldes": ("bucket", "buckets"),
     "bandeira": ("flag",),
+    "cajado": ("staff",),
+    "cajados": ("staff", "staffs"),
     "caveira": ("skull",),
     "caveiras": ("skull", "skulls"),
     "coracao": ("heart",),
     "coracoes": ("heart", "hearts"),
     "crafting": ("build", "workbench"),
+    "dinamite": ("dynamite",),
     "eletrica": ("electric", "lightning"),
     "eletrico": ("electric", "lightning"),
     "esqueleto": ("skeleton",),
@@ -163,12 +181,18 @@ TOKEN_EXPANSIONS = {
     "garrafa": ("bottle",),
     "garrafas": ("bottle", "bottles"),
     "incubar": ("incubate",),
+    "jogador": ("player",),
+    "jogadores": ("player", "players"),
     "lareira": ("fireplace",),
     "liberar": ("unlock",),
     "lobo": ("wolf",),
+    "macaco": ("monkey",),
+    "macacos": ("monkey", "monkeys"),
     "manopla": ("gauntlet",),
     "mascara": ("mask", "helmet"),
     "mascaras": ("mask", "masks", "helmet"),
+    "meteorito": ("meteorite",),
+    "meteoritos": ("meteorite", "meteorites"),
     "musica": ("music", "song"),
     "musicas": ("music", "songs"),
     "onde": ("where", "location"),
@@ -176,6 +200,8 @@ TOKEN_EXPANSIONS = {
     "ovo": ("egg",),
     "pego": ("get", "obtain"),
     "pedra": ("rock",),
+    "pessoa": ("player",),
+    "pessoas": ("player", "players"),
     "peca": ("part", "piece"),
     "pecas": ("parts", "pieces"),
     "planta": ("plant",),
@@ -185,10 +211,14 @@ TOKEN_EXPANSIONS = {
     "quatro": ("four", "4"),
     "ritual": ("ritual",),
     "rituais": ("ritual", "rituals"),
+    "robo": ("robot",),
+    "robos": ("robot", "robots"),
     "roxa": ("purple",),
     "roxo": ("purple",),
     "segunda": ("second", "part", "2"),
     "segundo": ("second", "part", "2"),
+    "sozinha": ("solo", "player"),
+    "sozinho": ("solo", "player"),
     "teletransportador": ("teleporter",),
     "teletransportadores": ("teleporter", "teleporters"),
     "terceira": ("third", "part", "3"),
@@ -201,6 +231,7 @@ TOKEN_EXPANSIONS = {
     "ursinhos": ("teddy", "bear", "bears"),
     "verde": ("green",),
     "vazio": ("void",),
+    "vento": ("wind",),
     "valvula": ("valve",),
     "valvulas": ("valve", "valves"),
     "vela": ("candle",),
@@ -300,6 +331,67 @@ class SearchEngine:
                 found.append(map_id)
         return tuple(found)
 
+    def explicit_document_paths(
+        self,
+        query: str,
+        map_id: str | None,
+    ) -> tuple[str, ...]:
+        """Return guides whose filename is explicitly named in the query.
+
+        This is intentionally conservative. It recognizes concrete guide names
+        such as "G-Strike" and "Maxis Drone", but does not treat generic words
+        such as "main", "setup" or "power" as a multi-document request.
+        """
+        record = self.knowledge_base.maps.get(map_id or "")
+        if record is None:
+            return ()
+
+        normalized_query = normalize_text(query)
+        query_tokens = set(expanded_query_tokens(query))
+        generic_tokens = {
+            "ee",
+            "general",
+            "main",
+            "music",
+            "overview",
+            "pap",
+            "power",
+            "setup",
+            "side",
+        }
+        matches: list[tuple[int, int, str]] = []
+        for order, path in enumerate(record.document_paths):
+            label = normalize_text(Path(path).stem.replace("_", " ").replace("-", " "))
+            label_tokens = set(tokenize(label))
+            phrase_match = re.search(
+                rf"(?:^|\s){re.escape(label)}(?:$|\s)",
+                normalized_query,
+            )
+            semantic_match = (
+                bool(label_tokens)
+                and label_tokens <= query_tokens
+                and bool(label_tokens - generic_tokens)
+            )
+            if phrase_match or semantic_match:
+                position = phrase_match.start() if phrase_match else len(normalized_query) + order
+                matches.append((position, order, path))
+
+        matches.sort()
+        return tuple(path for _, _, path in matches)
+
+    @staticmethod
+    def is_multi_document_request(
+        query: str,
+        document_paths: tuple[str, ...],
+    ) -> bool:
+        if len(document_paths) < 2:
+            return False
+        if len(document_paths) >= 3:
+            return True
+        if any(separator in query for separator in (",", ";", "&", "+", "/")):
+            return True
+        return bool({"e", "and"} & set(normalize_text(query).split()))
+
     def search(
         self,
         query: str,
@@ -309,10 +401,10 @@ class SearchEngine:
         explicit_maps = self.explicit_map_ids(query)
         valid_active_map = active_map_id if active_map_id in self.knowledge_base.maps else None
 
-        if explicit_maps:
-            allowed_maps = set(explicit_maps)
-        elif valid_active_map:
+        if valid_active_map:
             allowed_maps = {valid_active_map}
+        elif explicit_maps:
+            allowed_maps = set(explicit_maps)
         else:
             allowed_maps = set(self.knowledge_base.maps)
 
@@ -330,6 +422,17 @@ class SearchEngine:
         unique_topic_map = self._unique_topic_map(query, original_query_tokens)
         if not explicit_maps and not valid_active_map and unique_topic_map:
             scored = [item for item in scored if item.chunk.map_id == unique_topic_map]
+
+        document_map_id = valid_active_map
+        if document_map_id is None and len(explicit_maps) == 1:
+            document_map_id = explicit_maps[0]
+        if document_map_id is None:
+            document_map_id = unique_topic_map
+        explicit_documents = self.explicit_document_paths(query, document_map_id)
+        is_multi_document_query = (
+            len(explicit_documents) <= 3
+            and self.is_multi_document_request(query, explicit_documents)
+        )
 
         if not scored:
             suggestions = () if valid_active_map else tuple(sorted(allowed_maps))
@@ -367,17 +470,25 @@ class SearchEngine:
             second_score = map_scores[ranked_maps[1]]
             unique_topic = top_score >= (second_score * 1.8 + 1.0)
             if not unique_topic:
+                unranked_maps = sorted(allowed_maps - set(ranked_maps))
                 return RetrievalResult(
                     chunks=(),
                     active_map_id=None,
                     explicit_map_ids=(),
                     needs_clarification=True,
                     clarification_question="Sobre qual mapa você está falando?",
-                    suggested_map_ids=tuple(ranked_maps[:6]),
+                    suggested_map_ids=tuple([*ranked_maps, *unranked_maps]),
                 )
 
         selection_pool = scored
-        if not self._is_comparison_query(query) and len(explicit_maps) <= 1:
+        if is_multi_document_query:
+            requested_paths = set(explicit_documents)
+            selection_pool = [
+                item
+                for item in scored
+                if item.chunk.map_id == document_map_id and item.chunk.path in requested_paths
+            ]
+        elif not self._is_comparison_query(query) and len(explicit_maps) <= 1:
             best_by_file: dict[tuple[str, str], float] = {}
             for item in scored:
                 file_key = (item.chunk.map_id, item.chunk.path)
@@ -395,11 +506,34 @@ class SearchEngine:
                 item for item in scored if (item.chunk.map_id, item.chunk.path) == dominant_file
             ]
 
-        score_ratio = 0.0 if self._is_comprehensive_query(query) else 0.72
-        score_floor = selection_pool[0].score * score_ratio
-        selected_items = [item for item in selection_pool[:limit] if item.score >= score_floor]
-        if not selected_items:
-            selected_items = [selection_pool[0]]
+        if is_multi_document_query:
+            by_document = {
+                path: [item for item in selection_pool if item.chunk.path == path]
+                for path in explicit_documents
+            }
+            selected_items: list[ScoredChunk] = []
+            offset = 0
+            while len(selected_items) < limit:
+                added = False
+                for path in explicit_documents:
+                    candidates = by_document[path]
+                    if offset >= len(candidates):
+                        continue
+                    selected_items.append(candidates[offset])
+                    added = True
+                    if len(selected_items) >= limit:
+                        break
+                if not added:
+                    break
+                offset += 1
+        else:
+            score_ratio = 0.0 if self._is_comprehensive_query(query) else 0.72
+            score_floor = selection_pool[0].score * score_ratio
+            selected_items = [
+                item for item in selection_pool[:limit] if item.score >= score_floor
+            ]
+            if not selected_items:
+                selected_items = [selection_pool[0]]
 
         # A guide's overview and progression summary carry prerequisites and
         # connective steps that a highly specific score can otherwise omit.

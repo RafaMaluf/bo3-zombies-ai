@@ -1,0 +1,21 @@
+{
+  "map_id": "shi_no_numa",
+  "display_name": "Shi No Numa",
+  "release_order": 9,
+  "aliases": ["shi no numa", "shi", "swamp"],
+  "summary": "Zombies Chronicles version of Shi No Numa, covering perk huts, traps, the zipline, Wunderwaffe DG-2, Samantha dolls, secret songs, and achievements.",
+  "documents": [
+    {
+      "path": "source_guide.md",
+      "category": "general",
+      "summary": "Source guide covering setup, side easter eggs, and achievements on Shi No Numa.",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941103877&l=english",
+      "title": "Shi No Numa source guide",
+      "content_selector": ".guide.subSections",
+      "include_image_url_patterns": ["images\\.steamusercontent\\.com"],
+      "min_image_width": 320,
+      "min_image_height": 180,
+      "max_images": 120
+    }
+  ]
+}

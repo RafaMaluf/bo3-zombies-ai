@@ -40,6 +40,40 @@ REFERENTIAL_TERMS = {
     "tambem",
     "também",
 }
+ELLIPTICAL_OPENERS = {
+    "can",
+    "could",
+    "da",
+    "does",
+    "funciona",
+    "pode",
+    "podem",
+    "posso",
+    "precisa",
+    "serve",
+    "tem",
+    "would",
+}
+ELLIPTICAL_TERMS = {
+    "dupla",
+    "less",
+    "mais",
+    "menos",
+    "more",
+    "solo",
+    "sozinho",
+    "sozinha",
+    "trio",
+}
+GENERIC_VARIANT_LABEL_TERMS = {
+    "all",
+    "base",
+    "crafting",
+    "final",
+    "overview",
+    "setup",
+    "stage",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,6 +94,10 @@ document catalog to determine what the user means.
 Rules:
 - Resolve ellipsis and references such as "and the others?", "what about it?",
   "where is the third one?", and equivalent wording in any language.
+- Treat short yes/no or constraint follow-ups that omit their object, such as
+  "can it be done with fewer?" or "with two?", as referring to the latest
+  sourced objective. Preserve that document instead of switching to another
+  guide that happens to share a generic term.
 - If one document or intent is clear, produce a self-contained resolved_query.
 - If the user asks about a broad family with multiple distinct guides, request
   one concise clarification and return the matching document paths.
@@ -110,7 +148,12 @@ def should_resolve_follow_up(
     words = normalize_text(message).split()
     if not words or len(words) > 8:
         return False
-    return words[0] in REFERENTIAL_OPENERS or bool(set(words) & REFERENTIAL_TERMS)
+    word_set = set(words)
+    return (
+        words[0] in REFERENTIAL_OPENERS | ELLIPTICAL_OPENERS
+        or bool(word_set & (REFERENTIAL_TERMS | ELLIPTICAL_TERMS))
+        or (len(words) <= 4 and any(word.isdigit() for word in words))
+    )
 
 
 def document_catalog(
@@ -294,7 +337,7 @@ def _topic_document_options(
     scored.sort(key=lambda pair: (-pair[0], pair[1].path))
     cutoff = scored[0][0] * 0.65
     options = [item for score, item in scored if score >= cutoff and item.category != "general"]
-    return options[:8]
+    return _prefer_specific_variants(options)[:8]
 
 
 def _sibling_document_options(
@@ -324,7 +367,7 @@ def _sibling_document_options(
         and source_label_tokens.intersection(tokenize(item.label))
     ]
     if strong_matches:
-        return strong_matches[:8]
+        return _prefer_specific_variants(strong_matches)[:8]
 
     same_category = [
         item
@@ -334,6 +377,17 @@ def _sibling_document_options(
     if len(same_category) <= 5:
         return same_category
     return []
+
+
+def _prefer_specific_variants(
+    options: list[DocumentReference],
+) -> list[DocumentReference]:
+    if len(options) < 3:
+        return options
+    specific = [
+        item for item in options if not (set(tokenize(item.label)) & GENERIC_VARIANT_LABEL_TERMS)
+    ]
+    return specific if len(specific) >= 2 else options
 
 
 def _document_label(path: str) -> str:

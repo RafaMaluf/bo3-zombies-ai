@@ -1,0 +1,21 @@
+{
+  "map_id": "nacht_der_untoten",
+  "display_name": "Nacht der Untoten",
+  "release_order": 7,
+  "aliases": ["nacht", "nacht der untoten"],
+  "summary": "Zombies Chronicles version of Nacht der Untoten, covering its compact layout, weapons, survival setup, Samantha dolls, secret songs, and achievements.",
+  "documents": [
+    {
+      "path": "source_guide.md",
+      "category": "general",
+      "summary": "Source guide covering the Zombies Chronicles-specific side easter eggs and achievements on Nacht der Untoten.",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=941029268",
+      "title": "Nacht der Untoten source guide",
+      "content_selector": ".guide.subSections",
+      "include_image_url_patterns": ["images\\.steamusercontent\\.com"],
+      "min_image_width": 320,
+      "min_image_height": 180,
+      "max_images": 80
+    }
+  ]
+}

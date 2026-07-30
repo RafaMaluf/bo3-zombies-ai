@@ -36,9 +36,12 @@ class Settings:
     cache_dir: Path = BASE_DIR / ".cache"
     groq_api_key: str = field(default_factory=lambda: os.getenv("GROQ_API_KEY", ""))
     groq_model: str = field(
-        default_factory=lambda: os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+        default_factory=lambda: os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
     )
     max_retrieved_chunks: int = field(default_factory=lambda: _env_int("MAX_RETRIEVED_CHUNKS", 10))
+    max_multi_documents: int = field(
+        default_factory=lambda: _env_int("MAX_MULTI_DOCUMENTS", 3)
+    )
     max_context_chars: int = field(default_factory=lambda: _env_int("MAX_CONTEXT_CHARS", 28_000))
     max_candidate_images: int = field(default_factory=lambda: _env_int("MAX_CANDIDATE_IMAGES", 24))
     max_response_images: int = field(default_factory=lambda: _env_int("MAX_RESPONSE_IMAGES", 8))

@@ -15,10 +15,11 @@ maps/
 
 ## `index.json`
 
-Campos obrigatórios:
+Campos do índice:
 
 - `map_id`: identificador estável em `snake_case`;
 - `display_name`: nome exibido;
+- `release_order`: posição opcional do mapa na ordem de lançamento exibida pela interface; mapas sem esse campo aparecem por último;
 - `aliases`: nomes e abreviações usados pelos jogadores;
 - `summary`: resumo do mapa;
 - `files`: todos os Markdown pesquisáveis.

@@ -33,7 +33,7 @@ def test_generic_pack_a_punch_question_requests_a_map(search_engine: SearchEngin
     )
 
     assert result.needs_clarification
-    assert len(result.suggested_map_ids) > 1
+    assert set(result.suggested_map_ids) == set(search_engine.knowledge_base.maps)
 
 
 def test_missing_topic_in_active_map_does_not_suggest_same_map(
@@ -62,6 +62,21 @@ def test_active_map_keeps_follow_up_in_context(search_engine: SearchEngine) -> N
     assert result.chunks[0].chunk.section_title == "part 3 - underground frame"
 
 
+def test_active_map_wins_when_an_area_name_is_also_another_map(
+    search_engine: SearchEngine,
+) -> None:
+    result = search_engine.search(
+        "Onde fica a peça do Dragon Shield na área de Origins?",
+        active_map_id="revelations",
+        limit=6,
+    )
+
+    assert not result.needs_clarification
+    assert result.active_map_id == "revelations"
+    assert result.chunks[0].chunk.path == "shield.md"
+    assert result.chunks[0].chunk.section_title == "part 1 - origins area piece"
+
+
 def test_portuguese_ordinal_finds_the_correct_part_and_images(
     search_engine: SearchEngine,
 ) -> None:
@@ -86,6 +101,45 @@ def test_dominant_document_removes_loose_rocket_matches(search_engine: SearchEng
 
     assert not result.needs_clarification
     assert {scored.chunk.path for scored in result.chunks} == {"shield.md"}
+
+
+def test_three_explicit_guides_are_retrieved_together(
+    search_engine: SearchEngine,
+) -> None:
+    query = "Como faço o G-Strike, o Maxis Drone e o One Inch Punch?"
+
+    assert search_engine.explicit_document_paths(query, "origins") == (
+        "g_strike.md",
+        "maxis_drone.md",
+        "one_inch_punch.md",
+    )
+
+    result = search_engine.search(
+        query,
+        active_map_id="origins",
+        limit=10,
+    )
+
+    assert not result.needs_clarification
+    assert {item.chunk.path for item in result.chunks} == {
+        "g_strike.md",
+        "maxis_drone.md",
+        "one_inch_punch.md",
+    }
+
+
+def test_related_document_name_is_not_treated_as_a_multi_guide_list(
+    search_engine: SearchEngine,
+) -> None:
+    result = search_engine.search(
+        "Quais trials exigem o escudo elétrico?",
+        active_map_id="zetsubou_no_shima",
+        limit=10,
+    )
+
+    assert not result.needs_clarification
+    assert {item.chunk.path for item in result.chunks} == {"trials.md"}
+    assert result.chunks[0].chunk.section_title == "electric shield requirement"
 
 
 def test_portuguese_topic_expansion_finds_shield(search_engine: SearchEngine) -> None:

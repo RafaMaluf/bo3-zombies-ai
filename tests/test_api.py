@@ -15,7 +15,15 @@ class ImageSelectingLLM:
     async def answer(self, messages: list[dict[str, str]]) -> LLMResponse:
         image_ids = re.findall(r"img_[a-f0-9]{16}", messages[-1]["content"])
         selected = [image_ids[0], image_ids[0], "img_not_allowed"] if image_ids else []
-        return LLMResponse(answer="Resposta de teste.", image_ids=selected)
+        answer = (
+            "Resposta de teste.\n\n"
+            "---\n"
+            "**Imagens de apoio**\n"
+            f"- Escudo: `{image_ids[0]}`"
+            if image_ids
+            else "Resposta de teste."
+        )
+        return LLMResponse(answer=answer, image_ids=selected)
 
 
 class NoImageLLM:
@@ -73,17 +81,50 @@ class FailingResolverLLM:
         return LLMResponse(answer="O escudo é montado na bancada.")
 
 
+class PlayerCountFollowUpLLM:
+    async def resolve_query(
+        self,
+        _: list[dict[str, str]],
+    ) -> QueryResolution:
+        raise LLMResponseError("No usable resolution.")
+
+    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+        return LLMResponse(
+            answer=(
+                "No jogo sem mod, o Easter Egg principal exige 4 jogadores. "
+                "Solo requer um mod compatível; com 2 ou 3 não funciona."
+            )
+        )
+
+
 def test_health_maps_and_thumbnail_endpoints() -> None:
     with TestClient(app) as client:
         health = client.get("/health")
         assert health.status_code == 200
         assert health.json()["status"] == "ok"
-        assert health.json()["maps"] == 6
+        assert health.json()["maps"] == 14
 
         maps = client.get("/maps")
         assert maps.status_code == 200
         map_payload = maps.json()
-        assert len(map_payload) == 6
+        assert len(map_payload) == 14
+        assert [item["map_id"] for item in map_payload] == [
+            "shadows_of_evil",
+            "the_giant",
+            "der_eisendrache",
+            "zetsubou_no_shima",
+            "gorod_krovi",
+            "revelations",
+            "nacht_der_untoten",
+            "verruckt",
+            "shi_no_numa",
+            "kino_der_toten",
+            "ascension",
+            "shangri_la",
+            "moon",
+            "origins",
+        ]
+        assert [item["release_order"] for item in map_payload] == list(range(1, 15))
 
         cover_id = next(item["cover_image_id"] for item in map_payload if item["cover_image_id"])
         thumbnail = client.get(f"/media/{cover_id}?variant=thumb")
@@ -140,7 +181,37 @@ def test_generic_question_returns_map_clarification_without_calling_llm() -> Non
         assert response.status_code == 200
         payload = response.json()
         assert payload["need_clarification"]
-        assert len(payload["suggested_map_ids"]) == 6
+        assert len(payload["suggested_map_ids"]) == 14
+
+
+def test_more_than_three_explicit_guides_are_capped_without_calling_llm() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = UnavailableLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": (
+                    "Como faço o G-Strike, o Maxis Drone, o One Inch Punch "
+                    "e o Shield?"
+                ),
+                "active_map_id": "origins",
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["need_clarification"]
+        assert payload["clarification_question"] == (
+            "Você pediu 4 guias de uma vez. Para manter a resposta objetiva, "
+            "escolha até 3."
+        )
+        assert payload["suggested_queries"] == [
+            "G Strike",
+            "Maxis Drone",
+            "One Inch Punch",
+            "Shield",
+        ]
+        assert payload["active_map_id"] == "origins"
 
 
 def test_ambiguous_follow_up_offers_valid_document_choices() -> None:
@@ -232,6 +303,35 @@ def test_referential_follow_up_uses_previous_source_when_resolution_fails() -> N
         assert {source["path"] for source in payload["sources"]} == {"shield.md"}
 
 
+def test_elliptical_player_count_follow_up_keeps_previous_main_quest_source() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = PlayerCountFollowUpLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": "pode com 2?",
+                "active_map_id": "shangri_la",
+                "conversation_history": [
+                    {
+                        "role": "user",
+                        "content": "Em quantas pessoas consigo fazer o EE principal?",
+                    },
+                    {
+                        "role": "assistant",
+                        "content": "O Easter Egg principal exige quatro jogadores.",
+                        "source_paths": ["main_ee.md"],
+                    },
+                ],
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert not payload["need_clarification"]
+        assert {source["path"] for source in payload["sources"]} == {"main_ee.md"}
+        assert "4 jogadores" in payload["answer"]
+
+
 def test_chat_rejects_model_image_ids_outside_retrieved_context() -> None:
     with TestClient(app) as client:
         client.app.state.llm = ImageSelectingLLM()
@@ -246,8 +346,10 @@ def test_chat_rejects_model_image_ids_outside_retrieved_context() -> None:
         assert response.status_code == 200
         payload = response.json()
         assert payload["answer"] == "Resposta de teste."
-        assert len(payload["relevant_images"]) == 1
-        assert payload["relevant_images"][0]["section"] == "part 3 - underground frame"
+        assert len(payload["relevant_images"]) == 3
+        assert {image["section"] for image in payload["relevant_images"]} == {
+            "part 3 - underground frame"
+        }
         assert {source["path"] for source in payload["sources"]} == {"shield.md"}
 
 
@@ -266,6 +368,25 @@ def test_chat_falls_back_to_one_image_per_procedure_section() -> None:
             "part 1 - double pipe item",
             "part 2 - griffin plate",
             "part 3 - underground frame",
+        }
+
+
+def test_chat_fills_visual_location_guide_from_one_section() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = NoImageLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": "Onde ficam as bonecas da Samantha?",
+                "active_map_id": "nacht_der_untoten",
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert len(payload["relevant_images"]) == 6
+        assert {image["section"] for image in payload["relevant_images"]} == {
+            "Side easter egg - Samantha's dolls"
         }
 
 

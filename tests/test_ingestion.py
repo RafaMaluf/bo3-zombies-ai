@@ -22,6 +22,7 @@ def _write_manifest(path: Path, *, document_path: str = "guide.md") -> None:
             {
                 "map_id": "test_map",
                 "display_name": "Test Map",
+                "release_order": 99,
                 "aliases": ["tm"],
                 "summary": "A generated test map.",
                 "documents": [
@@ -98,6 +99,8 @@ def test_ingestion_builds_valid_map_deduplicates_and_normalizes_images(
     assert provenance["sources"][0]["url"] == "https://guides.example/map"
     assert provenance["images"][0]["path"].endswith(".webp")
     assert provenance["images"][0]["source_url"].endswith("/screens/power.png")
+    index = json.loads((result.destination / "index.json").read_text(encoding="utf-8"))
+    assert index["release_order"] == 99
 
     knowledge_base = KnowledgeBase(tmp_path / "maps", verify_images=True)
     assert not knowledge_base.issues
@@ -142,3 +145,49 @@ def test_ingestion_fails_when_content_selector_does_not_match(
             cache_dir=tmp_path / "cache",
             client=client,
         )
+
+
+def test_ingestion_preserves_steam_subsections_and_mixed_text(tmp_path: Path) -> None:
+    manifest_path = tmp_path / "manifest.json"
+    _write_manifest(manifest_path)
+    screenshot = _image_bytes((800, 450))
+    html = b"""
+    <html><body>
+      <article class="guide subSections">
+        <div class="subSection detailBox">
+          <div class="subSectionTitle">Turning on power</div>
+          <div class="subSectionDesc">
+            Open the first door.<br><br>
+            Use the <b>power switch</b> beside the stairs.
+            <ul><li>Listen for the activation sound.</li></ul>
+            <a href="/screens/power.png">
+              <img src="/screens/power.png" alt="Power switch">
+            </a>
+            <div style="clear: both"></div>
+          </div>
+        </div>
+      </article>
+    </body></html>
+    """
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if str(request.url) == "https://guides.example/map":
+            return httpx.Response(200, content=html, request=request)
+        if request.url.path == "/screens/power.png":
+            return httpx.Response(200, content=screenshot, request=request)
+        return httpx.Response(404, request=request)
+
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        result = ingest_manifest(
+            manifest_path,
+            maps_dir=tmp_path / "maps",
+            cache_dir=tmp_path / "cache",
+            client=client,
+        )
+
+    markdown = (result.destination / "guide.md").read_text(encoding="utf-8")
+    assert "## Turning on power" in markdown
+    assert "Open the first door." in markdown
+    assert "Use the power switch beside the stairs." in markdown
+    assert "- Listen for the activation sound." in markdown
+    assert "Related image: images/guide/power-switch-" in markdown

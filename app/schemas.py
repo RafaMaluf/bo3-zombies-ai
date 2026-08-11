@@ -34,6 +34,15 @@ class RelevantImage(BaseModel):
     section: str
 
 
+class RateLimitUsage(BaseModel):
+    remaining_tokens: int | None = None
+    token_limit: int | None = None
+    remaining_requests: int | None = None
+    request_limit: int | None = None
+    tokens_reset_in: str | None = None
+    requests_reset_in: str | None = None
+
+
 class MapSummary(BaseModel):
     map_id: str
     display_name: str
@@ -55,6 +64,7 @@ class ChatResponse(BaseModel):
     sources: list[SelectedSource] = Field(default_factory=list)
     relevant_images: list[RelevantImage] = Field(default_factory=list)
     active_map_id: str | None = None
+    usage: RateLimitUsage | None = None
 
 
 class HealthResponse(BaseModel):

@@ -346,6 +346,59 @@ button {
   border-radius: 50%;
 }
 
+.api-usage {
+  width: min(260px, 26vw);
+  min-width: 190px;
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(17, 17, 20, 0.7);
+}
+
+.api-usage-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#usage-percent {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.usage-track {
+  height: 4px;
+  margin: 6px 0 5px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.usage-progress {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--success);
+  transition: width 180ms ease, background 180ms ease;
+}
+
+.usage-track.warning .usage-progress { background: #e8b04b; }
+.usage-track.critical .usage-progress { background: var(--danger); }
+
+.usage-detail {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .chat-stage {
   position: relative;
   min-height: 0;
@@ -989,6 +1042,15 @@ button {
   }
 
   .knowledge-stats {
+    display: none;
+  }
+
+  .api-usage {
+    width: 168px;
+    min-width: 0;
+  }
+
+  .api-usage .usage-detail:last-child {
     display: none;
   }
 

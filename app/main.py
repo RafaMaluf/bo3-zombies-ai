@@ -340,6 +340,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
                             ),
                             suggested_queries=[item.label for item in options],
                             active_map_id=req.active_map_id,
+                            usage=resolution.usage,
                         )
                 else:
                     resolved_retrieval = search_engine.search(
@@ -423,6 +424,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         sources=sources,
         relevant_images=relevant_images,
         active_map_id=retrieval.active_map_id,
+        usage=generated.usage,
     )
 
 

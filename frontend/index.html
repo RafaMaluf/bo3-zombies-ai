@@ -71,6 +71,18 @@
         <div id="knowledge-stats" class="knowledge-stats" aria-label="Estatísticas">
           <span>Carregando…</span>
         </div>
+
+        <section id="api-usage" class="api-usage" aria-label="Uso da API Groq">
+          <div class="api-usage-heading">
+            <span id="usage-label">API disponível</span>
+            <span id="usage-percent">Aguardando</span>
+          </div>
+          <div class="usage-track" aria-hidden="true">
+            <div id="usage-progress" class="usage-progress"></div>
+          </div>
+          <div id="usage-tokens" class="usage-detail">Uso após a primeira resposta</div>
+          <div id="usage-requests" class="usage-detail"></div>
+        </section>
       </header>
 
       <section class="chat-stage">

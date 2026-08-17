@@ -8,11 +8,6 @@ const elements = {
   mapCount: document.getElementById("map-count"),
   activeMapLabel: document.getElementById("active-map-label"),
   knowledgeStats: document.getElementById("knowledge-stats"),
-  usageLabel: document.getElementById("usage-label"),
-  usagePercent: document.getElementById("usage-percent"),
-  usageProgress: document.getElementById("usage-progress"),
-  usageTokens: document.getElementById("usage-tokens"),
-  usageRequests: document.getElementById("usage-requests"),
   systemStatus: document.getElementById("system-status"),
   clearChat: document.getElementById("clear-chat"),
   welcome: document.getElementById("welcome"),
@@ -35,36 +30,6 @@ const state = {
   history: [],
   pending: false
 };
-
-function formatCompact(value) {
-  if (value >= 1000) return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
-  return new Intl.NumberFormat().format(value);
-}
-
-function updateUsage(usage) {
-  if (!usage) return;
-
-  const hasTokens = Number.isFinite(usage.remaining_tokens) && Number.isFinite(usage.token_limit);
-  const hasRequests = Number.isFinite(usage.remaining_requests) && Number.isFinite(usage.request_limit);
-  const ratio = hasTokens && usage.token_limit > 0
-    ? Math.max(0, Math.min(1, usage.remaining_tokens / usage.token_limit))
-    : null;
-
-  elements.usageLabel.textContent = ratio === null
-    ? "API conectada"
-    : ratio <= 0.1 ? "API quase no limite" : ratio <= 0.25 ? "API atenção" : "API disponível";
-  elements.usagePercent.textContent = ratio === null ? "Online" : `${Math.round(ratio * 100)}% restante`;
-  elements.usageProgress.style.width = ratio === null ? "100%" : `${ratio * 100}%`;
-  elements.usageProgress.parentElement.classList.toggle("warning", ratio !== null && ratio <= 0.25);
-  elements.usageProgress.parentElement.classList.toggle("critical", ratio !== null && ratio <= 0.1);
-
-  elements.usageTokens.textContent = hasTokens
-    ? `${formatCompact(usage.remaining_tokens)} / ${formatCompact(usage.token_limit)} tokens/min${usage.tokens_reset_in ? ` · renova em ${usage.tokens_reset_in}` : ""}`
-    : "Limite de tokens indisponível";
-  elements.usageRequests.textContent = hasRequests
-    ? `${new Intl.NumberFormat().format(usage.remaining_requests)} requisições restantes hoje${usage.requests_reset_in ? ` · renova em ${usage.requests_reset_in}` : ""}`
-    : "";
-}
 
 function escapeHtml(value) {
   return value
@@ -384,7 +349,8 @@ async function sendMessage(message) {
     body: JSON.stringify({
       message,
       conversation_history: state.history.slice(-10),
-      active_map_id: state.activeMapId
+      active_map_id: state.activeMapId,
+      preferred_language: navigator.languages?.[0] || navigator.language || "pt-BR"
     })
   });
 
@@ -410,7 +376,6 @@ async function submitMessage(message, { echoUser = true } = {}) {
   try {
     const response = await sendMessage(cleanMessage);
     typing.remove();
-    updateUsage(response.usage);
 
     if (response.active_map_id) {
       selectMap(response.active_map_id, { focus: false });

@@ -309,6 +309,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
                 history=history,
                 map_name=active_record.display_name,
                 catalog=catalog,
+                preferred_language=req.preferred_language,
             )
             try:
                 resolution = await llm.resolve_query(resolution_messages)
@@ -340,7 +341,6 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
                             ),
                             suggested_queries=[item.label for item in options],
                             active_map_id=req.active_map_id,
-                            usage=resolution.usage,
                         )
                 else:
                     resolved_retrieval = search_engine.search(
@@ -376,6 +376,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         knowledge_base=knowledge_base,
         max_context_chars=settings.max_context_chars,
         max_candidate_images=settings.max_candidate_images,
+        preferred_language=req.preferred_language,
     )
 
     try:
@@ -424,7 +425,6 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         sources=sources,
         relevant_images=relevant_images,
         active_map_id=retrieval.active_map_id,
-        usage=generated.usage,
     )
 
 

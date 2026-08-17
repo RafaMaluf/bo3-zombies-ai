@@ -15,6 +15,12 @@ class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=2_000)
     conversation_history: list[ConversationMessage] = Field(default_factory=list)
     active_map_id: str | None = None
+    preferred_language: str = Field(
+        default="pt-BR",
+        min_length=2,
+        max_length=35,
+        pattern=r"^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$",
+    )
 
 
 class SelectedSource(BaseModel):
@@ -32,15 +38,6 @@ class RelevantImage(BaseModel):
     path: str
     caption: str
     section: str
-
-
-class RateLimitUsage(BaseModel):
-    remaining_tokens: int | None = None
-    token_limit: int | None = None
-    remaining_requests: int | None = None
-    request_limit: int | None = None
-    tokens_reset_in: str | None = None
-    requests_reset_in: str | None = None
 
 
 class MapSummary(BaseModel):
@@ -64,7 +61,6 @@ class ChatResponse(BaseModel):
     sources: list[SelectedSource] = Field(default_factory=list)
     relevant_images: list[RelevantImage] = Field(default_factory=list)
     active_map_id: str | None = None
-    usage: RateLimitUsage | None = None
 
 
 class HealthResponse(BaseModel):

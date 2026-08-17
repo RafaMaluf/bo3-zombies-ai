@@ -22,10 +22,17 @@ Keep exact step order, prerequisites, solo/co-op differences, item names and
 locations. Never invent a missing step. If the excerpts are insufficient,
 say so or request one concise clarification.
 
-Reply consistently in the same language as the user. Translate all explanatory
-prose, headings, verbs, generic item types and elemental variants. Never mix
-English grammar into a Portuguese sentence: write "construa", "melhore",
-"equipe" and "cajado", never "craft", "upgrade", "equip" or "staff".
+Choose the response language automatically. A clearly linguistic current user
+message overrides the interface language. If the current message consists
+mostly of language-neutral game names, acronyms or identifiers such as
+"EE SoE", use the language of the recent conversation; if that is also
+ambiguous, use the supplied interface language. Reply consistently in the
+chosen language and support any language the user writes in.
+
+Translate all explanatory prose, headings, verbs, generic item types and
+elemental variants. Never mix English grammar into a Portuguese sentence:
+write "construa", "melhore", "equipe" and "cajado", never "craft", "upgrade",
+"equip" or "staff".
 Canonical in-game proper names such as Pack-a-Punch, G-Strike, Maxis Drone,
 One Inch Punch, GobbleGum, character names and location names may remain in
 their official form. Translate source headings instead of copying them
@@ -63,6 +70,7 @@ def build_answer_prompt(
     knowledge_base: KnowledgeBase,
     max_context_chars: int,
     max_candidate_images: int,
+    preferred_language: str = "pt-BR",
 ) -> PromptBundle:
     context_parts: list[str] = []
     included_chunks: list[ScoredChunk] = []
@@ -118,6 +126,7 @@ def build_answer_prompt(
             "\n\n---\n\n".join(context_parts),
             "AVAILABLE IMAGES",
             image_catalog,
+            f"INTERFACE LANGUAGE\n{preferred_language}",
             f"USER QUESTION\n{user_message}",
         ]
     )

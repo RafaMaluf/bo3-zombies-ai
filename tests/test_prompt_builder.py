@@ -99,4 +99,26 @@ def test_multi_guide_prompt_contains_all_named_guides_and_language_rules() -> No
     normalized_system_prompt = " ".join(SYSTEM_PROMPT.split())
     assert "answer every requested objective in one response" in normalized_system_prompt
     assert "Never mix English grammar into a Portuguese sentence" in normalized_system_prompt
+    assert "language-neutral game names, acronyms or identifiers" in normalized_system_prompt
     assert "never expose IDs" in normalized_system_prompt
+
+
+def test_prompt_uses_interface_language_as_ambiguous_query_fallback() -> None:
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    result = SearchEngine(knowledge_base).search(
+        "EE SoE",
+        active_map_id="shadows_of_evil",
+        limit=6,
+    )
+
+    prompt = build_answer_prompt(
+        user_message="EE SoE",
+        history=[],
+        scored_chunks=result.chunks,
+        knowledge_base=knowledge_base,
+        max_context_chars=12_000,
+        max_candidate_images=12,
+        preferred_language="en-US",
+    )
+
+    assert "INTERFACE LANGUAGE\nen-US" in prompt.messages[-1]["content"]

@@ -4,3 +4,4 @@ python-dotenv==1.2.2
 openai==2.47.0
 pydantic==2.13.4
 pillow==12.3.0
+langdetect==1.0.9

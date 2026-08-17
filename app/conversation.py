@@ -107,11 +107,9 @@ Rules:
   a plural request for the variants should normally return the upgrade guides.
   Include the base guide only when the user asks how to obtain or start it.
 - Never invent a document path or a gameplay fact.
-- Choose the language automatically. A clearly linguistic current follow-up
-  overrides the interface language. If it consists mostly of game names,
-  acronyms or identifiers, use the recent conversation language; if that is
-  ambiguous too, use the supplied interface language.
-- Keep clarification_question in that chosen language.
+- The application has already resolved the response language. Keep
+  clarification_question in the supplied response language and do not infer a
+  different language from the document catalog.
 
 Return one valid JSON object and no text outside it:
 {
@@ -197,7 +195,7 @@ def build_resolution_messages(
     history: list[ConversationMessage],
     map_name: str,
     catalog: tuple[DocumentReference, ...],
-    preferred_language: str = "pt-BR",
+    response_language: str = "pt-BR",
 ) -> list[dict[str, str]]:
     history_lines: list[str] = []
     for item in history[-6:]:
@@ -217,7 +215,7 @@ def build_resolution_messages(
             f"ACTIVE MAP\n{map_name}",
             "RECENT CONVERSATION\n" + ("\n".join(history_lines) or "(none)"),
             "DOCUMENT CATALOG\n" + "\n".join(catalog_lines),
-            f"INTERFACE LANGUAGE\n{preferred_language}",
+            f"RESPONSE LANGUAGE\n{response_language}",
             f"CURRENT FOLLOW-UP\n{message}",
         ]
     )

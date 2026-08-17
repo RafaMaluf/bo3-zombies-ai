@@ -25,6 +25,7 @@ from app.conversation import (
 )
 from app.domain import ImageAsset
 from app.knowledge_base import KnowledgeBase
+from app.language import resolve_response_language
 from app.llm import LLMResponseError, LLMService, LLMUnavailableError
 from app.media import MediaService
 from app.prompt_builder import build_answer_prompt
@@ -235,6 +236,11 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         req.message,
         settings.max_history_messages,
     )
+    response_language = resolve_response_language(
+        req.message,
+        history,
+        req.preferred_language,
+    )
     request_map_id = (
         req.active_map_id if req.active_map_id in knowledge_base.maps else None
     )
@@ -309,7 +315,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
                 history=history,
                 map_name=active_record.display_name,
                 catalog=catalog,
-                preferred_language=req.preferred_language,
+                response_language=response_language,
             )
             try:
                 resolution = await llm.resolve_query(resolution_messages)
@@ -376,7 +382,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         knowledge_base=knowledge_base,
         max_context_chars=settings.max_context_chars,
         max_candidate_images=settings.max_candidate_images,
-        preferred_language=req.preferred_language,
+        response_language=response_language,
     )
 
     try:

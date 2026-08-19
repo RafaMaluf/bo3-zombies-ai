@@ -23,7 +23,7 @@
       </div>
 
       <div class="library-heading">
-        <span>Base de conhecimento</span>
+        <span id="library-title">Base de conhecimento</span>
         <span id="map-count" class="library-count">—</span>
       </div>
 
@@ -36,10 +36,10 @@
       <div class="sidebar-footer">
         <div id="system-status" class="system-status">
           <span class="status-dot"></span>
-          <span>Verificando base</span>
+          <span id="system-status-label">Verificando base</span>
         </div>
         <button id="clear-chat" class="ghost-button" type="button">
-          Limpar conversa
+          <span id="clear-chat-label">Limpar conversa</span>
         </button>
       </div>
     </aside>
@@ -64,7 +64,7 @@
         </button>
 
         <div class="active-context">
-          <span class="eyebrow">Contexto ativo</span>
+          <span id="active-context-title" class="eyebrow">Contexto ativo</span>
           <strong id="active-map-label">Todos os mapas</strong>
         </div>
 
@@ -81,9 +81,9 @@
             <span></span>
             <span></span>
           </div>
-          <p class="eyebrow accent">Krono está online</p>
-          <h1>Entre no round<br />sabendo o próximo passo.</h1>
-          <p class="welcome-copy">
+          <p id="welcome-eyebrow" class="eyebrow accent">Krono está online</p>
+          <h1 id="welcome-title">Entre no round<br />sabendo o próximo passo.</h1>
+          <p id="welcome-copy" class="welcome-copy">
             Escolha um mapa ou pergunte diretamente. A resposta usa apenas os
             guias locais e traz as imagens certas para cada etapa.
           </p>
@@ -112,7 +112,7 @@
         <form id="chat-form" class="composer">
           <div id="composer-context" class="composer-context">
             <span class="context-dot"></span>
-            <span>Busca em todos os mapas</span>
+            <span id="composer-context-label">Busca em todos os mapas</span>
           </div>
           <div class="composer-row">
             <textarea
@@ -129,7 +129,7 @@
             </button>
           </div>
           <div class="composer-hint">
-            <span>Enter envia · Shift + Enter quebra a linha</span>
+            <span id="composer-hint-label">Enter envia · Shift + Enter quebra a linha</span>
             <span id="character-count">0 / 2000</span>
           </div>
         </form>
@@ -145,6 +145,18 @@
       <img id="modal-image" alt="" />
       <figcaption id="modal-caption"></figcaption>
     </figure>
+  </dialog>
+
+  <dialog id="map-switch-modal" class="map-switch-modal">
+    <div class="map-switch-card">
+      <p id="map-switch-eyebrow" class="eyebrow accent">Outro mapa detectado</p>
+      <h2 id="map-switch-title"></h2>
+      <p id="map-switch-copy" class="map-switch-copy"></p>
+      <div class="map-switch-actions">
+        <button id="map-switch-continue" class="ghost-button" type="button"></button>
+        <button id="map-switch-confirm" class="map-switch-confirm" type="button"></button>
+      </div>
+    </div>
   </dialog>
 
   <script src="./app.js"></script>

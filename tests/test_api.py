@@ -150,6 +150,9 @@ def test_frontend_redirect_and_assets() -> None:
         assert index.status_code == 200
         assert stylesheet.headers["content-type"].startswith("text/css")
         assert script.headers["content-type"].startswith("text/javascript")
+        assert 'id="map-switch-modal"' in index.text
+        assert '"pt-BR": {' in script.text
+        assert "map_switch" in script.text
         for response in (index, stylesheet, script):
             assert response.headers["cache-control"] == (
                 "no-cache, max-age=0, must-revalidate"
@@ -229,6 +232,28 @@ def test_more_than_three_explicit_guides_are_capped_without_calling_llm() -> Non
             "Shield",
         ]
         assert payload["active_map_id"] == "origins"
+
+
+def test_explicit_other_map_returns_structured_switch_without_calling_llm() -> None:
+    with TestClient(app) as client:
+        client.app.state.llm = UnavailableLLM()
+        response = client.post(
+            "/chat",
+            json={
+                "message": "How do I complete the main Easter Egg in Origins?",
+                "active_map_id": "der_eisendrache",
+                "preferred_language": "en-US",
+            },
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["answer"] == ""
+        assert payload["active_map_id"] == "der_eisendrache"
+        assert payload["map_switch"] == {
+            "current_map_id": "der_eisendrache",
+            "requested_map_id": "origins",
+        }
 
 
 def test_ambiguous_follow_up_offers_valid_document_choices() -> None:

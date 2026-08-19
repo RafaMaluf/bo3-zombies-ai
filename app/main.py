@@ -280,6 +280,19 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         history,
         req.preferred_language,
     )
+    requested_map_switch_id = search_engine.requested_map_switch_id(
+        req.message,
+        req.active_map_id,
+    )
+    if requested_map_switch_id is not None and req.active_map_id is not None:
+        return ChatResponse(
+            active_map_id=req.active_map_id,
+            map_switch={
+                "current_map_id": req.active_map_id,
+                "requested_map_id": requested_map_switch_id,
+            },
+        )
+
     request_map_id = req.active_map_id if req.active_map_id in knowledge_base.maps else None
     if request_map_id is None:
         explicit_maps = search_engine.explicit_map_ids(req.message)

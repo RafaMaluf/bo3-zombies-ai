@@ -52,6 +52,11 @@ class MapSummary(BaseModel):
     cover_image_id: str | None = None
 
 
+class MapSwitchAction(BaseModel):
+    current_map_id: str
+    requested_map_id: str
+
+
 class ChatResponse(BaseModel):
     answer: str = ""
     need_clarification: bool = False
@@ -61,6 +66,7 @@ class ChatResponse(BaseModel):
     sources: list[SelectedSource] = Field(default_factory=list)
     relevant_images: list[RelevantImage] = Field(default_factory=list)
     active_map_id: str | None = None
+    map_switch: MapSwitchAction | None = None
 
 
 class HealthResponse(BaseModel):

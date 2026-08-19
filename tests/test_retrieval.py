@@ -63,6 +63,28 @@ def test_active_map_keeps_follow_up_in_context(search_engine: SearchEngine) -> N
     assert result.chunks[0].chunk.section_title == "part 3 - underground frame"
 
 
+def test_explicit_other_map_requests_context_switch(search_engine: SearchEngine) -> None:
+    assert (
+        search_engine.requested_map_switch_id(
+            "Como libero o Pack-a-Punch em Origins?",
+            "der_eisendrache",
+        )
+        == "origins"
+    )
+
+
+def test_internal_area_name_does_not_request_context_switch(
+    search_engine: SearchEngine,
+) -> None:
+    assert (
+        search_engine.requested_map_switch_id(
+            "Onde fica a peça do escudo na área de Origins?",
+            "revelations",
+        )
+        is None
+    )
+
+
 def test_active_map_wins_when_an_area_name_is_also_another_map(
     search_engine: SearchEngine,
 ) -> None:

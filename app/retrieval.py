@@ -428,6 +428,50 @@ class SearchEngine:
                 found.append(map_id)
         return tuple(found)
 
+    def requested_map_switch_id(
+        self,
+        query: str,
+        active_map_id: str | None,
+    ) -> str | None:
+        """Return a clearly requested map outside the active conversation scope.
+
+        Map names can also name areas inside another map (for example the
+        Origins area in Revelations). Location-qualified mentions are therefore
+        kept in the current context instead of being treated as navigation.
+        """
+        if active_map_id not in self.knowledge_base.maps:
+            return None
+
+        requested_maps = {
+            map_id
+            for map_id in self.explicit_map_ids(query)
+            if map_id != active_map_id
+        }
+        if len(requested_maps) != 1:
+            return None
+
+        requested_map_id = next(iter(requested_maps))
+        normalized_query = normalize_text(query)
+        location_prefix = re.compile(
+            r"(?:^|\s)(?:area|room|section|zone|zona|regiao|local|portal|ilha)"
+            r"(?:\s+(?:de|do|da|in|of))?\s*$"
+        )
+        matching_aliases = sorted(
+            (
+                alias
+                for alias, map_id in self._alias_to_map.items()
+                if map_id == requested_map_id
+            ),
+            key=len,
+            reverse=True,
+        )
+        for alias in matching_aliases:
+            pattern = re.compile(rf"(?:^|\s){re.escape(alias)}(?:$|\s)")
+            for match in pattern.finditer(normalized_query):
+                if not location_prefix.search(normalized_query[: match.start()]):
+                    return requested_map_id
+        return None
+
     def explicit_document_paths(
         self,
         query: str,

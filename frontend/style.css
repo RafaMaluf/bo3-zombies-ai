@@ -877,6 +877,72 @@ button {
   box-shadow: var(--shadow);
 }
 
+.map-switch-modal {
+  width: min(520px, calc(100vw - 28px));
+  max-width: calc(100vw - 28px);
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+}
+
+.map-switch-modal::backdrop {
+  background: rgba(4, 4, 6, 0.82);
+  backdrop-filter: blur(10px);
+}
+
+.map-switch-card {
+  padding: 30px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(240, 106, 43, 0.14), transparent 42%),
+    var(--surface-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.map-switch-card h2 {
+  margin: 9px 0 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(27px, 5vw, 38px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.map-switch-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.map-switch-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.map-switch-actions button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.map-switch-confirm {
+  background: var(--orange-bright);
+  border: 1px solid transparent;
+  color: #1a0d07;
+  font-weight: 750;
+}
+
+.map-switch-confirm:hover {
+  filter: brightness(1.08);
+}
+
 .menu-toggle,
 .sidebar-backdrop {
   display: none;
@@ -1079,6 +1145,18 @@ button {
   .image-modal img {
     max-height: calc(100vh - 58px);
     max-height: calc(100dvh - 58px);
+  }
+
+  .map-switch-card {
+    padding: 24px 20px 20px;
+  }
+
+  .map-switch-actions {
+    flex-direction: column-reverse;
+  }
+
+  .map-switch-actions button {
+    width: 100%;
   }
 }
 

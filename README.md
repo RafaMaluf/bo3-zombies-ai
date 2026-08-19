@@ -7,7 +7,9 @@ durante a conversa.
 
 ## O que mudou na versão remasterizada
 
-- recuperação BM25 local antes da chamada ao modelo;
+- recuperação híbrida: BM25 local + embeddings Voyage com Reciprocal Rank Fusion;
+- índice semântico versionado e validado contra o conteúdo atual da base;
+- fallback automático para BM25, com circuit breaker quando a API de embeddings falha;
 - uma única chamada de IA por pergunta;
 - base carregada uma vez na inicialização;
 - chunks por seção de Markdown, com corte de relevância e dominância por guia;
@@ -61,7 +63,9 @@ python -m pip install -r requirements-dev.txt
 Copy-Item .env.example .env
 ```
 
-Preencha `GROQ_API_KEY` no `.env` e execute:
+Preencha `GROQ_API_KEY` no `.env`. Para habilitar a busca semântica híbrida,
+preencha também `VOYAGE_API_KEY` e mantenha `EMBEDDING_PROVIDER=voyage`.
+Depois execute:
 
 ```bash
 python -m uvicorn app.main:app --reload
@@ -88,6 +92,31 @@ Referências: [deprecações](https://console.groq.com/docs/deprecations),
 [GPT-OSS 120B](https://console.groq.com/docs/model/openai/gpt-oss-120b) e
 [limites](https://console.groq.com/docs/rate-limits).
 
+## Busca híbrida
+
+O texto dos 602 chunks é convertido previamente em vetores de 1.024 dimensões
+com `voyage-4-large`. O índice gerado fica em `embeddings/` e é carregado uma
+única vez na inicialização. Em cada pergunta, apenas a consulta é enviada para
+a Voyage; os vetores dos documentos não são recalculados.
+
+BM25 e similaridade vetorial não são alternativas exclusivas. O Krono combina
+os dois rankings com Reciprocal Rank Fusion: BM25 preserva nomes exatos,
+siglas, números de passos e termos próprios de Zombies, enquanto os embeddings
+recuperam paráfrases e perguntas semanticamente equivalentes.
+
+Se a Voyage estiver indisponível, a conversa continua com BM25. Um circuit
+breaker evita repetir chamadas lentas durante a falha. Para reconstruir o
+índice depois de alterar a base:
+
+```bash
+python -m scripts.build_embedding_index
+```
+
+O manifesto contém o modelo, a dimensão, os IDs dos chunks e um hash da base.
+Um índice ausente, corrompido, criado com outro modelo ou desatualizado é
+rejeitado na inicialização; nesse caso, o servidor permanece disponível em
+modo BM25.
+
 ## Qualidade
 
 ```bash
@@ -97,6 +126,8 @@ python -m pytest --cov=app --cov-report=term-missing
 python -m scripts.validate_kb
 python -m scripts.evaluate_retrieval
 python -m scripts.evaluate_retrieval --suite evals/chronicles_queries.json
+python -m scripts.evaluate_retrieval --hybrid
+python -m scripts.evaluate_retrieval --hybrid --suite evals/chronicles_queries.json
 ```
 
 Para gerar previamente os thumbnails das imagens:
@@ -139,8 +170,9 @@ O Compose lê a chave do arquivo `.env` e publica a aplicação em
 ## Como a resposta é montada
 
 1. O mapa explícito ou o contexto ativo restringe a busca.
-2. BM25 classifica as seções mais relevantes localmente.
-3. Um corte relativo remove resultados frouxos.
+2. BM25 e embeddings classificam as seções por sinais complementares.
+3. Reciprocal Rank Fusion combina os rankings e um corte relativo remove
+   resultados frouxos.
 4. Quando um documento vence claramente, outros guias não são misturados.
    Se a pergunta nomear explicitamente dois ou três guias, a busca distribui
    os chunks entre eles.
@@ -169,14 +201,15 @@ de misturar BO1, BO3, versões modificadas e informações incorretas. Consulte 
 ## Decisão de arquitetura
 
 A estrutura atual é adequada ao tamanho e ao tipo do projeto, não uma solução
-universal. Markdown como fonte canônica, metadados por mapa, BM25 e proveniência
-das imagens oferecem busca rápida, simples de depurar e sem infraestrutura
-externa. Com algumas centenas de chunks e muitos nomes exatos de itens, um
-banco vetorial ainda adicionaria mais complexidade do que precisão.
+universal. Markdown continua sendo a fonte canônica e o índice vetorial é um
+artefato derivado e reproduzível. Como são apenas 602 chunks, os vetores ficam
+em um arquivo binário local: adicionar Pinecone, Qdrant ou outro banco vetorial
+traria infraestrutura sem benefício prático neste estágio.
 
 Os limites conhecidos são:
 
-- sinônimos e paráfrases dependem de expansões manuais;
+- recuperação semântica depende da Voyage para vetorizar novas consultas, mas
+  possui fallback lexical;
 - a qualidade dos chunks depende da estrutura dos guias importados;
 - fatos rígidos como versão do mapa, modo e quantidade de jogadores deveriam
   evoluir para metadados estruturados;
@@ -185,14 +218,19 @@ Os limites conhecidos são:
 - a antiga dominância de um único documento era frágil para perguntas com
   vários objetivos; o caso explícito de até três guias agora é tratado.
 
-Se testes reais começarem a mostrar falhas de recall, a próxima evolução deve
-manter o Markdown e combinar BM25 com embeddings locais, fundindo os rankings
-antes de um reranqueamento curto. Não há motivo, hoje, para migrar tudo para
-Pinecone, Qdrant ou outro serviço vetorial.
+Antes de trocar modelos, pesos ou adicionar reranking, a mudança deve superar
+as duas suítes de avaliação versionadas. Isso evita aumentar a complexidade
+com base apenas em exemplos isolados.
 
 ## Configuração
 
-Além de `GROQ_API_KEY` e `GROQ_MODEL`, o comportamento pode ser ajustado por:
+Além de `GROQ_API_KEY` e `GROQ_MODEL`, a busca híbrida usa:
+
+- `EMBEDDING_PROVIDER` — use `voyage` para habilitar embeddings;
+- `VOYAGE_API_KEY` — chave usada somente no servidor;
+- `VOYAGE_MODEL` — deve ser o mesmo modelo registrado no índice.
+
+O comportamento também pode ser ajustado por:
 
 - `MAX_RETRIEVED_CHUNKS` — quantidade máxima de chunks recuperados;
 - `MAX_MULTI_DOCUMENTS` — quantidade máxima de guias em uma única resposta;
@@ -201,3 +239,9 @@ Além de `GROQ_API_KEY` e `GROQ_MODEL`, o comportamento pode ser ajustado por:
 - `MAX_RESPONSE_IMAGES` — imagens devolvidas ao frontend;
 - `MAX_HISTORY_MESSAGES` — mensagens anteriores mantidas no contexto;
 - `ALLOWED_ORIGINS` — origens CORS permitidas.
+
+## Licença
+
+O código-fonte é disponibilizado sob a licença MIT. Guias, screenshots, nomes,
+marcas e demais materiais de terceiros não são licenciados por este projeto e
+permanecem sob os direitos de seus respectivos proprietários.

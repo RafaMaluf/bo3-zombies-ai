@@ -13,6 +13,7 @@ RUN python -m pip install --upgrade pip \
 COPY app ./app
 COPY frontend ./frontend
 COPY maps ./maps
+COPY embeddings ./embeddings
 
 RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin krono \
     && mkdir -p /app/.cache \

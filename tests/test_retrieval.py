@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from app.embeddings import EmbeddingError
 from app.knowledge_base import KnowledgeBase
 from app.retrieval import SearchEngine
 
@@ -140,6 +141,33 @@ def test_related_document_name_is_not_treated_as_a_multi_guide_list(
     assert not result.needs_clarification
     assert {item.chunk.path for item in result.chunks} == {"trials.md"}
     assert result.chunks[0].chunk.section_title == "electric shield requirement"
+
+
+def test_semantic_failure_opens_circuit_and_keeps_bm25_available() -> None:
+    class FailingClient:
+        calls = 0
+
+        def embed_query(self, text: str) -> tuple[float, ...]:
+            self.calls += 1
+            raise EmbeddingError("temporary outage")
+
+    class UnusedIndex:
+        def score(self, query_vector: tuple[float, ...]) -> dict[str, float]:
+            raise AssertionError("No vector should be scored after the client fails.")
+
+    client = FailingClient()
+    engine = SearchEngine(
+        KnowledgeBase(ROOT / "maps"),
+        embedding_index=UnusedIndex(),  # type: ignore[arg-type]
+        embedding_client=client,  # type: ignore[arg-type]
+    )
+
+    first = engine.search("como monto o escudo?", active_map_id="gorod_krovi", limit=5)
+    second = engine.search("onde estao as pecas?", active_map_id="gorod_krovi", limit=5)
+
+    assert first.chunks
+    assert second.chunks
+    assert client.calls == 1
 
 
 def test_portuguese_topic_expansion_finds_shield(search_engine: SearchEngine) -> None:

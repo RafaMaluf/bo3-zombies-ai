@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from app.config import settings  # noqa: E402
+from app.embeddings import EmbeddingError, EmbeddingIndex, VoyageEmbeddingClient  # noqa: E402
 from app.knowledge_base import KnowledgeBase  # noqa: E402
 from app.retrieval import SearchEngine  # noqa: E402
 from scripts.retrieval_evals import (  # noqa: E402
@@ -37,6 +39,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--limit", type=int, default=10)
     parser.add_argument(
+        "--hybrid",
+        action="store_true",
+        help="Evaluate BM25 plus the configured persisted Voyage index.",
+    )
+    parser.add_argument(
         "--no-fail",
         action="store_true",
         help="Write the report but ignore threshold failures.",
@@ -52,8 +59,25 @@ def main() -> int:
         if knowledge_base.errors:
             details = ", ".join(issue.code for issue in knowledge_base.errors)
             raise EvaluationError(f"Knowledge base is invalid: {details}")
+        embedding_index = None
+        embedding_client = None
+        if args.hybrid:
+            if not settings.embeddings_configured:
+                raise EvaluationError("Voyage embeddings are not configured.")
+            try:
+                embedding_index = EmbeddingIndex.load(
+                    settings.embedding_index_dir,
+                    knowledge_base,
+                    expected_model=settings.voyage_model,
+                )
+            except EmbeddingError as error:
+                raise EvaluationError(str(error)) from error
+            embedding_client = VoyageEmbeddingClient(
+                settings.voyage_api_key,
+                settings.voyage_model,
+            )
         report = evaluate_suite(
-            SearchEngine(knowledge_base),
+            SearchEngine(knowledge_base, embedding_index, embedding_client),
             suite,
             limit=max(3, args.limit),
         )

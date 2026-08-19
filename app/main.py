@@ -24,6 +24,7 @@ from app.conversation import (
     validated_document_options,
 )
 from app.domain import ImageAsset
+from app.embeddings import EmbeddingError, EmbeddingIndex, VoyageEmbeddingClient
 from app.knowledge_base import KnowledgeBase
 from app.language import resolve_response_language
 from app.llm import LLMResponseError, LLMService, LLMUnavailableError
@@ -49,7 +50,27 @@ IMAGE_ID_PATTERN = re.compile(r"`?img_[a-f0-9]{16}`?", flags=re.IGNORECASE)
 async def lifespan(app: FastAPI):
     knowledge_base = KnowledgeBase(settings.maps_dir)
     app.state.knowledge_base = knowledge_base
-    app.state.search_engine = SearchEngine(knowledge_base)
+    embedding_index = None
+    embedding_client = None
+    if settings.embeddings_configured:
+        try:
+            embedding_index = EmbeddingIndex.load(
+                settings.embedding_index_dir,
+                knowledge_base,
+                expected_model=settings.voyage_model,
+            )
+        except EmbeddingError as error:
+            logger.warning("Semantic index unavailable; BM25 fallback active: %s", error)
+        else:
+            embedding_client = VoyageEmbeddingClient(
+                settings.voyage_api_key,
+                settings.voyage_model,
+            )
+    app.state.search_engine = SearchEngine(
+        knowledge_base,
+        embedding_index=embedding_index,
+        embedding_client=embedding_client,
+    )
     app.state.llm = LLMService(settings)
     app.state.media = MediaService(settings.cache_dir)
 
@@ -87,6 +108,23 @@ async def require_frontend_revalidation(request: Request, call_next):
 
 def _kb(request: Request) -> KnowledgeBase:
     return request.app.state.knowledge_base
+
+
+async def _search(
+    search_engine: SearchEngine,
+    query: str,
+    active_map_id: str | None,
+    limit: int,
+):
+    # Semantic retrieval performs a short network request. Keep it away from
+    # FastAPI's event loop while preserving the synchronous deterministic API
+    # used by the retrieval test suite.
+    return await asyncio.to_thread(
+        search_engine.search,
+        query,
+        active_map_id,
+        limit,
+    )
 
 
 def _select_image_assets(
@@ -156,11 +194,7 @@ def _select_image_assets(
 
 
 def _strip_internal_image_references(answer: str) -> str:
-    lines = [
-        line
-        for line in answer.splitlines()
-        if not IMAGE_ID_PATTERN.search(line)
-    ]
+    lines = [line for line in answer.splitlines() if not IMAGE_ID_PATTERN.search(line)]
     orphaned_tail_markers = {
         "---",
         "images",
@@ -189,6 +223,11 @@ async def health(request: Request) -> HealthResponse:
     return HealthResponse(
         status="ok" if not knowledge_base.errors else "degraded",
         llm_configured=settings.llm_configured,
+        embeddings_configured=settings.embeddings_configured,
+        embeddings_ready=request.app.state.search_engine.semantic_ready,
+        embedding_model=(
+            settings.voyage_model if request.app.state.search_engine.semantic_ready else None
+        ),
         **stats,
     )
 
@@ -241,9 +280,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         history,
         req.preferred_language,
     )
-    request_map_id = (
-        req.active_map_id if req.active_map_id in knowledge_base.maps else None
-    )
+    request_map_id = req.active_map_id if req.active_map_id in knowledge_base.maps else None
     if request_map_id is None:
         explicit_maps = search_engine.explicit_map_ids(req.message)
         if len(explicit_maps) == 1:
@@ -265,16 +302,15 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
                 f"Para manter a resposta objetiva, escolha até "
                 f"{settings.max_multi_documents}."
             ),
-            suggested_queries=[
-                labels_by_path.get(path, path) for path in requested_paths
-            ],
+            suggested_queries=[labels_by_path.get(path, path) for path in requested_paths],
             active_map_id=request_map_id,
         )
 
-    retrieval = search_engine.search(
-        query=req.message,
-        active_map_id=req.active_map_id,
-        limit=settings.max_retrieved_chunks,
+    retrieval = await _search(
+        search_engine,
+        req.message,
+        req.active_map_id,
+        settings.max_retrieved_chunks,
     )
 
     llm: LLMService = request.app.state.llm
@@ -322,10 +358,11 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
             except (LLMUnavailableError, LLMResponseError):
                 logger.warning("Could not resolve ambiguous follow-up", exc_info=True)
                 if anchored_query:
-                    anchored_retrieval = search_engine.search(
-                        query=anchored_query,
-                        active_map_id=req.active_map_id,
-                        limit=settings.max_retrieved_chunks,
+                    anchored_retrieval = await _search(
+                        search_engine,
+                        anchored_query,
+                        req.active_map_id,
+                        settings.max_retrieved_chunks,
                     )
                     if not anchored_retrieval.needs_clarification:
                         retrieval = anchored_retrieval
@@ -349,20 +386,22 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
                             active_map_id=req.active_map_id,
                         )
                 else:
-                    resolved_retrieval = search_engine.search(
-                        query=resolution.resolved_query,
-                        active_map_id=req.active_map_id,
-                        limit=settings.max_retrieved_chunks,
+                    resolved_retrieval = await _search(
+                        search_engine,
+                        resolution.resolved_query,
+                        req.active_map_id,
+                        settings.max_retrieved_chunks,
                     )
                     if not resolved_retrieval.needs_clarification:
                         retrieval = resolved_retrieval
                         anchored_query = ""
 
                 if anchored_query:
-                    anchored_retrieval = search_engine.search(
-                        query=anchored_query,
-                        active_map_id=req.active_map_id,
-                        limit=settings.max_retrieved_chunks,
+                    anchored_retrieval = await _search(
+                        search_engine,
+                        anchored_query,
+                        req.active_map_id,
+                        settings.max_retrieved_chunks,
                     )
                     if not anchored_retrieval.needs_clarification:
                         retrieval = anchored_retrieval

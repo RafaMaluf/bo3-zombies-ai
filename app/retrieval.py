@@ -1,17 +1,23 @@
 from __future__ import annotations
 
+import logging
 import math
 import re
+import time
 import unicodedata
 from collections import Counter, defaultdict
 from pathlib import Path
+from threading import Lock
 
 from app.domain import (
     KnowledgeChunk,
     RetrievalResult,
     ScoredChunk,
 )
+from app.embeddings import EmbeddingError, EmbeddingIndex, VoyageEmbeddingClient
 from app.knowledge_base import KnowledgeBase
+
+logger = logging.getLogger("krono.retrieval")
 
 TOKEN_PATTERN = re.compile(r"[a-z0-9]+")
 COMPARISON_TERMS = {
@@ -269,8 +275,19 @@ def expanded_query_tokens(query: str) -> list[str]:
 
 
 class SearchEngine:
-    def __init__(self, knowledge_base: KnowledgeBase) -> None:
+    def __init__(
+        self,
+        knowledge_base: KnowledgeBase,
+        embedding_index: EmbeddingIndex | None = None,
+        embedding_client: VoyageEmbeddingClient | None = None,
+        semantic_retry_seconds: float = 60.0,
+    ) -> None:
         self.knowledge_base = knowledge_base
+        self.embedding_index = embedding_index
+        self.embedding_client = embedding_client
+        self._semantic_retry_seconds = semantic_retry_seconds
+        self._semantic_retry_after = 0.0
+        self._semantic_state_lock = Lock()
         self._chunks = tuple(knowledge_base.chunks.values())
         self._tokens: dict[str, list[str]] = {}
         self._normalized_text: dict[str, str] = {}
@@ -279,6 +296,86 @@ class SearchEngine:
         self._average_length = 1.0
         self._alias_to_map = self._build_alias_index()
         self._build_index()
+
+    @property
+    def semantic_ready(self) -> bool:
+        return self.embedding_index is not None and self.embedding_client is not None
+
+    def _bm25_ranked(self, bm25_scores: dict[str, float]) -> list[ScoredChunk]:
+        scored = [
+            ScoredChunk(chunk=self.knowledge_base.chunks[chunk_id], score=score)
+            for chunk_id, score in bm25_scores.items()
+            if score > 0
+        ]
+        scored.sort(key=lambda item: (-item.score, item.chunk.position))
+        return scored
+
+    def _rank_chunks(
+        self,
+        query: str,
+        allowed_maps: set[str],
+        bm25_scores: dict[str, float],
+    ) -> list[ScoredChunk]:
+        if not self.semantic_ready:
+            return self._bm25_ranked(bm25_scores)
+
+        with self._semantic_state_lock:
+            if time.monotonic() < self._semantic_retry_after:
+                return self._bm25_ranked(bm25_scores)
+
+        assert self.embedding_index is not None
+        assert self.embedding_client is not None
+        try:
+            query_vector = self.embedding_client.embed_query(query)
+            semantic_scores = self.embedding_index.score(query_vector)
+        except EmbeddingError:
+            with self._semantic_state_lock:
+                self._semantic_retry_after = time.monotonic() + self._semantic_retry_seconds
+            logger.warning("Semantic retrieval failed; using BM25 only.", exc_info=True)
+            return self._bm25_ranked(bm25_scores)
+
+        with self._semantic_state_lock:
+            self._semantic_retry_after = 0.0
+
+        bm25_ids = sorted(
+            (chunk_id for chunk_id, score in bm25_scores.items() if score > 0),
+            key=lambda chunk_id: (
+                -bm25_scores[chunk_id],
+                self.knowledge_base.chunks[chunk_id].position,
+            ),
+        )
+        semantic_ids = sorted(
+            (
+                chunk.id
+                for chunk in self._chunks
+                if chunk.map_id in allowed_maps and semantic_scores.get(chunk.id, -1.0) >= 0.15
+            ),
+            key=lambda chunk_id: (
+                -semantic_scores[chunk_id],
+                self.knowledge_base.chunks[chunk_id].position,
+            ),
+        )[:100]
+
+        # Reciprocal Rank Fusion combines lexical precision with semantic
+        # recall without pretending BM25 and cosine scores share a scale. The
+        # lexical side intentionally carries more weight: Zombies terminology
+        # contains exact names, acronyms and step numbers that embeddings may
+        # otherwise smooth over.
+        fused: defaultdict[str, float] = defaultdict(float)
+        for rank, chunk_id in enumerate(bm25_ids, start=1):
+            fused[chunk_id] += 4.0 / (60 + rank)
+        for rank, chunk_id in enumerate(semantic_ids, start=1):
+            fused[chunk_id] += 1.0 / (60 + rank)
+
+        scored = [
+            ScoredChunk(
+                chunk=self.knowledge_base.chunks[chunk_id],
+                score=round(score * 1000, 6),
+            )
+            for chunk_id, score in fused.items()
+        ]
+        scored.sort(key=lambda item: (-item.score, item.chunk.position))
+        return scored
 
     def _build_alias_index(self) -> dict[str, str]:
         aliases: dict[str, str] = {}
@@ -410,18 +507,26 @@ class SearchEngine:
 
         query_tokens = expanded_query_tokens(query)
         original_query_tokens = tokenize(query)
-        scored: list[ScoredChunk] = []
+        bm25_scores: dict[str, float] = {}
         for chunk in self._chunks:
             if chunk.map_id not in allowed_maps:
                 continue
             score = self._score_chunk(query_tokens, original_query_tokens, chunk)
-            if score > 0:
-                scored.append(ScoredChunk(chunk=chunk, score=score))
-        scored.sort(key=lambda item: (-item.score, item.chunk.position))
+            bm25_scores[chunk.id] = score
+        lexical_scored = [
+            ScoredChunk(chunk=self.knowledge_base.chunks[chunk_id], score=score)
+            for chunk_id, score in bm25_scores.items()
+            if score > 0
+        ]
+        lexical_scored.sort(key=lambda item: (-item.score, item.chunk.position))
+        scored = self._rank_chunks(query, allowed_maps, bm25_scores)
 
         unique_topic_map = self._unique_topic_map(query, original_query_tokens)
         if not explicit_maps and not valid_active_map and unique_topic_map:
             scored = [item for item in scored if item.chunk.map_id == unique_topic_map]
+            lexical_scored = [
+                item for item in lexical_scored if item.chunk.map_id == unique_topic_map
+            ]
 
         document_map_id = valid_active_map
         if document_map_id is None and len(explicit_maps) == 1:
@@ -429,9 +534,8 @@ class SearchEngine:
         if document_map_id is None:
             document_map_id = unique_topic_map
         explicit_documents = self.explicit_document_paths(query, document_map_id)
-        is_multi_document_query = (
-            len(explicit_documents) <= 3
-            and self.is_multi_document_request(query, explicit_documents)
+        is_multi_document_query = len(explicit_documents) <= 3 and self.is_multi_document_request(
+            query, explicit_documents
         )
 
         if not scored:
@@ -449,7 +553,11 @@ class SearchEngine:
             )
 
         map_scores: dict[str, float] = defaultdict(float)
-        for item in scored[: max(limit * 3, 18)]:
+        # Map inference remains lexical when possible. Map names and community
+        # aliases are deterministic identifiers; semantic similarity is used
+        # to rank content inside that scope, not to override a strong map cue.
+        map_evidence = lexical_scored or scored
+        for item in map_evidence[: max(limit * 3, 18)]:
             map_scores[item.chunk.map_id] = max(
                 map_scores[item.chunk.map_id],
                 item.score,
@@ -529,9 +637,7 @@ class SearchEngine:
         else:
             score_ratio = 0.0 if self._is_comprehensive_query(query) else 0.72
             score_floor = selection_pool[0].score * score_ratio
-            selected_items = [
-                item for item in selection_pool[:limit] if item.score >= score_floor
-            ]
+            selected_items = [item for item in selection_pool[:limit] if item.score >= score_floor]
             if not selected_items:
                 selected_items = [selection_pool[0]]
 

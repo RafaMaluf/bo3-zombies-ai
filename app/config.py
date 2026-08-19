@@ -35,13 +35,15 @@ class Settings:
     frontend_dir: Path = BASE_DIR / "frontend"
     cache_dir: Path = BASE_DIR / ".cache"
     groq_api_key: str = field(default_factory=lambda: os.getenv("GROQ_API_KEY", ""))
-    groq_model: str = field(
-        default_factory=lambda: os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+    groq_model: str = field(default_factory=lambda: os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"))
+    embedding_provider: str = field(
+        default_factory=lambda: os.getenv("EMBEDDING_PROVIDER", "").strip().lower()
     )
+    voyage_api_key: str = field(default_factory=lambda: os.getenv("VOYAGE_API_KEY", ""))
+    voyage_model: str = field(default_factory=lambda: os.getenv("VOYAGE_MODEL", "voyage-4-large"))
+    embedding_index_dir: Path = BASE_DIR / "embeddings"
     max_retrieved_chunks: int = field(default_factory=lambda: _env_int("MAX_RETRIEVED_CHUNKS", 10))
-    max_multi_documents: int = field(
-        default_factory=lambda: _env_int("MAX_MULTI_DOCUMENTS", 3)
-    )
+    max_multi_documents: int = field(default_factory=lambda: _env_int("MAX_MULTI_DOCUMENTS", 3))
     max_context_chars: int = field(default_factory=lambda: _env_int("MAX_CONTEXT_CHARS", 28_000))
     max_candidate_images: int = field(default_factory=lambda: _env_int("MAX_CANDIDATE_IMAGES", 24))
     max_response_images: int = field(default_factory=lambda: _env_int("MAX_RESPONSE_IMAGES", 8))
@@ -51,6 +53,10 @@ class Settings:
     @property
     def llm_configured(self) -> bool:
         return bool(self.groq_api_key)
+
+    @property
+    def embeddings_configured(self) -> bool:
+        return self.embedding_provider == "voyage" and bool(self.voyage_api_key)
 
 
 settings = Settings()

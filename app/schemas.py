@@ -66,6 +66,9 @@ class ChatResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: Literal["ok", "degraded"]
     llm_configured: bool
+    embeddings_configured: bool = False
+    embeddings_ready: bool = False
+    embedding_model: str | None = None
     maps: int
     documents: int
     chunks: int

@@ -38,6 +38,8 @@ class RelevantImage(BaseModel):
     path: str
     caption: str
     section: str
+    thumbnail_url: str
+    full_url: str
 
 
 class MapSummary(BaseModel):
@@ -50,6 +52,7 @@ class MapSummary(BaseModel):
     chunk_count: int
     image_count: int
     cover_image_id: str | None = None
+    cover_image_url: str | None = None
 
 
 class MapSwitchAction(BaseModel):

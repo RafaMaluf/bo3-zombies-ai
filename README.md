@@ -117,6 +117,17 @@ Um índice ausente, corrompido, criado com outro modelo ou desatualizado é
 rejeitado na inicialização; nesse caso, o servidor permanece disponível em
 modo BM25.
 
+## Imagens
+
+As imagens dos guias são publicadas em object storage com chaves imutáveis
+baseadas no SHA-256 do arquivo original. O manifesto versionado em
+`assets/image-manifest.json` relaciona cada imagem da base às variantes
+`original`, `full` e `thumb`; nenhuma credencial de storage é enviada ao
+frontend.
+
+O pipeline de geração, upload idempotente, verificação, backup e migração de
+provedor está documentado em [docs/assets.md](docs/assets.md).
+
 ## Qualidade
 
 ```bash

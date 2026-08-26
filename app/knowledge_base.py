@@ -8,6 +8,7 @@ from typing import Any
 
 from PIL import Image, UnidentifiedImageError
 
+from app.assets import AssetManifest
 from app.chunking import (
     extract_image_paths,
     normalize_image_path,
@@ -69,8 +70,15 @@ def _humanize_filename(
 
 
 class KnowledgeBase:
-    def __init__(self, maps_dir: Path, *, verify_images: bool = False) -> None:
+    def __init__(
+        self,
+        maps_dir: Path,
+        *,
+        verify_images: bool = False,
+        asset_manifest: AssetManifest | None = None,
+    ) -> None:
         self.maps_dir = maps_dir.resolve()
+        self.asset_manifest = asset_manifest or AssetManifest.empty()
         self.maps: dict[str, MapRecord] = {}
         self.chunks: dict[str, KnowledgeChunk] = {}
         self.images: dict[str, ImageAsset] = {}
@@ -78,6 +86,7 @@ class KnowledgeBase:
         self._document_count = 0
         self._verified_image_ids: set[str] = set()
         self._load()
+        self._validate_asset_manifest()
         if verify_images:
             self.validate_image_files()
 
@@ -143,6 +152,15 @@ class KnowledgeBase:
             if asset.id in self._verified_image_ids:
                 continue
             self._verified_image_ids.add(asset.id)
+            if asset.source_file is None:
+                if self.asset_manifest.get(asset.id) is None:
+                    self._issue(
+                        "error",
+                        "image-file-and-manifest-missing",
+                        "Image has neither a local file nor a remote manifest record.",
+                        asset.path,
+                    )
+                continue
             try:
                 with Image.open(asset.source_file) as image:
                     if image.width <= 0 or image.height <= 0:
@@ -460,18 +478,32 @@ class KnowledgeBase:
                 document_path,
             )
             return None
-        if not file_path.is_file():
+        asset_id = _image_id(record.map_id, normalized_path)
+        manifest_record = self.asset_manifest.get(asset_id)
+        if manifest_record is not None and (
+            manifest_record.map_id != record.map_id or manifest_record.path != normalized_path
+        ):
             self._issue(
                 "error",
-                "referenced-image-missing",
-                f"Referenced image does not exist: {normalized_path}",
+                "asset-manifest-record-mismatch",
+                f"Manifest metadata does not match image reference: {asset_id}",
                 document_path,
             )
             return None
-
-        asset_id = _image_id(record.map_id, normalized_path)
         asset = self.images.get(asset_id)
         if asset is None:
+            source_file = file_path if file_path.is_file() else None
+            if source_file is None and manifest_record is None:
+                self._issue(
+                    "error",
+                    "referenced-image-missing",
+                    (
+                        "Referenced image does not exist locally or in the manifest: "
+                        f"{normalized_path}"
+                    ),
+                    document_path,
+                )
+                return None
             asset = ImageAsset(
                 id=asset_id,
                 map_id=record.map_id,
@@ -484,7 +516,7 @@ class KnowledgeBase:
                 ),
                 section=section_title,
                 document_path=document_path.relative_to(record.directory).as_posix(),
-                source_file=file_path,
+                source_file=source_file,
             )
             self.images[asset_id] = asset
         record.image_ids.add(asset_id)
@@ -507,6 +539,7 @@ class KnowledgeBase:
             self.images[image_id].source_file.resolve()
             for image_id in record.image_ids
             if image_id in self.images
+            and self.images[image_id].source_file is not None
         }
         for file_path in record.directory.rglob("*"):
             if not file_path.is_file():
@@ -520,3 +553,21 @@ class KnowledgeBase:
                     "Image is not referenced by any indexed document.",
                     file_path,
                 )
+
+    def _validate_asset_manifest(self) -> None:
+        if not self.asset_manifest.records:
+            return
+        image_ids = set(self.images)
+        manifest_ids = set(self.asset_manifest.records)
+        for image_id in sorted(image_ids - manifest_ids):
+            self._issue(
+                "error",
+                "image-missing-from-asset-manifest",
+                f"Image is not registered in the asset manifest: {image_id}",
+            )
+        for image_id in sorted(manifest_ids - image_ids):
+            self._issue(
+                "error",
+                "orphan-asset-manifest-record",
+                f"Asset manifest entry is not referenced by the knowledge base: {image_id}",
+            )

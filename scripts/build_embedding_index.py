@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from app.assets import AssetManifest  # noqa: E402
 from app.config import settings  # noqa: E402
 from app.embeddings import (  # noqa: E402
     EmbeddingError,
@@ -31,7 +32,8 @@ def main() -> int:
     if not settings.voyage_api_key:
         print("VOYAGE_API_KEY is not configured.", file=sys.stderr)
         return 2
-    knowledge_base = KnowledgeBase(args.maps_dir)
+    manifest = AssetManifest.load(args.maps_dir.parent / "assets" / "image-manifest.json")
+    knowledge_base = KnowledgeBase(args.maps_dir, asset_manifest=manifest)
     if knowledge_base.errors:
         print("Knowledge base has validation errors.", file=sys.stderr)
         return 2

@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from app.assets import AssetManifest  # noqa: E402
 from app.config import settings  # noqa: E402
 from app.embeddings import EmbeddingError, EmbeddingIndex, VoyageEmbeddingClient  # noqa: E402
 from app.knowledge_base import KnowledgeBase  # noqa: E402
@@ -55,7 +56,8 @@ def main() -> int:
     args = parse_args()
     try:
         suite = load_eval_suite(args.suite)
-        knowledge_base = KnowledgeBase(args.maps_dir)
+        manifest = AssetManifest.load(args.maps_dir.parent / "assets" / "image-manifest.json")
+        knowledge_base = KnowledgeBase(args.maps_dir, asset_manifest=manifest)
         if knowledge_base.errors:
             details = ", ".join(issue.code for issue in knowledge_base.errors)
             raise EvaluationError(f"Knowledge base is invalid: {details}")

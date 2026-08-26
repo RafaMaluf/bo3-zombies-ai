@@ -20,7 +20,7 @@ class ImageAsset:
     caption: str
     section: str
     document_path: str
-    source_file: Path
+    source_file: Path | None
 
 
 @dataclass(frozen=True, slots=True)

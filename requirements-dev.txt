@@ -1,5 +1,6 @@
 -r requirements.txt
 beautifulsoup4==4.15.0
+boto3==1.43.81
 httpx==0.28.1
 httpx2==2.7.0
 pytest==9.1.1

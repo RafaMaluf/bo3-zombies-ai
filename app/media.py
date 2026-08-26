@@ -18,6 +18,8 @@ class MediaService:
         self._locks_guard = Lock()
 
     def get_path(self, asset: ImageAsset, variant: str) -> Path:
+        if asset.source_file is None:
+            raise ValueError("Local image is unavailable; configure ASSET_BASE_URL.")
         if variant == "full":
             return asset.source_file
         if variant != "thumb":
@@ -25,6 +27,8 @@ class MediaService:
         return self._thumbnail(asset)
 
     def _thumbnail(self, asset: ImageAsset) -> Path:
+        if asset.source_file is None:
+            raise ValueError("Local image is unavailable; configure ASSET_BASE_URL.")
         self.thumbnail_dir.mkdir(parents=True, exist_ok=True)
         destination = self.thumbnail_dir / f"{asset.id}.webp"
         with self._lock_for(asset.id):

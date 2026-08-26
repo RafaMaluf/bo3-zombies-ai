@@ -9,9 +9,10 @@ from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 
+from app.assets import AssetManifest
 from app.config import settings
 from app.conversation import (
     build_resolution_messages,
@@ -48,8 +49,10 @@ IMAGE_ID_PATTERN = re.compile(r"`?img_[a-f0-9]{16}`?", flags=re.IGNORECASE)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    knowledge_base = KnowledgeBase(settings.maps_dir)
+    asset_manifest = AssetManifest.load(settings.asset_manifest_path)
+    knowledge_base = KnowledgeBase(settings.maps_dir, asset_manifest=asset_manifest)
     app.state.knowledge_base = knowledge_base
+    app.state.asset_manifest = asset_manifest
     embedding_index = None
     embedding_client = None
     if settings.embeddings_configured:
@@ -108,6 +111,15 @@ async def require_frontend_revalidation(request: Request, call_next):
 
 def _kb(request: Request) -> KnowledgeBase:
     return request.app.state.knowledge_base
+
+
+def _asset_url(request: Request, image_id: str, variant: str) -> str:
+    manifest: AssetManifest = request.app.state.asset_manifest
+    if settings.asset_base_url:
+        remote_url = manifest.url(settings.asset_base_url, image_id, variant)
+        if remote_url:
+            return remote_url
+    return f"/media/{image_id}?variant={variant}"
 
 
 async def _search(
@@ -234,7 +246,11 @@ async def health(request: Request) -> HealthResponse:
 
 @app.get("/maps", response_model=list[MapSummary])
 async def maps(request: Request) -> list[MapSummary]:
-    return _kb(request).map_summaries()
+    summaries = _kb(request).map_summaries()
+    for summary in summaries:
+        if summary.cover_image_id:
+            summary.cover_image_url = _asset_url(request, summary.cover_image_id, "thumb")
+    return summaries
 
 
 @app.get("/media/{image_id}", response_class=FileResponse)
@@ -242,10 +258,18 @@ async def media(
     image_id: str,
     request: Request,
     variant: Literal["thumb", "full"] = Query(default="thumb"),
-) -> FileResponse:
+) -> Response:
     asset = _kb(request).get_image(image_id)
     if asset is None:
         raise HTTPException(status_code=404, detail="Unknown image.")
+
+    manifest: AssetManifest = request.app.state.asset_manifest
+    if settings.asset_base_url:
+        remote_url = manifest.url(settings.asset_base_url, image_id, variant)
+        if remote_url:
+            response = RedirectResponse(remote_url, status_code=307)
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+            return response
 
     service: MediaService = request.app.state.media
     try:
@@ -462,6 +486,8 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
                 path=asset.path,
                 caption=asset.caption,
                 section=asset.section,
+                thumbnail_url=_asset_url(request, asset.id, "thumb"),
+                full_url=_asset_url(request, asset.id, "full"),
             )
         )
     sources = [

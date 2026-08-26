@@ -9,12 +9,18 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from app.assets import AssetManifest  # noqa: E402
 from app.config import settings  # noqa: E402
 from app.knowledge_base import KnowledgeBase  # noqa: E402
 
 
 def main() -> int:
-    knowledge_base = KnowledgeBase(settings.maps_dir, verify_images=True)
+    manifest = AssetManifest.load(settings.asset_manifest_path)
+    knowledge_base = KnowledgeBase(
+        settings.maps_dir,
+        verify_images=True,
+        asset_manifest=manifest,
+    )
     stats = knowledge_base.stats
 
     print(

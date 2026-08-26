@@ -264,6 +264,12 @@ function mediaUrl(imageId, variant = "thumb") {
   return `${API_BASE}/media/${encodeURIComponent(imageId)}?variant=${variant}`;
 }
 
+function imageVariantUrl(image, variant = "thumb") {
+  if (variant === "full" && image?.full_url) return image.full_url;
+  if (variant === "thumb" && image?.thumbnail_url) return image.thumbnail_url;
+  return mediaUrl(image.id, variant);
+}
+
 function setSidebarOpen(open) {
   document.body.classList.toggle("sidebar-open", open);
   elements.menuToggle.setAttribute("aria-expanded", String(open));
@@ -311,7 +317,8 @@ function renderMaps() {
     const cover = document.createElement("span");
     cover.className = "map-cover";
     if (map.cover_image_id) {
-      cover.style.backgroundImage = `linear-gradient(90deg, rgba(9,9,11,.08), rgba(9,9,11,.7)), url("${mediaUrl(map.cover_image_id)}")`;
+      const coverUrl = map.cover_image_url || mediaUrl(map.cover_image_id);
+      cover.style.backgroundImage = `linear-gradient(90deg, rgba(9,9,11,.08), rgba(9,9,11,.7)), url("${coverUrl}")`;
     }
 
     const copy = document.createElement("span");
@@ -361,7 +368,7 @@ function createImageGallery(images) {
   for (const image of images) {
     const figure = document.createElement("figure");
     const img = document.createElement("img");
-    img.src = mediaUrl(image.id, "thumb");
+    img.src = imageVariantUrl(image, "thumb");
     img.alt = "";
     img.loading = "lazy";
     img.decoding = "async";
@@ -477,7 +484,7 @@ function scrollMessageToStart(article) {
 }
 
 function openImage(image) {
-  elements.modalImage.src = mediaUrl(image.id, "full");
+  elements.modalImage.src = imageVariantUrl(image, "full");
   elements.modalImage.alt = image.caption;
   elements.modalCaption.textContent = `${getMap(image.map_id)?.display_name || image.map_id} · ${image.caption}`;
   elements.imageModal.showModal();

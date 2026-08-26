@@ -1,7 +1,10 @@
 import re
+from collections.abc import Iterator
 
+import pytest
 from fastapi.testclient import TestClient
 
+from app.config import settings
 from app.llm import (
     LLMResponse,
     LLMResponseError,
@@ -97,7 +100,18 @@ class PlayerCountFollowUpLLM:
         )
 
 
-def test_health_maps_and_thumbnail_endpoints() -> None:
+@pytest.fixture
+def local_asset_delivery() -> Iterator[None]:
+    original_base_url = settings.asset_base_url
+    object.__setattr__(settings, "asset_base_url", "")
+    try:
+        yield
+    finally:
+        object.__setattr__(settings, "asset_base_url", original_base_url)
+
+
+def test_health_maps_and_thumbnail_endpoints(local_asset_delivery: None) -> None:
+    del local_asset_delivery
     with TestClient(app) as client:
         health = client.get("/health")
         assert health.status_code == 200
@@ -135,6 +149,41 @@ def test_health_maps_and_thumbnail_endpoints() -> None:
         full = client.get(f"/media/{cover_id}?variant=full")
         assert full.status_code == 200
         assert full.headers["content-type"].startswith("image/")
+
+
+def test_remote_asset_urls_are_returned_and_media_endpoint_redirects() -> None:
+    original_base_url = settings.asset_base_url
+    object.__setattr__(settings, "asset_base_url", "https://assets.example.com")
+    try:
+        with TestClient(app) as client:
+            maps = client.get("/maps").json()
+            cover = next(item for item in maps if item["cover_image_id"])
+            assert cover["cover_image_url"].startswith(
+                "https://assets.example.com/images/v1/"
+            )
+            redirect = client.get(
+                f"/media/{cover['cover_image_id']}?variant=thumb",
+                follow_redirects=False,
+            )
+            assert redirect.status_code == 307
+            assert redirect.headers["location"] == cover["cover_image_url"]
+
+            client.app.state.llm = ImageSelectingLLM()
+            chat = client.post(
+                "/chat",
+                json={
+                    "message": "Onde fica a terceira peça do escudo?",
+                    "active_map_id": "der_eisendrache",
+                },
+            ).json()
+            assert chat["relevant_images"]
+            assert all(
+                image["thumbnail_url"].startswith("https://assets.example.com/images/v1/")
+                and image["full_url"].startswith("https://assets.example.com/images/v1/")
+                for image in chat["relevant_images"]
+            )
+    finally:
+        object.__setattr__(settings, "asset_base_url", original_base_url)
 
 
 def test_frontend_redirect_and_assets() -> None:

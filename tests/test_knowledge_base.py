@@ -4,13 +4,19 @@ from pathlib import Path
 
 from PIL import Image
 
+from app.assets import AssetManifest
 from app.knowledge_base import KnowledgeBase
 
 ROOT = Path(__file__).resolve().parent.parent
 
 
 def test_current_knowledge_base_is_consistent() -> None:
-    knowledge_base = KnowledgeBase(ROOT / "maps", verify_images=True)
+    manifest = AssetManifest.load(ROOT / "assets" / "image-manifest.json", required=True)
+    knowledge_base = KnowledgeBase(
+        ROOT / "maps",
+        verify_images=True,
+        asset_manifest=manifest,
+    )
 
     assert not knowledge_base.errors
     assert not knowledge_base.warnings
@@ -150,3 +156,62 @@ def test_image_ids_are_stable_between_loads() -> None:
     second = KnowledgeBase(ROOT / "maps")
 
     assert set(first.images) == set(second.images)
+
+
+def test_manifest_keeps_referenced_image_valid_without_local_binary(tmp_path: Path) -> None:
+    maps_dir = tmp_path / "maps"
+    map_dir = maps_dir / "test_map"
+    image_dir = map_dir / "images"
+    image_dir.mkdir(parents=True)
+    _write_index(
+        map_dir,
+        [{"path": "guide.md", "category": "test", "summary": "Guide"}],
+    )
+    (map_dir / "guide.md").write_text(
+        "# Guide\n\n## step\n\nRelated image: images/example.png\n",
+        encoding="utf-8",
+    )
+    source = image_dir / "example.png"
+    Image.new("RGB", (8, 8)).save(source)
+    local = KnowledgeBase(maps_dir)
+    image_id = next(iter(local.images))
+    variant = {
+        "key": "images/v1/hash/image.webp",
+        "sha256": "a" * 64,
+        "size_bytes": 100,
+        "width": 8,
+        "height": 8,
+        "content_type": "image/webp",
+    }
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "assets": {
+                    image_id: {
+                        "map_id": "test_map",
+                        "path": "images/example.png",
+                        "original_sha256": "a" * 64,
+                        "source_url": None,
+                        "variants": {
+                            "original": variant,
+                            "full": variant,
+                            "thumb": variant,
+                        },
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    source.unlink()
+
+    remote = KnowledgeBase(
+        maps_dir,
+        verify_images=True,
+        asset_manifest=AssetManifest.load(manifest_path, required=True),
+    )
+
+    assert not remote.errors
+    assert remote.images[image_id].source_file is None

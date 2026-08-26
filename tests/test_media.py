@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+import pytest
 from PIL import Image
 
 from app.domain import ImageAsset
@@ -43,3 +44,18 @@ def test_full_variant_returns_the_original_file(tmp_path: Path) -> None:
     Image.new("RGB", (10, 10)).save(source)
 
     assert MediaService(tmp_path / "cache").get_path(_asset(source), "full") == source
+
+
+def test_local_media_fails_cleanly_when_only_remote_asset_exists(tmp_path: Path) -> None:
+    asset = ImageAsset(
+        id="img_remote_only",
+        map_id="test_map",
+        path="images/remote.webp",
+        caption="Remote image",
+        section="Test section",
+        document_path="guide.md",
+        source_file=None,
+    )
+
+    with pytest.raises(ValueError, match="ASSET_BASE_URL"):
+        MediaService(tmp_path / "cache").get_path(asset, "thumb")

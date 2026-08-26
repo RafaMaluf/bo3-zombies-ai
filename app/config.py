@@ -34,6 +34,10 @@ class Settings:
     maps_dir: Path = BASE_DIR / "maps"
     frontend_dir: Path = BASE_DIR / "frontend"
     cache_dir: Path = BASE_DIR / ".cache"
+    asset_manifest_path: Path = BASE_DIR / "assets" / "image-manifest.json"
+    asset_base_url: str = field(
+        default_factory=lambda: os.getenv("ASSET_BASE_URL", "").strip().rstrip("/")
+    )
     groq_api_key: str = field(default_factory=lambda: os.getenv("GROQ_API_KEY", ""))
     groq_model: str = field(default_factory=lambda: os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"))
     embedding_provider: str = field(
@@ -57,6 +61,10 @@ class Settings:
     @property
     def embeddings_configured(self) -> bool:
         return self.embedding_provider == "voyage" and bool(self.voyage_api_key)
+
+    @property
+    def remote_assets_configured(self) -> bool:
+        return bool(self.asset_base_url)
 
 
 settings = Settings()

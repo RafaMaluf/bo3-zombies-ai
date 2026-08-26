@@ -42,3 +42,9 @@ jobs:
           python -m scripts.evaluate_retrieval
           --suite evals/chronicles_queries.json
           --report .cache/reports/chronicles-retrieval-eval.json
+
+      - name: Evaluate multilingual retrieval quality
+        run: >-
+          python -m scripts.evaluate_retrieval
+          --suite evals/multilingual_queries.json
+          --report .cache/reports/multilingual-retrieval-eval.json

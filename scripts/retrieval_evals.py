@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import math
 import time
+from collections import defaultdict
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -17,10 +18,13 @@ class EvaluationError(RuntimeError):
 @dataclass(frozen=True, slots=True)
 class EvalCase:
     id: str
+    group_id: str | None
+    language: str | None
     query: str
     active_map_id: str | None
     expected_map_id: str | None
     expected_document_paths: tuple[str, ...]
+    required_document_paths: tuple[str, ...]
     expected_section_titles: tuple[str, ...]
     minimum_images: int | None
     expected_clarification: bool
@@ -32,12 +36,16 @@ class EvalSuite:
     version: int
     description: str
     thresholds: dict[str, float]
+    required_languages: tuple[str, ...]
+    language_thresholds: dict[str, dict[str, float]]
     cases: tuple[EvalCase, ...]
 
 
 @dataclass(frozen=True, slots=True)
 class EvalCaseResult:
     id: str
+    group_id: str | None
+    language: str | None
     passed: bool
     latency_ms: float
     checks: dict[str, bool]
@@ -46,6 +54,7 @@ class EvalCaseResult:
     expected_map_id: str | None
     actual_map_id: str | None
     expected_document_paths: tuple[str, ...]
+    required_document_paths: tuple[str, ...]
     actual_document_paths: tuple[str, ...]
     expected_section_titles: tuple[str, ...]
     actual_section_titles: tuple[str, ...]
@@ -60,7 +69,9 @@ class EvalReport:
     total: int
     passed: int
     metrics: dict[str, float]
+    language_metrics: dict[str, dict[str, float]]
     thresholds: dict[str, float]
+    language_thresholds: dict[str, dict[str, float]]
     threshold_failures: tuple[str, ...]
     cases: tuple[EvalCaseResult, ...]
 
@@ -73,7 +84,9 @@ class EvalReport:
             "total": self.total,
             "passed": self.passed,
             "metrics": self.metrics,
+            "language_metrics": self.language_metrics,
             "thresholds": self.thresholds,
+            "language_thresholds": self.language_thresholds,
             "threshold_failures": list(self.threshold_failures),
             "cases": [asdict(case) for case in self.cases],
         }
@@ -87,6 +100,20 @@ def _string_tuple(value: Any, field_name: str) -> tuple[str, ...]:
     return tuple(item.strip() for item in value if item.strip())
 
 
+def _thresholds(value: Any, field_name: str) -> dict[str, float]:
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise EvaluationError(f"{field_name} must be an object.")
+    parsed: dict[str, float] = {}
+    for name, raw_value in value.items():
+        threshold = float(raw_value)
+        if not 0 <= threshold <= 1:
+            raise EvaluationError(f"Threshold {field_name}.{name} must be between 0 and 1.")
+        parsed[str(name)] = threshold
+    return parsed
+
+
 def load_eval_suite(path: Path) -> EvalSuite:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
@@ -96,17 +123,28 @@ def load_eval_suite(path: Path) -> EvalSuite:
         raise EvaluationError("Evaluation suite root must be an object.")
 
     version = int(payload.get("version", 0))
-    if version != 1:
+    if version not in {1, 2}:
         raise EvaluationError(f"Unsupported evaluation suite version: {version}.")
-    raw_thresholds = payload.get("thresholds", {})
-    if not isinstance(raw_thresholds, dict):
-        raise EvaluationError("thresholds must be an object.")
-    thresholds: dict[str, float] = {}
-    for name, raw_value in raw_thresholds.items():
-        value = float(raw_value)
-        if not 0 <= value <= 1:
-            raise EvaluationError(f"Threshold {name} must be between 0 and 1.")
-        thresholds[str(name)] = value
+    thresholds = _thresholds(payload.get("thresholds"), "thresholds")
+    required_languages = _string_tuple(
+        payload.get("required_languages"),
+        "required_languages",
+    )
+    raw_language_thresholds = payload.get("language_thresholds", {})
+    if not isinstance(raw_language_thresholds, dict):
+        raise EvaluationError("language_thresholds must be an object.")
+    language_thresholds = {
+        str(language): _thresholds(values, f"language_thresholds.{language}")
+        for language, values in raw_language_thresholds.items()
+    }
+    if version == 2 and not required_languages:
+        raise EvaluationError("Version 2 suites require required_languages.")
+    unknown_threshold_languages = set(language_thresholds) - set(required_languages)
+    if unknown_threshold_languages:
+        raise EvaluationError(
+            "language_thresholds contains unsupported languages: "
+            + ", ".join(sorted(unknown_threshold_languages))
+        )
 
     raw_cases = payload.get("cases")
     if not isinstance(raw_cases, list) or not raw_cases:
@@ -134,12 +172,24 @@ def load_eval_suite(path: Path) -> EvalSuite:
         cases.append(
             EvalCase(
                 id=case_id,
+                group_id=(
+                    str(raw_case.get("group_id", "")).strip()
+                    or None
+                ),
+                language=(
+                    str(raw_case.get("language", "")).strip()
+                    or None
+                ),
                 query=query,
                 active_map_id=str(active_map).strip() if active_map else None,
                 expected_map_id=str(expected_map).strip() if expected_map else None,
                 expected_document_paths=_string_tuple(
                     raw_case.get("expected_document_paths"),
                     f"{case_id}.expected_document_paths",
+                ),
+                required_document_paths=_string_tuple(
+                    raw_case.get("required_document_paths"),
+                    f"{case_id}.required_document_paths",
                 ),
                 expected_section_titles=_string_tuple(
                     raw_case.get("expected_section_titles"),
@@ -151,10 +201,51 @@ def load_eval_suite(path: Path) -> EvalSuite:
             )
         )
 
+    if required_languages:
+        languages_by_group: dict[str, set[str]] = defaultdict(set)
+        signature_by_group: dict[str, tuple[Any, ...]] = {}
+        for case in cases:
+            if not case.group_id or not case.language:
+                raise EvaluationError(
+                    f"{case.id} requires group_id and language in a multilingual suite."
+                )
+            if case.language not in required_languages:
+                raise EvaluationError(
+                    f"{case.id} uses unsupported language {case.language}."
+                )
+            if case.language in languages_by_group[case.group_id]:
+                raise EvaluationError(
+                    f"Duplicate language {case.language} in group {case.group_id}."
+                )
+            languages_by_group[case.group_id].add(case.language)
+            signature = (
+                case.active_map_id,
+                case.expected_map_id,
+                case.expected_document_paths,
+                case.required_document_paths,
+                case.expected_section_titles,
+                case.minimum_images,
+                case.expected_clarification,
+            )
+            previous_signature = signature_by_group.setdefault(case.group_id, signature)
+            if signature != previous_signature:
+                raise EvaluationError(
+                    f"Equivalent group {case.group_id} has inconsistent expectations."
+                )
+        expected_languages = set(required_languages)
+        for group_id, languages in languages_by_group.items():
+            if languages != expected_languages:
+                missing = ", ".join(sorted(expected_languages - languages)) or "none"
+                raise EvaluationError(
+                    f"Equivalent group {group_id} is incomplete; missing: {missing}."
+                )
+
     return EvalSuite(
         version=version,
         description=str(payload.get("description", "")).strip(),
         thresholds=thresholds,
+        required_languages=required_languages,
+        language_thresholds=language_thresholds,
         cases=tuple(cases),
     )
 
@@ -171,6 +262,25 @@ def _percentile(values: list[float], percentile: float) -> float:
     return round(ordered[index], 3)
 
 
+def _summarize(case_results: list[EvalCaseResult]) -> dict[str, float]:
+    def check_rate(name: str) -> float:
+        relevant = [case for case in case_results if name in case.checks]
+        return _rate(sum(case.checks[name] for case in relevant), len(relevant))
+
+    latencies = [case.latency_ms for case in case_results]
+    return {
+        "pass_rate": _rate(sum(case.passed for case in case_results), len(case_results)),
+        "map_accuracy": check_rate("map"),
+        "document_hit_at_1": check_rate("document_at_1"),
+        "required_documents_hit_at_10": check_rate("documents_at_10"),
+        "section_hit_at_3": check_rate("section_at_3"),
+        "image_hit_at_3": check_rate("images_at_3"),
+        "clarification_accuracy": check_rate("clarification"),
+        "median_latency_ms": _percentile(latencies, 0.5),
+        "p95_latency_ms": _percentile(latencies, 0.95),
+    }
+
+
 def evaluate_suite(
     search_engine: SearchEngine,
     suite: EvalSuite,
@@ -178,16 +288,6 @@ def evaluate_suite(
     limit: int = 10,
 ) -> EvalReport:
     case_results: list[EvalCaseResult] = []
-    map_hits = 0
-    map_total = 0
-    document_hits = 0
-    document_total = 0
-    section_hits = 0
-    section_total = 0
-    image_hits = 0
-    image_total = 0
-    clarification_hits = 0
-
     for case in suite.cases:
         started = time.perf_counter()
         result = search_engine.search(
@@ -205,38 +305,37 @@ def evaluate_suite(
         checks: dict[str, bool] = {}
         clarification_ok = result.needs_clarification == case.expected_clarification
         checks["clarification"] = clarification_ok
-        clarification_hits += int(clarification_ok)
 
         if case.expected_map_id is not None:
-            map_total += 1
             map_ok = result.active_map_id == case.expected_map_id
             checks["map"] = map_ok
-            map_hits += int(map_ok)
 
         if case.expected_document_paths:
-            document_total += 1
             document_ok = bool(actual_documents) and (
                 actual_documents[0] in set(case.expected_document_paths)
             )
             checks["document_at_1"] = document_ok
-            document_hits += int(document_ok)
+
+        if case.required_document_paths:
+            required_documents_ok = set(case.required_document_paths).issubset(
+                set(actual_documents[:10])
+            )
+            checks["documents_at_10"] = required_documents_ok
 
         if case.expected_section_titles:
-            section_total += 1
             expected_sections = {normalize_text(title) for title in case.expected_section_titles}
             section_ok = bool(expected_sections & top_three_sections)
             checks["section_at_3"] = section_ok
-            section_hits += int(section_ok)
 
         if case.minimum_images is not None:
-            image_total += 1
             image_ok = len(image_ids) >= case.minimum_images
             checks["images_at_3"] = image_ok
-            image_hits += int(image_ok)
 
         case_results.append(
             EvalCaseResult(
                 id=case.id,
+                group_id=case.group_id,
+                language=case.language,
                 passed=all(checks.values()),
                 latency_ms=latency_ms,
                 checks=checks,
@@ -245,6 +344,7 @@ def evaluate_suite(
                 expected_map_id=case.expected_map_id,
                 actual_map_id=result.active_map_id,
                 expected_document_paths=case.expected_document_paths,
+                required_document_paths=case.required_document_paths,
                 actual_document_paths=actual_documents[:5],
                 expected_section_titles=case.expected_section_titles,
                 actual_section_titles=actual_sections[:5],
@@ -255,28 +355,43 @@ def evaluate_suite(
             )
         )
 
-    latencies = [case.latency_ms for case in case_results]
     passed = sum(case.passed for case in case_results)
-    metrics = {
-        "pass_rate": _rate(passed, len(case_results)),
-        "map_accuracy": _rate(map_hits, map_total),
-        "document_hit_at_1": _rate(document_hits, document_total),
-        "section_hit_at_3": _rate(section_hits, section_total),
-        "image_hit_at_3": _rate(image_hits, image_total),
-        "clarification_accuracy": _rate(clarification_hits, len(case_results)),
-        "median_latency_ms": _percentile(latencies, 0.5),
-        "p95_latency_ms": _percentile(latencies, 0.95),
+    metrics = _summarize(case_results)
+    grouped_results: dict[str, list[EvalCaseResult]] = defaultdict(list)
+    language_results: dict[str, list[EvalCaseResult]] = defaultdict(list)
+    for case in case_results:
+        if case.group_id:
+            grouped_results[case.group_id].append(case)
+        if case.language:
+            language_results[case.language].append(case)
+    if grouped_results:
+        metrics["equivalent_group_pass_rate"] = _rate(
+            sum(all(case.passed for case in group) for group in grouped_results.values()),
+            len(grouped_results),
+        )
+    language_metrics = {
+        language: _summarize(results)
+        for language, results in sorted(language_results.items())
     }
-    threshold_failures = tuple(
+    threshold_failures = [
         f"{name}={metrics.get(name, 0):.4f} < {minimum:.4f}"
         for name, minimum in suite.thresholds.items()
         if metrics.get(name, 0) < minimum
-    )
+    ]
+    for language, thresholds in suite.language_thresholds.items():
+        actual_metrics = language_metrics.get(language, {})
+        threshold_failures.extend(
+            f"language[{language}].{name}={actual_metrics.get(name, 0):.4f} < {minimum:.4f}"
+            for name, minimum in thresholds.items()
+            if actual_metrics.get(name, 0) < minimum
+        )
     return EvalReport(
         total=len(case_results),
         passed=passed,
         metrics=metrics,
+        language_metrics=language_metrics,
         thresholds=suite.thresholds,
-        threshold_failures=threshold_failures,
+        language_thresholds=suite.language_thresholds,
+        threshold_failures=tuple(threshold_failures),
         cases=tuple(case_results),
     )

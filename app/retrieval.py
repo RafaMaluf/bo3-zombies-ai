@@ -96,6 +96,29 @@ STOP_WORDS = {
     "uma",
     "what",
     "with",
+    "avec",
+    "aux",
+    "ce",
+    "ces",
+    "comment",
+    "dans",
+    "des",
+    "du",
+    "elle",
+    "en",
+    "est",
+    "et",
+    "je",
+    "la",
+    "le",
+    "les",
+    "ou",
+    "pour",
+    "quel",
+    "quelle",
+    "sur",
+    "un",
+    "une",
 }
 TITLE_BOOST_STOP_WORDS = {
     "abrir",
@@ -117,10 +140,25 @@ TITLE_BOOST_STOP_WORDS = {
     "quest",
     "unlock",
     "where",
+    "activer",
+    "ameliorer",
+    "construire",
+    "debloquer",
+    "obtenir",
+    "trouver",
 }
 TOPIC_EXPANSIONS = {
     "pack a punch": ("pap", "pack", "punch"),
     "pack-a-punch": ("pap", "pack", "punch"),
+    "melhora qualquer arma": ("pap", "pack", "punch", "upgrade", "weapon"),
+    "upgrades any gun": ("pap", "pack", "punch", "upgrade", "weapon"),
+    "ameliore n importe quelle arme": (
+        "pap",
+        "pack",
+        "punch",
+        "upgrade",
+        "weapon",
+    ),
     "easter egg": ("easter", "egg", "main", "ee"),
     "main quest": ("main", "quest", "easter", "egg"),
     "base bow": ("wrath", "ancients", "bow"),
@@ -134,6 +172,8 @@ TOPIC_EXPANSIONS = {
     "escudo": ("shield",),
     "energia": ("power",),
     "ligar a energia": ("power",),
+    "embaixo d agua": ("underwater", "bunker", "step", "power"),
+    "sous l eau": ("underwater", "bunker", "step", "power"),
     "arco eletrico": ("lightning", "bow", "electric"),
     "arco de fogo": ("fire", "bow"),
     "arco do lobo": ("wolf", "bow"),
@@ -145,6 +185,13 @@ TOPIC_EXPANSIONS = {
     "piramide de almas": ("pyramid", "souls", "main", "quest"),
     "q e d": ("qed", "quantum", "entanglement", "device"),
     "samantha says": ("computer", "colors", "pyramid", "souls", "main", "quest"),
+    "oeuf de paques": ("easter", "egg", "main", "ee"),
+    "quete principale": ("main", "quest", "easter", "egg"),
+    "arme speciale": ("wonder", "weapon"),
+    "baton de feu": ("fire", "staff"),
+    "baton de glace": ("ice", "staff"),
+    "baton de foudre": ("lightning", "staff"),
+    "baton de vent": ("wind", "staff"),
 }
 TOKEN_EXPANSIONS = {
     "abrir": ("open", "unlock"),
@@ -246,6 +293,35 @@ TOKEN_EXPANSIONS = {
     "unlock": ("get", "obtain"),
     "quarta": ("fourth", "part", "4"),
     "quarto": ("fourth", "part", "4"),
+    "allumer": ("light", "activate"),
+    "ameliorer": ("upgrade",),
+    "arme": ("weapon",),
+    "armes": ("weapon", "weapons"),
+    "baton": ("staff",),
+    "batons": ("staff", "staffs"),
+    "bouclier": ("shield",),
+    "chanson": ("music", "song"),
+    "construire": ("build",),
+    "crane": ("skull",),
+    "cranes": ("skull", "skulls"),
+    "debloquer": ("unlock",),
+    "electricite": ("power",),
+    "feu": ("fire",),
+    "foudre": ("lightning",),
+    "glace": ("ice",),
+    "joueur": ("player",),
+    "joueurs": ("player", "players"),
+    "masque": ("mask", "helmet"),
+    "morceau": ("part", "piece"),
+    "morceaux": ("parts", "pieces"),
+    "obtenir": ("get", "obtain"),
+    "piece": ("part", "piece"),
+    "pieces": ("parts", "pieces"),
+    "premier": ("first", "part", "1"),
+    "premiere": ("first", "part", "1"),
+    "troisieme": ("third", "part", "3"),
+    "trouver": ("where", "location"),
+    "vent": ("wind",),
 }
 
 
@@ -821,6 +897,7 @@ class SearchEngine:
         title_tokens = set(tokenize(normalized_title))
         document_tokens = set(tokenize(Path(chunk.path).stem.replace("_", " ")))
         original_token_set = set(original_query_tokens)
+        expanded_token_set = set(query_tokens)
         score += sum(1.25 for token in query_tokens if token in title_tokens)
         score += sum(
             6.0
@@ -830,6 +907,11 @@ class SearchEngine:
         matched_document_tokens = document_tokens & original_token_set
         if document_tokens and document_tokens <= original_token_set:
             score += 10.0 + 2.0 * len(document_tokens)
+        elif document_tokens and document_tokens <= expanded_token_set:
+            # Translated canonical terms (for example bouclier -> shield) must
+            # be able to select the same guide without receiving the stronger
+            # exact-name boost reserved for words the user actually typed.
+            score += 6.0 + 1.5 * len(document_tokens)
         else:
             score += 3.0 * len(matched_document_tokens)
         if normalized_query and normalized_query in normalized_title:

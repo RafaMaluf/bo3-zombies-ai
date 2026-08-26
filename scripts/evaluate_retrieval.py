@@ -98,10 +98,19 @@ def main() -> int:
         "Metrics: "
         f"map={report.metrics['map_accuracy']:.1%}, "
         f"document@1={report.metrics['document_hit_at_1']:.1%}, "
+        f"documents@10={report.metrics['required_documents_hit_at_10']:.1%}, "
         f"section@3={report.metrics['section_hit_at_3']:.1%}, "
         f"images@3={report.metrics['image_hit_at_3']:.1%}, "
         f"p95={report.metrics['p95_latency_ms']:.3f}ms"
     )
+    for language, metrics in report.language_metrics.items():
+        print(
+            f"Language {language}: pass={metrics['pass_rate']:.1%}, "
+            f"map={metrics['map_accuracy']:.1%}, "
+            f"document@1={metrics['document_hit_at_1']:.1%}, "
+            f"documents@10={metrics['required_documents_hit_at_10']:.1%}, "
+            f"section@3={metrics['section_hit_at_3']:.1%}"
+        )
     for case in report.cases:
         if not case.passed:
             failed_checks = ", ".join(name for name, passed in case.checks.items() if not passed)

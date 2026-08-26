@@ -1,0 +1,189 @@
+{
+  "version": 2,
+  "description": "Equivalent PT-BR, English, and French retrieval queries covering generic clarification, canonical community terms, paraphrases, follow-ups, multi-guide requests, exact items, sections, and images without calling an LLM.",
+  "required_languages": ["pt-BR", "en", "fr"],
+  "thresholds": {
+    "pass_rate": 0.85,
+    "map_accuracy": 1.0,
+    "document_hit_at_1": 0.85,
+    "required_documents_hit_at_10": 1.0,
+    "section_hit_at_3": 0.8,
+    "image_hit_at_3": 0.8,
+    "clarification_accuracy": 1.0,
+    "equivalent_group_pass_rate": 0.75
+  },
+  "language_thresholds": {
+    "pt-BR": {"pass_rate": 0.8, "map_accuracy": 1.0, "document_hit_at_1": 0.8},
+    "en": {"pass_rate": 0.8, "map_accuracy": 1.0, "document_hit_at_1": 0.8},
+    "fr": {"pass_rate": 0.8, "map_accuracy": 1.0, "document_hit_at_1": 0.8}
+  },
+  "cases": [
+    {
+      "id": "generic-pap-pt", "group_id": "generic-pap-clarification", "language": "pt-BR",
+      "query": "Como eu libero o Pack-a-Punch?", "expected_clarification": true,
+      "tags": ["generic", "clarification", "paraphrase"]
+    },
+    {
+      "id": "generic-pap-en", "group_id": "generic-pap-clarification", "language": "en",
+      "query": "How do I unlock Pack-a-Punch?", "expected_clarification": true,
+      "tags": ["generic", "clarification", "paraphrase"]
+    },
+    {
+      "id": "generic-pap-fr", "group_id": "generic-pap-clarification", "language": "fr",
+      "query": "Comment débloquer le Pack-a-Punch ?", "expected_clarification": true,
+      "tags": ["generic", "clarification", "paraphrase"]
+    },
+
+    {
+      "id": "de-shield-followup-pt", "group_id": "de-shield-third-part-followup", "language": "pt-BR",
+      "query": "E a terceira peça do escudo?", "active_map_id": "der_eisendrache", "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["shield.md"], "expected_section_titles": ["part 3 - underground frame"], "minimum_images": 1,
+      "tags": ["follow_up", "buildable", "translated_term"]
+    },
+    {
+      "id": "de-shield-followup-en", "group_id": "de-shield-third-part-followup", "language": "en",
+      "query": "And the third shield part?", "active_map_id": "der_eisendrache", "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["shield.md"], "expected_section_titles": ["part 3 - underground frame"], "minimum_images": 1,
+      "tags": ["follow_up", "buildable", "translated_term"]
+    },
+    {
+      "id": "de-shield-followup-fr", "group_id": "de-shield-third-part-followup", "language": "fr",
+      "query": "Et la troisième pièce du bouclier ?", "active_map_id": "der_eisendrache", "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["shield.md"], "expected_section_titles": ["part 3 - underground frame"], "minimum_images": 1,
+      "tags": ["follow_up", "buildable", "translated_term"]
+    },
+
+    {
+      "id": "de-pap-paraphrase-pt", "group_id": "de-pap-paraphrase", "language": "pt-BR",
+      "query": "Onde encontro a máquina que melhora qualquer arma por 5000 pontos?", "active_map_id": "der_eisendrache", "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["power_pap_teleporter.md"], "expected_section_titles": ["rocket test site Pack-a-Punch location", "undercroft / pyramid Pack-a-Punch location", "upper castle / bastion Pack-a-Punch location"], "minimum_images": 1,
+      "tags": ["paraphrase", "setup"]
+    },
+    {
+      "id": "de-pap-paraphrase-en", "group_id": "de-pap-paraphrase", "language": "en",
+      "query": "Where is the machine that upgrades any gun for 5000 points?", "active_map_id": "der_eisendrache", "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["power_pap_teleporter.md"], "expected_section_titles": ["rocket test site Pack-a-Punch location", "undercroft / pyramid Pack-a-Punch location", "upper castle / bastion Pack-a-Punch location"], "minimum_images": 1,
+      "tags": ["paraphrase", "setup"]
+    },
+    {
+      "id": "de-pap-paraphrase-fr", "group_id": "de-pap-paraphrase", "language": "fr",
+      "query": "Où est la machine qui améliore n'importe quelle arme pour 5000 points ?", "active_map_id": "der_eisendrache", "expected_map_id": "der_eisendrache",
+      "expected_document_paths": ["power_pap_teleporter.md"], "expected_section_titles": ["rocket test site Pack-a-Punch location", "undercroft / pyramid Pack-a-Punch location", "upper castle / bastion Pack-a-Punch location"], "minimum_images": 1,
+      "tags": ["paraphrase", "setup"]
+    },
+
+    {
+      "id": "soe-ee-acronym-pt", "group_id": "soe-ee-acronym", "language": "pt-BR",
+      "query": "Como faço o EE de SoE?", "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["main-ee.md"], "expected_section_titles": ["overview", "step 1 - unlock Pack-a-Punch"],
+      "tags": ["community_acronym", "main_ee"]
+    },
+    {
+      "id": "soe-ee-acronym-en", "group_id": "soe-ee-acronym", "language": "en",
+      "query": "How do I complete the EE in SoE?", "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["main-ee.md"], "expected_section_titles": ["overview", "step 1 - unlock Pack-a-Punch"],
+      "tags": ["community_acronym", "main_ee"]
+    },
+    {
+      "id": "soe-ee-acronym-fr", "group_id": "soe-ee-acronym", "language": "fr",
+      "query": "Comment terminer l'EE de SoE ?", "expected_map_id": "shadows_of_evil",
+      "expected_document_paths": ["main-ee.md"], "expected_section_titles": ["overview", "step 1 - unlock Pack-a-Punch"],
+      "tags": ["community_acronym", "main_ee"]
+    },
+
+    {
+      "id": "origins-gstrike-pt", "group_id": "origins-gstrike", "language": "pt-BR",
+      "query": "Como consigo o G-Strike em Origins?", "expected_map_id": "origins",
+      "expected_document_paths": ["g_strike.md"], "expected_section_titles": ["Equipment - G-Strike"],
+      "tags": ["exact_item", "canonical_english_term"]
+    },
+    {
+      "id": "origins-gstrike-en", "group_id": "origins-gstrike", "language": "en",
+      "query": "How do I get the G-Strike in Origins?", "expected_map_id": "origins",
+      "expected_document_paths": ["g_strike.md"], "expected_section_titles": ["Equipment - G-Strike"],
+      "tags": ["exact_item", "canonical_english_term"]
+    },
+    {
+      "id": "origins-gstrike-fr", "group_id": "origins-gstrike", "language": "fr",
+      "query": "Comment obtenir le G-Strike dans Origins ?", "expected_map_id": "origins",
+      "expected_document_paths": ["g_strike.md"], "expected_section_titles": ["Equipment - G-Strike"],
+      "tags": ["exact_item", "canonical_english_term"]
+    },
+
+    {
+      "id": "origins-three-guides-pt", "group_id": "origins-three-guides", "language": "pt-BR",
+      "query": "Como faço o G-Strike, o Maxis Drone e o One Inch Punch?", "active_map_id": "origins", "expected_map_id": "origins",
+      "required_document_paths": ["g_strike.md", "maxis_drone.md", "one_inch_punch.md"],
+      "tags": ["multi_guide", "canonical_english_term"]
+    },
+    {
+      "id": "origins-three-guides-en", "group_id": "origins-three-guides", "language": "en",
+      "query": "How do I get the G-Strike, Maxis Drone, and One Inch Punch?", "active_map_id": "origins", "expected_map_id": "origins",
+      "required_document_paths": ["g_strike.md", "maxis_drone.md", "one_inch_punch.md"],
+      "tags": ["multi_guide", "canonical_english_term"]
+    },
+    {
+      "id": "origins-three-guides-fr", "group_id": "origins-three-guides", "language": "fr",
+      "query": "Comment obtenir le G-Strike, le Maxis Drone et le One Inch Punch ?", "active_map_id": "origins", "expected_map_id": "origins",
+      "required_document_paths": ["g_strike.md", "maxis_drone.md", "one_inch_punch.md"],
+      "tags": ["multi_guide", "canonical_english_term"]
+    },
+
+    {
+      "id": "moon-hacker-pt", "group_id": "moon-hacker", "language": "pt-BR",
+      "query": "Onde o Hacker aparece e como paro uma escavadeira em Moon?", "expected_map_id": "moon",
+      "expected_document_paths": ["hacker.md"], "expected_section_titles": ["Equipment - Hacker Tool"], "minimum_images": 3,
+      "tags": ["exact_item", "equipment", "canonical_english_term"]
+    },
+    {
+      "id": "moon-hacker-en", "group_id": "moon-hacker", "language": "en",
+      "query": "Where can the Hacker spawn and how do I stop an excavator on Moon?", "expected_map_id": "moon",
+      "expected_document_paths": ["hacker.md"], "expected_section_titles": ["Equipment - Hacker Tool"], "minimum_images": 3,
+      "tags": ["exact_item", "equipment", "canonical_english_term"]
+    },
+    {
+      "id": "moon-hacker-fr", "group_id": "moon-hacker", "language": "fr",
+      "query": "Où apparaît le Hacker et comment arrêter une excavatrice sur Moon ?", "expected_map_id": "moon",
+      "expected_document_paths": ["hacker.md"], "expected_section_titles": ["Equipment - Hacker Tool"], "minimum_images": 3,
+      "tags": ["exact_item", "equipment", "canonical_english_term"]
+    },
+
+    {
+      "id": "origins-fire-staff-pt", "group_id": "origins-fire-staff", "language": "pt-BR",
+      "query": "Como monto e melhoro o cajado de fogo em Origins?", "expected_map_id": "origins",
+      "expected_document_paths": ["fire_staff.md"], "expected_section_titles": ["Preparation - Fire Staff", "Preparation - Kagutsuchi's blood (Upgraded fire staff)"], "minimum_images": 3,
+      "tags": ["translated_term", "wonder_weapon"]
+    },
+    {
+      "id": "origins-fire-staff-en", "group_id": "origins-fire-staff", "language": "en",
+      "query": "How do I build and upgrade the Fire Staff in Origins?", "expected_map_id": "origins",
+      "expected_document_paths": ["fire_staff.md"], "expected_section_titles": ["Preparation - Fire Staff", "Preparation - Kagutsuchi's blood (Upgraded fire staff)"], "minimum_images": 3,
+      "tags": ["translated_term", "wonder_weapon"]
+    },
+    {
+      "id": "origins-fire-staff-fr", "group_id": "origins-fire-staff", "language": "fr",
+      "query": "Comment construire et améliorer le bâton de feu dans Origins ?", "expected_map_id": "origins",
+      "expected_document_paths": ["fire_staff.md"], "expected_section_titles": ["Preparation - Fire Staff", "Preparation - Kagutsuchi's blood (Upgraded fire staff)"], "minimum_images": 3,
+      "tags": ["translated_term", "wonder_weapon"]
+    },
+
+    {
+      "id": "zns-underwater-power-pt", "group_id": "zns-underwater-power", "language": "pt-BR",
+      "query": "O que faço embaixo d'água para ligar a energia permanente?", "active_map_id": "zetsubou_no_shima", "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["power_bunker_pap.md"], "expected_section_titles": ["underwater bunker step"], "minimum_images": 1,
+      "tags": ["paraphrase", "translated_term", "setup"]
+    },
+    {
+      "id": "zns-underwater-power-en", "group_id": "zns-underwater-power", "language": "en",
+      "query": "What do I do underwater to turn on permanent power?", "active_map_id": "zetsubou_no_shima", "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["power_bunker_pap.md"], "expected_section_titles": ["underwater bunker step"], "minimum_images": 1,
+      "tags": ["paraphrase", "translated_term", "setup"]
+    },
+    {
+      "id": "zns-underwater-power-fr", "group_id": "zns-underwater-power", "language": "fr",
+      "query": "Que faire sous l'eau pour rétablir définitivement l'électricité ?", "active_map_id": "zetsubou_no_shima", "expected_map_id": "zetsubou_no_shima",
+      "expected_document_paths": ["power_bunker_pap.md"], "expected_section_titles": ["underwater bunker step"], "minimum_images": 1,
+      "tags": ["paraphrase", "translated_term", "setup"]
+    }
+  ]
+}

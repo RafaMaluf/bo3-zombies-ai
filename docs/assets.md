@@ -57,8 +57,10 @@ python -m scripts.migrate_images upload
 python -m scripts.migrate_images verify
 ```
 
-`build` validates local files, creates deterministic variants under the
-ignored `.cache/r2-assets` directory, and writes the committed manifest.
+`build` validates new or changed local files, creates deterministic variants
+under the ignored `.cache/r2-assets` directory, and writes the committed
+manifest. Existing records can be rebuilt from the manifest after their local
+binaries have been removed.
 `upload` compares remote metadata before every write, so repeated executions
 do not create duplicates or rewrite matching objects. `verify` checks every
 expected object against its size and hashes and exits non-zero for missing or
@@ -75,10 +77,11 @@ alerts enabled and review the current R2 free-tier limits in Cloudflare's
 official pricing documentation. Public image delivery means anyone who knows
 an object URL can download it.
 
-Until the separate Git-history cleanup is complete, the current repository is
-an additional local source for the originals. Before that destructive cleanup,
-retain an offline archive or export the bucket with an S3-compatible tool such
-as `rclone`.
+The Git repository deliberately contains no gameplay image binaries. A
+verified pre-rewrite Git bundle is retained as a rollback artifact; R2 remains
+the operational source. Periodically export the bucket with an S3-compatible
+tool such as `rclone` if an additional offline backup is required. See
+[history-rewrite.md](history-rewrite.md) for recovery instructions.
 
 To migrate providers, copy every key without renaming it to another
 S3-compatible bucket, verify it against the committed manifest, and change

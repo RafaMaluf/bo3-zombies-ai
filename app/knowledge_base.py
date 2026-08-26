@@ -78,7 +78,11 @@ class KnowledgeBase:
         asset_manifest: AssetManifest | None = None,
     ) -> None:
         self.maps_dir = maps_dir.resolve()
-        self.asset_manifest = asset_manifest or AssetManifest.empty()
+        self.asset_manifest = (
+            asset_manifest
+            if asset_manifest is not None
+            else AssetManifest.load(self.maps_dir.parent / "assets" / "image-manifest.json")
+        )
         self.maps: dict[str, MapRecord] = {}
         self.chunks: dict[str, KnowledgeChunk] = {}
         self.images: dict[str, ImageAsset] = {}

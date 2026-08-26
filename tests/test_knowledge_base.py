@@ -1,6 +1,6 @@
 import json
 import re
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from PIL import Image
 
@@ -31,7 +31,13 @@ def test_every_registered_image_stays_inside_its_map() -> None:
 
     for asset in knowledge_base.images.values():
         map_root = knowledge_base.maps[asset.map_id].directory
-        asset.source_file.resolve().relative_to(map_root)
+        if asset.source_file is not None:
+            asset.source_file.resolve().relative_to(map_root)
+            continue
+        relative_path = PurePosixPath(asset.path)
+        assert not relative_path.is_absolute()
+        assert ".." not in relative_path.parts
+        assert knowledge_base.asset_manifest.get(asset.id) is not None
 
 
 def test_multiple_images_in_one_step_have_distinct_captions() -> None:

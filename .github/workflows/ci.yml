@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements-dev.txt
 
+      - name: Check repository hygiene
+        run: python -m scripts.check_repository_hygiene
+
       - name: Lint
         run: python -m ruff check app scripts tests
 

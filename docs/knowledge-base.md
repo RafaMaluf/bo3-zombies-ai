@@ -44,8 +44,10 @@ Related images:
 - images/shield/part_1_location_b.jpg
 ```
 
-As imagens devem ficar na mesma pasta do mapa, dentro de `images/`. Não use
-espaços nos nomes de arquivo. Formatos aceitos:
+Durante a importação e a curadoria, as imagens ficam na pasta do mapa, dentro
+de `images/`. Não use espaços nos nomes de arquivo. Depois de executar o
+pipeline de object storage, esses binários locais são ignorados e somente o
+manifesto em `assets/image-manifest.json` é versionado. Formatos aceitos:
 
 - `.jpg`
 - `.jpeg`
@@ -83,4 +85,5 @@ facilitar correções e substituir imagens no futuro.
 
 Para novos mapas, use o pipeline descrito em
 [ingestion.md](ingestion.md). Ele cria `sources.json` com a URL e o hash de
-cada página, além da URL, dimensões e hash de cada imagem importada.
+cada página, além da URL, dimensões e hash de cada imagem importada. Consulte
+[assets.md](assets.md) para publicar novos arquivos sem adicioná-los ao Git.

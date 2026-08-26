@@ -190,34 +190,50 @@ def build_manifest(
     manifest_path: Path,
     staging_dir: Path,
 ) -> dict[str, Any]:
-    knowledge_base = KnowledgeBase(maps_dir)
+    existing_manifest = AssetManifest.load(manifest_path)
+    existing_payload = (
+        json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest_path.is_file()
+        else {"assets": {}}
+    )
+    existing_assets = existing_payload.get("assets", {})
+    knowledge_base = KnowledgeBase(maps_dir, asset_manifest=existing_manifest)
     if knowledge_base.errors:
         messages = "; ".join(f"{issue.path}: {issue.message}" for issue in knowledge_base.errors)
         raise MigrationError(f"Knowledge base contains invalid images: {messages}")
 
     source_urls = _source_urls(maps_dir)
-    variants_by_sha256: dict[str, dict[str, Any]] = {}
+    unique_originals: set[str] = set()
     assets: dict[str, dict[str, Any]] = {}
     total = len(knowledge_base.images)
     for position, asset in enumerate(sorted(knowledge_base.images.values(), key=lambda x: x.id), 1):
-        if asset.source_file is None:
-            raise MigrationError(f"Local source is unavailable for {asset.id}.")
-        original_sha256 = sha256_file(asset.source_file)
-        variants = variants_by_sha256.get(original_sha256)
-        if variants is None:
+        existing = existing_assets.get(asset.id)
+        if asset.source_file is not None:
+            original_sha256 = sha256_file(asset.source_file)
             variants = _build_variants(
                 asset.source_file,
                 staging_dir / original_sha256,
                 original_sha256,
             )
-            variants_by_sha256[original_sha256] = variants
+            source_url = source_urls.get((asset.map_id, asset.path))
+            if source_url is None and isinstance(existing, dict):
+                source_url = existing.get("source_url")
+        elif isinstance(existing, dict):
+            original_sha256 = str(existing["original_sha256"])
+            variants = existing["variants"]
+            source_url = existing.get("source_url")
+        else:
+            raise MigrationError(
+                f"Local source and existing manifest are unavailable for {asset.id}."
+            )
+        unique_originals.add(original_sha256)
         assets[asset.id] = {
             "map_id": asset.map_id,
             "path": asset.path,
             "document_path": asset.document_path,
             "caption": asset.caption,
             "section": asset.section,
-            "source_url": source_urls.get((asset.map_id, asset.path)),
+            "source_url": source_url,
             "original_sha256": original_sha256,
             "variants": variants,
         }
@@ -235,8 +251,8 @@ def build_manifest(
         },
         "counts": {
             "assets": len(assets),
-            "unique_originals": len(variants_by_sha256),
-            "objects": len(variants_by_sha256) * 3,
+            "unique_originals": len(unique_originals),
+            "objects": len(unique_originals) * 3,
         },
         "assets": assets,
     }
@@ -245,8 +261,8 @@ def build_manifest(
     if not manifest_path.is_file() or manifest_path.read_text(encoding="utf-8") != serialized:
         manifest_path.write_text(serialized, encoding="utf-8", newline="\n")
     print(
-        f"Manifest: {len(assets)} assets, {len(variants_by_sha256)} unique originals, "
-        f"{len(variants_by_sha256) * 3} objects.",
+        f"Manifest: {len(assets)} assets, {len(unique_originals)} unique originals, "
+        f"{len(unique_originals) * 3} objects.",
         flush=True,
     )
     return payload
@@ -338,12 +354,14 @@ def upload_objects(objects: Iterable[LocalObject], *, workers: int) -> Operation
     lock = Lock()
 
     def upload(item: LocalObject) -> str:
-        if not item.source_file.is_file():
-            raise MigrationError(f"Staged object is missing: {item.source_file}")
-        if item.source_file.stat().st_size != item.size_bytes:
-            raise MigrationError(f"Staged object size changed: {item.source_file}")
         if _head_matches(client, bucket, item):
             return "skipped"
+        if not item.source_file.is_file():
+            raise MigrationError(
+                f"Remote object is missing and no local source is available: {item.key}"
+            )
+        if item.source_file.stat().st_size != item.size_bytes:
+            raise MigrationError(f"Staged object size changed: {item.source_file}")
         client.upload_file(
             str(item.source_file),
             bucket,

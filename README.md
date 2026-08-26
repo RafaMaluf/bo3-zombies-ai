@@ -141,10 +141,10 @@ python -m scripts.evaluate_retrieval --hybrid
 python -m scripts.evaluate_retrieval --hybrid --suite evals/chronicles_queries.json
 ```
 
-Para gerar previamente os thumbnails das imagens:
+Para validar que nenhum binário de imagem de gameplay foi adicionado ao Git:
 
 ```bash
-python -m scripts.prewarm_thumbnails
+python -m scripts.check_repository_hygiene
 ```
 
 Com a aplicação em execução, valide os endpoints e respostas reais:
@@ -154,7 +154,8 @@ python -m scripts.smoke_api
 python -m scripts.smoke_api --live-chat
 ```
 
-Os thumbnails e relatórios ficam em `.cache/` e não são versionados.
+As variantes de imagem geradas e os relatórios ficam em `.cache/` e não são
+versionados.
 
 ## Importando novos mapas
 
@@ -168,6 +169,9 @@ python -m scripts.ingest_map ingestion/manifests/nacht_der_untoten.json --dry-ru
 
 Veja [docs/ingestion.md](docs/ingestion.md) para o formato do manifesto e
 [docs/evaluations.md](docs/evaluations.md) para adicionar os casos de busca.
+Depois da curadoria, publique as imagens com o pipeline descrito em
+[docs/assets.md](docs/assets.md); os binários locais em `maps/*/images/` não
+devem ser adicionados ao Git.
 
 ## Docker
 

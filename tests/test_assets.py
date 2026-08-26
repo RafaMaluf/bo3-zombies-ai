@@ -13,6 +13,7 @@ from scripts.migrate_images import (
     LocalObject,
     MigrationError,
     _build_variants,
+    build_manifest,
     upload_objects,
     verify_objects,
 )
@@ -153,3 +154,43 @@ def test_remote_verification_detects_missing_object(
 
     with pytest.raises(MigrationError, match="does not match"):
         verify_objects([_local_object(tmp_path)], workers=1)
+
+
+def test_manifest_can_be_rebuilt_after_local_images_are_removed(tmp_path: Path) -> None:
+    maps_dir = tmp_path / "maps"
+    map_dir = maps_dir / "test_map"
+    image_dir = map_dir / "images"
+    image_dir.mkdir(parents=True)
+    (map_dir / "index.json").write_text(
+        json.dumps(
+            {
+                "map_id": "test_map",
+                "display_name": "Test Map",
+                "release_order": 1,
+                "aliases": ["test"],
+                "summary": "Test map.",
+                "files": [
+                    {
+                        "path": "guide.md",
+                        "category": "guide",
+                        "summary": "Test guide.",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    (map_dir / "guide.md").write_text(
+        "# Guide\n\n## Step\n\nRelated image: images/example.png\n",
+        encoding="utf-8",
+    )
+    source = image_dir / "example.png"
+    Image.new("RGB", (800, 450), color=(20, 40, 60)).save(source)
+    manifest_path = tmp_path / "assets" / "image-manifest.json"
+    staging_dir = tmp_path / "staging"
+
+    initial = build_manifest(maps_dir, manifest_path, staging_dir)
+    source.unlink()
+    rebuilt = build_manifest(maps_dir, manifest_path, staging_dir)
+
+    assert rebuilt == initial

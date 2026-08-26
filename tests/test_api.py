@@ -101,17 +101,17 @@ class PlayerCountFollowUpLLM:
 
 
 @pytest.fixture
-def local_asset_delivery() -> Iterator[None]:
+def remote_asset_delivery() -> Iterator[None]:
     original_base_url = settings.asset_base_url
-    object.__setattr__(settings, "asset_base_url", "")
+    object.__setattr__(settings, "asset_base_url", "https://assets.example.com")
     try:
         yield
     finally:
         object.__setattr__(settings, "asset_base_url", original_base_url)
 
 
-def test_health_maps_and_thumbnail_endpoints(local_asset_delivery: None) -> None:
-    del local_asset_delivery
+def test_health_maps_and_thumbnail_endpoints(remote_asset_delivery: None) -> None:
+    del remote_asset_delivery
     with TestClient(app) as client:
         health = client.get("/health")
         assert health.status_code == 200
@@ -141,14 +141,14 @@ def test_health_maps_and_thumbnail_endpoints(local_asset_delivery: None) -> None
         assert [item["release_order"] for item in map_payload] == list(range(1, 15))
 
         cover_id = next(item["cover_image_id"] for item in map_payload if item["cover_image_id"])
-        thumbnail = client.get(f"/media/{cover_id}?variant=thumb")
-        assert thumbnail.status_code == 200
-        assert thumbnail.headers["content-type"] == "image/webp"
-        assert thumbnail.headers["cache-control"] == "public, max-age=86400"
+        thumbnail = client.get(f"/media/{cover_id}?variant=thumb", follow_redirects=False)
+        assert thumbnail.status_code == 307
+        assert thumbnail.headers["location"].startswith("https://assets.example.com/images/v1/")
+        assert thumbnail.headers["cache-control"] == "public, max-age=31536000, immutable"
 
-        full = client.get(f"/media/{cover_id}?variant=full")
-        assert full.status_code == 200
-        assert full.headers["content-type"].startswith("image/")
+        full = client.get(f"/media/{cover_id}?variant=full", follow_redirects=False)
+        assert full.status_code == 307
+        assert full.headers["location"].startswith("https://assets.example.com/images/v1/")
 
 
 def test_remote_asset_urls_are_returned_and_media_endpoint_redirects() -> None:

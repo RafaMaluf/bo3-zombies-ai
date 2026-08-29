@@ -1,262 +1,297 @@
-# Krono
+# Kronochat
 
-Assistente pessoal para **Call of Duty: Black Ops III Zombies**. A aplicação
-usa uma base local de guias como fonte canônica e seleciona screenshots
-associadas aos passos recuperados. A versão atual não pesquisa a internet
-durante a conversa.
+[![CI](https://github.com/RafaMaluf/zombies-ai/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/RafaMaluf/zombies-ai/actions/workflows/ci.yml)
+[![Tests and coverage](https://img.shields.io/github/actions/workflow/status/RafaMaluf/zombies-ai/ci.yml?branch=main&label=tests%20%26%20coverage)](https://github.com/RafaMaluf/zombies-ai/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Code license: MIT](https://img.shields.io/badge/code%20license-MIT-green.svg)](LICENSE)
 
-## O que mudou na versão remasterizada
+**A retrieval-augmented assistant for Call of Duty: Black Ops III Zombies.**
 
-- recuperação híbrida: BM25 local + embeddings Voyage com Reciprocal Rank Fusion;
-- índice semântico versionado e validado contra o conteúdo atual da base;
-- fallback automático para BM25, com circuit breaker quando a API de embeddings falha;
-- uma única chamada de IA por pergunta;
-- base carregada uma vez na inicialização;
-- chunks por seção de Markdown, com corte de relevância e dominância por guia;
-- até três guias nomeados podem ser respondidos juntos; acima disso, o usuário
-  escolhe quais deseja para evitar respostas enormes;
-- instruções de idioma impedem que verbos e nomes genéricos em inglês sejam
-  misturados em respostas em português;
-- imagens registradas por IDs estáveis, com legenda e vínculo à seção;
-- thumbnails WebP gerados sob demanda e armazenados em cache;
-- validação automática de índices, documentos e imagens;
-- frontend responsivo com seleção de mapa, fontes e galeria;
-- testes, lint, Docker e CI.
+Kronochat turns a curated, image-linked knowledge base into concise walkthroughs for
+Easter eggs, buildables, upgrades and map mechanics. It retrieves the relevant guide
+sections, answers in the user's language and returns the screenshots associated with
+the exact steps it used.
 
-## Base atual
+**[Try the live app](https://zombies.rafaelmaluf.dev/)** ·
+**[Health status](https://zombies.rafaelmaluf.dev/health)**
 
-- Shadows of Evil
-- The Giant
-- Der Eisendrache
-- Zetsubou No Shima
-- Gorod Krovi
-- Revelations
-- Nacht der Untoten
-- Verrückt
-- Shi No Numa
-- Kino der Toten
-- Ascension
-- Shangri-La
-- Moon
-- Origins
+![Kronochat desktop interface](docs/screenshots/kronochat-desktop.png)
 
-O comando de validação informa a contagem exata de documentos, chunks e
-imagens:
+## Why this is not a generic game chatbot
 
-```bash
-python -m scripts.validate_kb
+A general-purpose model can recognize terms such as “EE SoE”, but it is unreliable at
+long, map-specific sequences and often mixes versions of the game. Kronochat keeps the
+model away from retrieval, arithmetic and asset selection decisions it should not make:
+
+- Markdown guides are the canonical source of truth.
+- BM25 preserves exact signals such as map names, acronyms and step numbers.
+- Voyage embeddings recover paraphrases across Portuguese, English and French.
+- Reciprocal Rank Fusion combines both rankings without comparing incompatible scores.
+- Only retrieved sections and their registered image IDs enter the prompt.
+- The API rejects any image ID the model was not explicitly offered.
+- When semantic search is unavailable, a circuit breaker falls back to BM25.
+
+The result is a focused RAG system rather than an LLM wrapped in a chat UI.
+
+## Current scope
+
+| Knowledge base | Count |
+| --- | ---: |
+| Black Ops III maps | 14 |
+| Curated guides | 166 |
+| Searchable sections | 602 |
+| Registered screenshots | 1,084 |
+
+It covers the six original Black Ops III maps and the eight Zombies Chronicles maps.
+The application does not search the web during a conversation.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Build["Offline ingestion and indexing"]
+        Sources["Community guides"] --> Ingest["Ingestion and curation"]
+        Ingest --> Markdown["Canonical Markdown + provenance"]
+        Markdown --> Chunk["Section-aware chunking"]
+        Chunk --> BM25["BM25 index"]
+        Chunk --> EmbedDocs["Voyage document embeddings"]
+        Ingest --> Assets["SHA-256 image pipeline"]
+        Assets --> Manifest["Versioned asset manifest"]
+        Assets --> R2["Cloudflare R2"]
+    end
+
+    subgraph Runtime["Request path"]
+        Browser["Responsive web client"] --> API["FastAPI"]
+        API --> Context["Language + map context"]
+        Context --> BM25Query["BM25 retrieval"]
+        Context --> EmbedQuery["Voyage query embedding"]
+        BM25Query --> RRF["Reciprocal Rank Fusion"]
+        EmbedQuery --> RRF
+        RRF --> Prompt["Bounded context + allowed image IDs"]
+        Prompt --> Groq["Groq LLM"]
+        Groq --> Validate["Response and image validation"]
+        Validate --> Browser
+        Manifest --> Validate
+        R2 --> Browser
+    end
+
+    Markdown -. loaded at startup .-> BM25Query
+    EmbedDocs -. versioned local index .-> EmbedQuery
 ```
 
-## Rodando localmente
+The vector index is a reproducible artifact, not a second source of truth. At this
+scale, a validated local binary index is simpler than operating a vector database.
+Its manifest records the model, dimensions, chunk IDs and a content hash, so stale or
+incompatible vectors are rejected at startup.
 
-Requer Python 3.10 ou superior.
+## Retrieval and answer flow
+
+1. The explicit map or active conversation context limits the search space.
+2. BM25 and semantic search independently rank guide sections.
+3. Reciprocal Rank Fusion merges the rankings and a relative cutoff removes weak hits.
+4. Clear single-guide questions stay focused; up to three explicitly requested guides
+   can be answered together.
+5. The prompt receives only approved text, provenance and candidate image IDs.
+6. Groq generates the answer in the active language.
+7. The API validates the response and converts image IDs into immutable R2 URLs.
+
+Language starts from `navigator.languages`. Explicit language changes in the user's
+message override that preference, while ambiguous canonical terms such as “EE SoE” keep
+the current language. Game-specific proper names remain canonical.
+
+## Evaluation
+
+Retrieval is tested without calling an LLM, which makes failures deterministic and
+cheap to reproduce.
+
+| Suite | Cases | Languages | Current baseline |
+| --- | ---: | --- | ---: |
+| Core BO3 maps | 90 | Portuguese, English | 90 / 90 |
+| Zombies Chronicles | 49 | Portuguese, English | 49 / 49 |
+| Multilingual matrix | 27 | Portuguese, English, French | 27 / 27 |
+
+Each case can assert the inferred map, expected guide at rank one, required guides for
+multi-document questions, expected section, image availability and clarification
+behavior. CI also enforces at least 90% application-code coverage.
+
+See [the evaluation guide](docs/evaluations.md) for the suite format and hybrid runs.
+
+## Interface
+
+The UI is intentionally map-first: users can pin context, ask across all maps, inspect
+the retrieved sources and open step images without leaving the answer.
+
+<p align="center">
+  <img src="docs/screenshots/kronochat-mobile.png" width="430" alt="Kronochat responsive interface" />
+</p>
+
+## Run locally
+
+### Requirements
+
+- Python 3.10 or newer
+- a [Groq API key](https://console.groq.com/keys) for generated answers
+- optionally, a Voyage API key for hybrid semantic retrieval
 
 ```bash
+git clone https://github.com/RafaMaluf/zombies-ai.git
+cd zombies-ai
 python -m venv .venv
 ```
 
-No Windows:
+Activate the environment and install the development dependencies.
 
 ```powershell
+# Windows PowerShell
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements-dev.txt
 Copy-Item .env.example .env
 ```
 
-Preencha `GROQ_API_KEY` no `.env`. Para habilitar a busca semântica híbrida,
-preencha também `VOYAGE_API_KEY` e mantenha `EMBEDDING_PROVIDER=voyage`.
-Depois execute:
+```bash
+# macOS / Linux
+source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+cp .env.example .env
+```
+
+At minimum, set the following value in `.env`:
+
+```dotenv
+GROQ_API_KEY=your_key_here
+```
+
+To reproduce the production retrieval and image delivery path, also set:
+
+```dotenv
+EMBEDDING_PROVIDER=voyage
+VOYAGE_API_KEY=your_key_here
+VOYAGE_MODEL=voyage-4-large
+ASSET_BASE_URL=https://pub-526c370122924a1e842babde6cc44be9.r2.dev
+```
+
+The main runtime variables are:
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `GROQ_API_KEY` | For chat | Server-side key used to generate answers |
+| `GROQ_MODEL` | No | Groq model; defaults to `openai/gpt-oss-120b` |
+| `EMBEDDING_PROVIDER` | No | Set to `voyage` to enable hybrid retrieval |
+| `VOYAGE_API_KEY` | For hybrid search | Embeds each incoming query on the server |
+| `VOYAGE_MODEL` | No | Must match the model recorded in the vector manifest |
+| `ASSET_BASE_URL` | For remote images | Public object-storage base URL; contains no credential |
+| `ALLOWED_ORIGINS` | No | Comma-separated CORS allowlist |
+
+Retrieval limits and migration-only R2 variables are documented in `.env.example`.
+
+Start the server:
 
 ```bash
 python -m uvicorn app.main:app --reload
 ```
 
-Acesse [http://127.0.0.1:8000/app/](http://127.0.0.1:8000/app/).
+Open <http://127.0.0.1:8000/app/>. Without Voyage, the application remains available
+with BM25-only retrieval. R2 write credentials are required only by the asset migration
+tooling and must never be exposed to the browser.
 
-## Modelo
+## Docker
 
-O padrão é `openai/gpt-oss-120b` no Groq, com raciocínio baixo para privilegiar
-velocidade. Ele pode ser trocado sem alteração de código:
-
-```dotenv
-GROQ_MODEL=openai/gpt-oss-120b
-```
-
-O antigo `llama-3.3-70b-versatile` está programado para sair do Groq em
-16 de agosto de 2026. O GPT-OSS 120B foi escolhido por estar em produção,
-ter bom desempenho multilíngue, contexto de 131 mil tokens e suporte a saída
-JSON. No plano gratuito, o limite publicado é de 30 requisições por minuto,
-1.000 por dia, 8 mil tokens por minuto e 200 mil por dia.
-
-Referências: [deprecações](https://console.groq.com/docs/deprecations),
-[GPT-OSS 120B](https://console.groq.com/docs/model/openai/gpt-oss-120b) e
-[limites](https://console.groq.com/docs/rate-limits).
-
-## Busca híbrida
-
-O texto dos 602 chunks é convertido previamente em vetores de 1.024 dimensões
-com `voyage-4-large`. O índice gerado fica em `embeddings/` e é carregado uma
-única vez na inicialização. Em cada pergunta, apenas a consulta é enviada para
-a Voyage; os vetores dos documentos não são recalculados.
-
-BM25 e similaridade vetorial não são alternativas exclusivas. O Krono combina
-os dois rankings com Reciprocal Rank Fusion: BM25 preserva nomes exatos,
-siglas, números de passos e termos próprios de Zombies, enquanto os embeddings
-recuperam paráfrases e perguntas semanticamente equivalentes.
-
-Se a Voyage estiver indisponível, a conversa continua com BM25. Um circuit
-breaker evita repetir chamadas lentas durante a falha. Para reconstruir o
-índice depois de alterar a base:
+After creating `.env`:
 
 ```bash
-python -m scripts.build_embedding_index
+docker compose up --build
 ```
 
-O manifesto contém o modelo, a dimensão, os IDs dos chunks e um hash da base.
-Um índice ausente, corrompido, criado com outro modelo ou desatualizado é
-rejeitado na inicialização; nesse caso, o servidor permanece disponível em
-modo BM25.
+The application is published at <http://127.0.0.1:8000/app/> and the health endpoint at
+<http://127.0.0.1:8000/health>.
 
-## Imagens
-
-As imagens dos guias são publicadas em object storage com chaves imutáveis
-baseadas no SHA-256 do arquivo original. O manifesto versionado em
-`assets/image-manifest.json` relaciona cada imagem da base às variantes
-`original`, `full` e `thumb`; nenhuma credencial de storage é enviada ao
-frontend.
-
-O pipeline de geração, upload idempotente, verificação, backup e migração de
-provedor está documentado em [docs/assets.md](docs/assets.md).
-
-## Qualidade
+## Quality checks
 
 ```bash
 python -m ruff check app scripts tests
-python -m pytest
-python -m pytest --cov=app --cov-report=term-missing
+python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=90
 python -m scripts.validate_kb
 python -m scripts.evaluate_retrieval
 python -m scripts.evaluate_retrieval --suite evals/chronicles_queries.json
-python -m scripts.evaluate_retrieval --hybrid
-python -m scripts.evaluate_retrieval --hybrid --suite evals/chronicles_queries.json
-```
-
-Para validar que nenhum binário de imagem de gameplay foi adicionado ao Git:
-
-```bash
+python -m scripts.evaluate_retrieval --suite evals/multilingual_queries.json
 python -m scripts.check_repository_hygiene
 ```
 
-Com a aplicação em execução, valide os endpoints e respostas reais:
+With Voyage configured, evaluate the hybrid path:
+
+```bash
+python -m scripts.evaluate_retrieval --hybrid
+python -m scripts.evaluate_retrieval --hybrid --suite evals/multilingual_queries.json
+```
+
+With the API running, smoke-test its public surface:
 
 ```bash
 python -m scripts.smoke_api
 python -m scripts.smoke_api --live-chat
 ```
 
-As variantes de imagem geradas e os relatórios ficam em `.cache/` e não são
-versionados.
+## Knowledge and asset pipelines
 
-## Importando novos mapas
-
-O pipeline em `scripts.ingest_map` baixa os guias definidos em um manifesto,
-converte as imagens para WebP, remove duplicatas, registra a procedência e
-valida o mapa antes de alterar `maps/`.
+New maps are imported from explicit manifests, normalized into section-based Markdown,
+deduplicated and validated before they enter `maps/`:
 
 ```bash
 python -m scripts.ingest_map ingestion/manifests/nacht_der_untoten.json --dry-run
 ```
 
-Veja [docs/ingestion.md](docs/ingestion.md) para o formato do manifesto e
-[docs/evaluations.md](docs/evaluations.md) para adicionar os casos de busca.
-Depois da curadoria, publique as imagens com o pipeline descrito em
-[docs/assets.md](docs/assets.md); os binários locais em `maps/*/images/` não
-devem ser adicionados ao Git.
-
-## Docker
+After guide changes, rebuild the semantic index with:
 
 ```bash
-docker compose up --build
+python -m scripts.build_embedding_index
 ```
 
-O Compose lê a chave do arquivo `.env` e publica a aplicação em
-`http://127.0.0.1:8000`.
+Gameplay images are deliberately absent from Git. A migration script hashes each
+source, produces bounded `full.webp` and `thumb.webp` variants, uploads immutable
+objects and verifies remote hashes:
 
-## Como a resposta é montada
+```bash
+python -m scripts.migrate_images build
+python -m scripts.migrate_images upload
+python -m scripts.migrate_images verify
+```
 
-1. O mapa explícito ou o contexto ativo restringe a busca.
-2. BM25 e embeddings classificam as seções por sinais complementares.
-3. Reciprocal Rank Fusion combina os rankings e um corte relativo remove
-   resultados frouxos.
-4. Quando um documento vence claramente, outros guias não são misturados.
-   Se a pergunta nomear explicitamente dois ou três guias, a busca distribui
-   os chunks entre eles.
-5. Somente os chunks e imagens aprovados entram no prompt.
-6. O modelo devolve texto e IDs de imagens.
-7. O servidor descarta qualquer ID que não tenha sido oferecido.
+Read [ingestion](docs/ingestion.md), [knowledge-base](docs/knowledge-base.md) and
+[asset-storage](docs/assets.md) documentation before modifying these pipelines.
 
-Veja [docs/knowledge-base.md](docs/knowledge-base.md) antes de adicionar um
-novo mapa.
+## Project layout
 
-## Pesquisa externa
+```text
+app/                    FastAPI, retrieval, conversation and model integration
+assets/                 Versioned image manifest (no gameplay binaries)
+embeddings/             Validated semantic index and manifest
+evals/                  Deterministic retrieval suites
+frontend/               Responsive dependency-free web client
+ingestion/manifests/    Source declarations for imported maps
+maps/                   Canonical Markdown guides and provenance
+scripts/                Ingestion, indexing, evaluation and migration tools
+tests/                  Unit and API integration tests
+```
 
-É possível acrescentar pesquisa na internet. O modelo padrão suporta uma
-ferramenta de busca, mas ela não está habilitada nesta versão. A direção
-recomendada é um fallback híbrido:
+## Deliberate trade-offs and limitations
 
-1. responder primeiro com a base local;
-2. pesquisar apenas quando a base for insuficiente ou quando o usuário pedir;
-3. exibir URL e distinguir claramente conteúdo local de conteúdo externo;
-4. nunca incorporar silenciosamente o resultado pesquisado à base canônica.
+- The curated base favors reproducibility over open-ended web coverage.
+- Answer generation requires Groq; semantic retrieval requires Voyage, but lexical
+  retrieval degrades gracefully when Voyage is unavailable.
+- Guide quality still depends on source quality and human curation.
+- Hard facts such as player-count requirements are partly encoded in prose and should
+  continue moving toward structured metadata.
+- The service has no user accounts or cross-device conversation persistence.
+- Public image URLs can be downloaded by anyone who receives them.
+- Call of Duty terminology, screenshots and community guide material are third-party
+  content and are not covered by this repository's code license.
 
-Pesquisar sempre tornaria a resposta menos reproduzível e aumentaria o risco
-de misturar BO1, BO3, versões modificadas e informações incorretas. Consulte a
-[documentação de ferramentas do Groq](https://console.groq.com/docs/tool-use/built-in-tools).
+## License and third-party material
 
-## Decisão de arquitetura
+The original source code in this repository is licensed under the [MIT License](LICENSE).
+That license does **not** grant rights to Call of Duty, Black Ops, Zombies, map names,
+gameplay screenshots, community guides or any other third-party material.
 
-A estrutura atual é adequada ao tamanho e ao tipo do projeto, não uma solução
-universal. Markdown continua sendo a fonte canônica e o índice vetorial é um
-artefato derivado e reproduzível. Como são apenas 602 chunks, os vetores ficam
-em um arquivo binário local: adicionar Pinecone, Qdrant ou outro banco vetorial
-traria infraestrutura sem benefício prático neste estágio.
-
-Os limites conhecidos são:
-
-- recuperação semântica depende da Voyage para vetorizar novas consultas, mas
-  possui fallback lexical;
-- a qualidade dos chunks depende da estrutura dos guias importados;
-- fatos rígidos como versão do mapa, modo e quantidade de jogadores deveriam
-  evoluir para metadados estruturados;
-- o mapa ativo tem prioridade para evitar que nomes de áreas sejam confundidos
-  com outros mapas;
-- a antiga dominância de um único documento era frágil para perguntas com
-  vários objetivos; o caso explícito de até três guias agora é tratado.
-
-Antes de trocar modelos, pesos ou adicionar reranking, a mudança deve superar
-as duas suítes de avaliação versionadas. Isso evita aumentar a complexidade
-com base apenas em exemplos isolados.
-
-## Configuração
-
-Além de `GROQ_API_KEY` e `GROQ_MODEL`, a busca híbrida usa:
-
-- `EMBEDDING_PROVIDER` — use `voyage` para habilitar embeddings;
-- `VOYAGE_API_KEY` — chave usada somente no servidor;
-- `VOYAGE_MODEL` — deve ser o mesmo modelo registrado no índice.
-
-O comportamento também pode ser ajustado por:
-
-- `MAX_RETRIEVED_CHUNKS` — quantidade máxima de chunks recuperados;
-- `MAX_MULTI_DOCUMENTS` — quantidade máxima de guias em uma única resposta;
-- `MAX_CONTEXT_CHARS` — tamanho máximo do contexto enviado ao modelo;
-- `MAX_CANDIDATE_IMAGES` — imagens oferecidas ao modelo;
-- `MAX_RESPONSE_IMAGES` — imagens devolvidas ao frontend;
-- `MAX_HISTORY_MESSAGES` — mensagens anteriores mantidas no contexto;
-- `ALLOWED_ORIGINS` — origens CORS permitidas.
-
-## Licença
-
-O código-fonte é disponibilizado sob a licença MIT. Guias, screenshots, nomes,
-marcas e demais materiais de terceiros não são licenciados por este projeto e
-permanecem sob os direitos de seus respectivos proprietários.
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution, provenance and the
+scope of the code license. This is a personal, non-commercial fan project and is not
+affiliated with or endorsed by Activision or the respective rights holders.

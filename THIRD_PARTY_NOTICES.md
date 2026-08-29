@@ -26,8 +26,10 @@ place it under the MIT License or imply ownership by this project.
 ## Community guide material
 
 The knowledge base was curated from publicly available community resources, including
-Steam Community guides and Reddit community pages. Guide-specific provenance is kept in
-`maps/*/sources.json`, ingestion manifests and the image manifest.
+Steam Community guides and Reddit community pages. Where available, guide-specific
+provenance is kept in `maps/*/sources.json`, ingestion manifests and the image manifest.
+The eight imported Zombies Chronicles maps retain source URLs, capture timestamps,
+selectors and source hashes in their `sources.json` manifests.
 
 Facts and procedures were reorganized into a structured retrieval corpus. Original
 wording, screenshots and other expressive content remain subject to the applicable
@@ -39,3 +41,6 @@ If you are a rights holder or source author and believe material is incorrectly 
 or should be removed, open a GitHub issue with the affected source or asset identifier.
 The provenance manifests make individual records traceable and removable without
 changing the retrieval architecture.
+
+This document records repository provenance and licensing boundaries; it is not legal
+advice.

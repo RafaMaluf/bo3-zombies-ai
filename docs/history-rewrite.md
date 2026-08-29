@@ -1,17 +1,17 @@
-# Repository history rewrite
+# Repository history policy
 
 Gameplay screenshots are delivered from object storage and must not be stored
-in Git. On 26 August 2026, the repository history was rewritten to remove
-every object below `maps/*/images/` from all relevant refs.
+in Git. The repository history was rewritten before its public release to
+remove every object below `maps/*/images/` from all relevant refs.
 
-## Why a fresh clone is required
+## Effect on older clones
 
 History rewriting changes commit IDs, even when the source code in a commit is
 otherwise identical. Existing clones still contain the retired binary blobs
 and cannot safely pull the rewritten `main` branch.
 
-After the force-push, collaborators should archive any uncommitted work and
-create a fresh clone:
+Clones created before the rewrite retain the old objects and commit IDs. They
+should be replaced with a fresh clone:
 
 ```bash
 git clone https://github.com/RafaMaluf/zombies-ai.git
@@ -19,10 +19,8 @@ cd zombies-ai
 cp .env.example .env
 ```
 
-Copy only the required local secrets into the new `.env`. Do not copy the old
-`.git` directory or merge an old branch into the rewritten history. A branch
-with valuable uncommitted work should be exported as a patch and reapplied to
-the fresh clone.
+Local configuration can then be recreated from `.env.example`. Old `.git`
+directories and branches must not be merged back into the cleaned history.
 
 ## Guardrails
 
@@ -35,16 +33,14 @@ New guide images are generated locally, migrated to object storage with
 `python -m scripts.migrate_images all`, and represented in Git only by the
 updated `assets/image-manifest.json`, guide references and provenance files.
 
-## Rollback
+## Asset verification
 
-Before the rewrite, a complete verified Git bundle was created. Restoring it
-recreates the previous refs and all removed blobs. Object storage remains the
-primary runtime source and can be independently verified with:
+Object storage is the runtime source for gameplay images and can be verified
+independently against the committed manifest with:
 
 ```bash
 python -m scripts.migrate_images verify
 ```
 
-If the Git host must be restored from the bundle, clone the bundle into an
-isolated directory, validate production, and only then replace the remote
-history. Never mix rollback refs into the cleaned repository accidentally.
+This policy keeps the public source history focused on code, guides and
+reproducible metadata while preserving stable asset references at runtime.

@@ -1,7 +1,7 @@
 # Kronochat
 
 [![CI](https://github.com/RafaMaluf/zombies-ai/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/RafaMaluf/zombies-ai/actions/workflows/ci.yml)
-[![Tests and coverage](https://img.shields.io/github/actions/workflow/status/RafaMaluf/zombies-ai/ci.yml?branch=main&label=tests%20%26%20coverage)](https://github.com/RafaMaluf/zombies-ai/actions/workflows/ci.yml)
+[![Coverage threshold: 90%](https://img.shields.io/badge/coverage_threshold-90%25-brightgreen)](https://github.com/RafaMaluf/zombies-ai/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Code license: MIT](https://img.shields.io/badge/code%20license-MIT-green.svg)](LICENSE)
 

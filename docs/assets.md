@@ -70,19 +70,15 @@ operations.
 The Docker build explicitly excludes `maps/*/images/**`; it packages only the
 guides, asset manifest and application code.
 
-## Backup, ownership and provider migration
+## Storage portability
 
-The R2 bucket is owned by the Cloudflare account that created it. Keep billing
-alerts enabled and review the current R2 free-tier limits in Cloudflare's
-official pricing documentation. Public image delivery means anyone who knows
-an object URL can download it.
+Asset identity is independent of the storage provider. Object keys are derived
+from content hashes, and the complete mapping is kept in the versioned
+manifest. The Git repository therefore contains the metadata required to
+verify the collection without storing gameplay image binaries.
 
-The Git repository deliberately contains no gameplay image binaries. A
-verified pre-rewrite Git bundle is retained as a rollback artifact; R2 remains
-the operational source. Periodically export the bucket with an S3-compatible
-tool such as `rclone` if an additional offline backup is required. See
-[history-rewrite.md](history-rewrite.md) for recovery instructions.
-
-To migrate providers, copy every key without renaming it to another
-S3-compatible bucket, verify it against the committed manifest, and change
-`ASSET_BASE_URL`. No guide, image ID or retrieval index needs to change.
+The current public origin is Cloudflare R2, but migration only requires copying
+the existing keys to another S3-compatible bucket and changing
+`ASSET_BASE_URL`. Guide references, image IDs and retrieval indexes remain
+unchanged. Because delivery is public, anyone with an object URL can download
+that asset; write access remains protected by the migration-only credentials.

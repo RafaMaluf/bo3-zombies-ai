@@ -1,6 +1,6 @@
-# Estrutura da base de conhecimento
+# Knowledge base structure
 
-Cada mapa ocupa uma pasta em `maps/<map_id>/`.
+Each map has its own directory under `maps/<map_id>/`.
 
 ```text
 maps/
@@ -15,22 +15,21 @@ maps/
 
 ## `index.json`
 
-Campos do índice:
+The map index contains:
 
-- `map_id`: identificador estável em `snake_case`;
-- `display_name`: nome exibido;
-- `release_order`: posição opcional do mapa na ordem de lançamento exibida pela interface; mapas sem esse campo aparecem por último;
-- `aliases`: nomes e abreviações usados pelos jogadores;
-- `summary`: resumo do mapa;
-- `files`: todos os Markdown pesquisáveis.
+- `map_id`: stable `snake_case` identifier;
+- `display_name`: name shown in the interface;
+- `release_order`: optional display order; maps without one appear last;
+- `aliases`: names and abbreviations used by players;
+- `summary`: short map description;
+- `files`: every searchable Markdown guide.
 
-Cada arquivo precisa de `path`, `category` e `summary`. Um Markdown que não
-estiver no índice faz a validação falhar. Um caminho indexado que não existir
-também faz a validação falhar.
+Each file entry requires `path`, `category` and `summary`. Validation fails if
+a Markdown guide is missing from the index or an indexed path does not exist.
 
 ## Markdown
 
-Use um `#` para o título e `##` para seções recuperáveis:
+Use `#` for the document title and `##` for independently retrievable sections:
 
 ```markdown
 # Rocket Shield
@@ -44,10 +43,10 @@ Related images:
 - images/shield/part_1_location_b.jpg
 ```
 
-Durante a importação e a curadoria, as imagens ficam na pasta do mapa, dentro
-de `images/`. Não use espaços nos nomes de arquivo. Depois de executar o
-pipeline de object storage, esses binários locais são ignorados e somente o
-manifesto em `assets/image-manifest.json` é versionado. Formatos aceitos:
+During ingestion and curation, source images live in the map's `images/`
+directory. File names must not contain spaces. After the object-storage
+pipeline runs, local binaries are ignored and only
+`assets/image-manifest.json` is versioned. Supported formats are:
 
 - `.jpg`
 - `.jpeg`
@@ -55,35 +54,34 @@ manifesto em `assets/image-manifest.json` é versionado. Formatos aceitos:
 - `.webp`
 - `.gif`
 
-Não é necessário repetir uma galeria completa no fim do documento. O loader
-mantém compatibilidade com as galerias legadas, mas imagens próximas à seção
-produzem respostas mais precisas.
+There is no need to repeat a complete gallery at the end of a guide. The
+loader supports legacy galleries, but placing image references next to the
+relevant section produces more precise answers.
 
-## Validação obrigatória
+## Validation
 
-Depois de importar ou editar conteúdo:
+After importing or editing content, run:
 
 ```bash
 python -m scripts.validate_kb
 python -m pytest
 ```
 
-O validador detecta:
+The validator detects:
 
-- índices inválidos;
-- documentos ausentes ou não indexados;
-- caminhos que escapam da pasta do mapa;
-- referências de imagem quebradas;
-- imagens órfãs;
-- IDs duplicados.
+- invalid indexes;
+- missing or unindexed documents;
+- paths that escape the map directory;
+- broken image references;
+- orphaned images;
+- duplicate IDs.
 
-## Fontes
+## Provenance
 
-Como o projeto é pessoal, screenshots públicas podem ser armazenadas
-localmente. Ainda assim, registre a URL de origem durante a importação para
-facilitar correções e substituir imagens no futuro.
+Every imported source should retain its origin URL. This makes later reviews,
+corrections and asset replacements reproducible.
 
-Para novos mapas, use o pipeline descrito em
-[ingestion.md](ingestion.md). Ele cria `sources.json` com a URL e o hash de
-cada página, além da URL, dimensões e hash de cada imagem importada. Consulte
-[assets.md](assets.md) para publicar novos arquivos sem adicioná-los ao Git.
+For new maps, use the pipeline described in [ingestion.md](ingestion.md). It
+creates `sources.json` with each page URL and hash, plus the URL, dimensions
+and hash of each imported image. See [assets.md](assets.md) for publishing new
+assets without adding their binaries to Git.

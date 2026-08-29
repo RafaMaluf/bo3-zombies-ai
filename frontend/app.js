@@ -94,6 +94,13 @@ const UI_COPY = {
 };
 
 function resolveUiLocale() {
+  const requestedLocale = new URLSearchParams(window.location.search).get("lang");
+  if (requestedLocale) {
+    const requestedBase = requestedLocale.toLowerCase().split("-")[0];
+    if (requestedBase === "pt") return "pt-BR";
+    if (requestedBase === "en") return "en";
+  }
+
   const languages = navigator.languages?.length
     ? navigator.languages
     : [navigator.language || "en"];

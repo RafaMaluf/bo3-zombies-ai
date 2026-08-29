@@ -38,6 +38,13 @@ LIVE_CASES = (
     ),
 )
 
+EXPECTED_COUNTS = {
+    "maps": 14,
+    "documents": 166,
+    "chunks": 602,
+    "images": 1084,
+}
+
 
 class SmokeFailure(RuntimeError):
     pass
@@ -53,7 +60,11 @@ def _request(
     request = Request(
         f"{base_url.rstrip('/')}{path}",
         data=body,
-        headers={"Content-Type": "application/json"} if body is not None else {},
+        headers={
+            "Accept": "application/json, image/webp, text/html, */*",
+            "User-Agent": "Mozilla/5.0 Kronochat-Smoke/1.0",
+            **({"Content-Type": "application/json"} if body is not None else {}),
+        },
         method="POST" if body is not None else "GET",
     )
     try:
@@ -86,16 +97,16 @@ def _json(
 
 def run(base_url: str, *, live_chat: bool) -> None:
     health = _json(base_url, "/health")
-    expected_counts = {"maps": 6, "documents": 99, "chunks": 516, "images": 626}
     if health["status"] != "ok":
         raise SmokeFailure(f"Health is not ok: {health}")
-    for field, expected in expected_counts.items():
+    for field, expected in EXPECTED_COUNTS.items():
         if health[field] != expected:
             raise SmokeFailure(f"Health field {field} is {health[field]}; expected {expected}.")
 
     maps = _json(base_url, "/maps")
-    if len(maps) != 6 or len({item["map_id"] for item in maps}) != 6:
-        raise SmokeFailure("Map catalog must contain six unique maps.")
+    expected_maps = EXPECTED_COUNTS["maps"]
+    if len(maps) != expected_maps or len({item["map_id"] for item in maps}) != expected_maps:
+        raise SmokeFailure(f"Map catalog must contain {expected_maps} unique maps.")
     for item in maps:
         cover_id = item["cover_image_id"]
         if not cover_id:
@@ -119,7 +130,10 @@ def run(base_url: str, *, live_chat: bool) -> None:
         "/chat",
         {"message": "How do I unlock Pack-a-Punch?"},
     )
-    if not clarification["need_clarification"] or len(clarification["suggested_map_ids"]) != 6:
+    if (
+        not clarification["need_clarification"]
+        or len(clarification["suggested_map_ids"]) != expected_maps
+    ):
         raise SmokeFailure("Generic Pack-a-Punch question did not request a map.")
 
     if live_chat:

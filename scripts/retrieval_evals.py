@@ -359,11 +359,11 @@ def evaluate_suite(
     metrics = _summarize(case_results)
     grouped_results: dict[str, list[EvalCaseResult]] = defaultdict(list)
     language_results: dict[str, list[EvalCaseResult]] = defaultdict(list)
-    for case in case_results:
-        if case.group_id:
-            grouped_results[case.group_id].append(case)
-        if case.language:
-            language_results[case.language].append(case)
+    for case_result in case_results:
+        if case_result.group_id:
+            grouped_results[case_result.group_id].append(case_result)
+        if case_result.language:
+            language_results[case_result.language].append(case_result)
     if grouped_results:
         metrics["equivalent_group_pass_rate"] = _rate(
             sum(all(case.passed for case in group) for group in grouped_results.values()),

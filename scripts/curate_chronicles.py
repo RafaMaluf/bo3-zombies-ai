@@ -685,9 +685,9 @@ def curate_map(map_dir: Path, plan: MapPlan) -> None:
     kept_images: list[dict[str, object]] = []
     for image in provenance.get("images", []):
         image_path = str(image.get("path", ""))
-        document_path = image_documents.get(image_path)
-        if document_path:
-            image["document"] = document_path
+        matched_document_path = image_documents.get(image_path)
+        if matched_document_path:
+            image["document"] = matched_document_path
             kept_images.append(image)
             continue
         orphan = map_dir / image_path

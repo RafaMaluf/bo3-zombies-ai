@@ -32,14 +32,14 @@ def main() -> int:
     if not settings.voyage_api_key:
         print("VOYAGE_API_KEY is not configured.", file=sys.stderr)
         return 2
-    manifest = AssetManifest.load(args.maps_dir.parent / "assets" / "image-manifest.json")
-    knowledge_base = KnowledgeBase(args.maps_dir, asset_manifest=manifest)
+    asset_manifest = AssetManifest.load(args.maps_dir.parent / "assets" / "image-manifest.json")
+    knowledge_base = KnowledgeBase(args.maps_dir, asset_manifest=asset_manifest)
     if knowledge_base.errors:
         print("Knowledge base has validation errors.", file=sys.stderr)
         return 2
     client = VoyageEmbeddingClient(settings.voyage_api_key, settings.voyage_model)
     try:
-        manifest = write_embedding_index(
+        index_manifest = write_embedding_index(
             args.output_dir,
             knowledge_base,
             client=client,
@@ -48,7 +48,7 @@ def main() -> int:
     except EmbeddingError as error:
         print(f"Embedding index failed: {error}", file=sys.stderr)
         return 1
-    print(json.dumps(manifest, ensure_ascii=False, indent=2))
+    print(json.dumps(index_manifest, ensure_ascii=False, indent=2))
     return 0
 
 

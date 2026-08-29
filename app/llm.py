@@ -3,8 +3,10 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
+from typing import cast
 
 from openai import AsyncOpenAI
+from openai.types.chat import ChatCompletionMessageParam
 from pydantic import BaseModel, Field, ValidationError
 
 from app.config import Settings
@@ -91,17 +93,22 @@ class LLMService:
             )
 
         try:
-            request_options: dict[str, object] = {
-                "model": self.settings.groq_model,
-                "messages": messages,
-                "temperature": 0.1,
-                "response_format": {"type": "json_object"},
-            }
+            typed_messages = cast(list[ChatCompletionMessageParam], messages)
             if self.settings.groq_model.startswith("openai/gpt-oss"):
-                request_options["reasoning_effort"] = "low"
-            response = await self._client.chat.completions.create(
-                **request_options,
-            )
+                response = await self._client.chat.completions.create(
+                    model=self.settings.groq_model,
+                    messages=typed_messages,
+                    temperature=0.1,
+                    response_format={"type": "json_object"},
+                    reasoning_effort="low",
+                )
+            else:
+                response = await self._client.chat.completions.create(
+                    model=self.settings.groq_model,
+                    messages=typed_messages,
+                    temperature=0.1,
+                    response_format={"type": "json_object"},
+                )
         except Exception as error:
             raise LLMResponseError(f"Model request failed: {error}") from error
 

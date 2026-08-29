@@ -209,13 +209,19 @@ The application is published at <http://127.0.0.1:8000/app/> and the health endp
 
 ```bash
 python -m ruff check app scripts tests
+python -m mypy app scripts
 python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=90
 python -m scripts.validate_kb
+python -m scripts.validate_embedding_index
 python -m scripts.evaluate_retrieval
 python -m scripts.evaluate_retrieval --suite evals/chronicles_queries.json
 python -m scripts.evaluate_retrieval --suite evals/multilingual_queries.json
 python -m scripts.check_repository_hygiene
 ```
+
+Mypy checks `app/` and `scripts/` with typed function bodies, explicit optional values,
+unreachable-code warnings and redundant/unused suppression warnings. Third-party
+packages that do not publish typing metadata are ignored; project code is not.
 
 With Voyage configured, evaluate the hybrid path:
 

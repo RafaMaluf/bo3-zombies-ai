@@ -4,13 +4,20 @@ on:
   push:
     branches:
       - main
-      - "agent/**"
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  validate:
+  quality:
+    name: Quality and test suites
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -25,17 +32,37 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements-dev.txt
 
-      - name: Check repository hygiene
+      - name: Check tracked images and secrets
         run: python -m scripts.check_repository_hygiene
 
       - name: Lint
         run: python -m ruff check app scripts tests
 
-      - name: Test
-        run: python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=90
+      - name: Type check
+        run: python -m mypy app scripts
+
+      - name: Unit tests
+        run: >-
+          python -m pytest tests
+          --ignore=tests/test_api.py
+          --cov=app
+          --cov-report=
+
+      - name: API integration tests
+        run: >-
+          python -m pytest tests/test_api.py
+          --cov=app
+          --cov-append
+          --cov-report=
+
+      - name: Enforce coverage
+        run: python -m coverage report --show-missing --fail-under=90
 
       - name: Validate knowledge base
         run: python -m scripts.validate_kb
+
+      - name: Validate committed embedding index
+        run: python -m scripts.validate_embedding_index
 
       - name: Evaluate retrieval quality
         run: python -m scripts.evaluate_retrieval
@@ -51,3 +78,66 @@ jobs:
           python -m scripts.evaluate_retrieval
           --suite evals/multilingual_queries.json
           --report .cache/reports/multilingual-retrieval-eval.json
+
+  container:
+    name: Docker build and smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build image
+        run: docker build --tag kronochat-ci:${{ github.sha }} .
+
+      - name: Verify configured runtime user
+        run: test "$(docker image inspect --format '{{.Config.User}}' kronochat-ci:${{ github.sha }})" = "krono"
+
+      - name: Start container
+        run: >-
+          docker run --detach
+          --name kronochat-ci
+          --publish 127.0.0.1:8000:8000
+          --health-start-period=2s
+          --health-interval=2s
+          kronochat-ci:${{ github.sha }}
+
+      - name: Wait for container health
+        run: |
+          for attempt in {1..45}; do
+            status="$(docker inspect --format '{{.State.Health.Status}}' kronochat-ci)"
+            if [ "$status" = "healthy" ]; then
+              exit 0
+            fi
+            if [ "$status" = "unhealthy" ]; then
+              docker logs kronochat-ci
+              exit 1
+            fi
+            sleep 2
+          done
+          docker logs kronochat-ci
+          exit 1
+
+      - name: Verify non-root process and health payload
+        run: |
+          test "$(docker exec kronochat-ci id -u)" = "10001"
+          curl --fail --silent --show-error http://127.0.0.1:8000/health | python -c '
+          import json, sys
+          health = json.load(sys.stdin)
+          expected = {"maps": 14, "documents": 166, "chunks": 602, "images": 1084}
+          assert health["status"] == "ok", health
+          assert all(health[key] == value for key, value in expected.items()), health
+          assert health["validation_errors"] == 0, health
+          assert health["validation_warnings"] == 0, health
+          assert health["llm_configured"] is False, health
+          assert health["embeddings_configured"] is False, health
+          '
+
+      - name: Container logs
+        if: always()
+        run: docker logs kronochat-ci || true
+
+      - name: Stop container
+        if: always()
+        run: docker rm --force kronochat-ci || true

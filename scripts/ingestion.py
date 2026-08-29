@@ -8,7 +8,7 @@ import shutil
 import time
 import uuid
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from io import BytesIO
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -635,7 +635,7 @@ def build_map(
                 url=spec.source_url,
                 document=spec.path,
                 selector=spec.content_selector or "auto",
-                captured_at=datetime.now(UTC).isoformat(),
+                captured_at=datetime.now(timezone.utc).isoformat(),
                 sha256=hashlib.sha256(response.content).hexdigest(),
             )
         )
@@ -647,7 +647,7 @@ def build_map(
             }
         )
 
-    index = {
+    index: dict[str, object] = {
         "map_id": manifest.map_id,
         "display_name": manifest.display_name,
         "aliases": list(manifest.aliases),
@@ -662,7 +662,7 @@ def build_map(
     )
     provenance = {
         "schema_version": 1,
-        "generated_at": datetime.now(UTC).isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "sources": [asdict(item) for item in imported_sources],
         "images": [asdict(item) for item in image_importer.assets],
     }
@@ -725,7 +725,7 @@ def ingest_manifest(
         if target.exists():
             backup_root = cache_dir.resolve() / "backups"
             backup_root.mkdir(parents=True, exist_ok=True)
-            timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+            timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
             backup = backup_root / f"{manifest.map_id}-{timestamp}"
             os.replace(target, backup)
         try:

@@ -539,12 +539,11 @@ class KnowledgeBase:
                 )
 
     def _validate_orphan_images(self, record: MapRecord) -> None:
-        referenced_paths = {
-            self.images[image_id].source_file.resolve()
-            for image_id in record.image_ids
-            if image_id in self.images
-            and self.images[image_id].source_file is not None
-        }
+        referenced_paths: set[Path] = set()
+        for image_id in record.image_ids:
+            image = self.images.get(image_id)
+            if image is not None and image.source_file is not None:
+                referenced_paths.add(image.source_file.resolve())
         for file_path in record.directory.rglob("*"):
             if not file_path.is_file():
                 continue

@@ -10,7 +10,7 @@ import urllib.request
 from array import array
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
 
@@ -275,7 +275,7 @@ def write_embedding_index(
         "chunk_count": len(chunks),
         "chunk_ids": [chunk.id for chunk in chunks],
         "knowledge_base_hash": knowledge_base_fingerprint(chunks),
-        "created_at": datetime.now(UTC).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "vector_file": VECTOR_FILENAME,
     }
     (directory / MANIFEST_FILENAME).write_text(

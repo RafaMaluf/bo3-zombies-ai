@@ -37,6 +37,7 @@ from app.schemas import (
     ChatResponse,
     HealthResponse,
     MapSummary,
+    MapSwitchAction,
     RelevantImage,
     SelectedSource,
 )
@@ -267,9 +268,9 @@ async def media(
     if settings.asset_base_url:
         remote_url = manifest.url(settings.asset_base_url, image_id, variant)
         if remote_url:
-            response = RedirectResponse(remote_url, status_code=307)
-            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
-            return response
+            redirect_response = RedirectResponse(remote_url, status_code=307)
+            redirect_response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+            return redirect_response
 
     service: MediaService = request.app.state.media
     try:
@@ -277,9 +278,9 @@ async def media(
     except (OSError, ValueError) as error:
         raise HTTPException(status_code=404, detail=str(error)) from error
 
-    response = FileResponse(file_path)
-    response.headers["Cache-Control"] = "public, max-age=86400"
-    return response
+    file_response = FileResponse(file_path)
+    file_response.headers["Cache-Control"] = "public, max-age=86400"
+    return file_response
 
 
 @app.post("/chat", response_model=ChatResponse)
@@ -311,10 +312,10 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
     if requested_map_switch_id is not None and req.active_map_id is not None:
         return ChatResponse(
             active_map_id=req.active_map_id,
-            map_switch={
-                "current_map_id": req.active_map_id,
-                "requested_map_id": requested_map_switch_id,
-            },
+            map_switch=MapSwitchAction(
+                current_map_id=req.active_map_id,
+                requested_map_id=requested_map_switch_id,
+            ),
         )
 
     request_map_id = req.active_map_id if req.active_map_id in knowledge_base.maps else None

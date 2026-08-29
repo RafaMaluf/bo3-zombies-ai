@@ -14,7 +14,7 @@ Clones created before the rewrite retain the old objects and commit IDs. They
 should be replaced with a fresh clone:
 
 ```bash
-git clone https://github.com/RafaMaluf/zombies-ai.git
+git clone https://github.com/RafaMaluf/bo3-zombies-ai.git
 cd zombies-ai
 cp .env.example .env
 ```

@@ -195,14 +195,27 @@ def test_frontend_redirect_and_assets() -> None:
         index = client.get("/app/")
         stylesheet = client.get("/app/style.css")
         script = client.get("/app/app.js")
+        manifest = client.get("/app/manifest.webmanifest")
+        service_worker = client.get("/app/service-worker.js")
+        icon_192 = client.get("/app/icon-192.png")
+        icon_512 = client.get("/app/icon-512.png")
 
         assert index.status_code == 200
         assert stylesheet.headers["content-type"].startswith("text/css")
         assert script.headers["content-type"].startswith("text/javascript")
+        assert manifest.headers["content-type"].startswith("application/manifest+json")
+        assert service_worker.headers["content-type"].startswith("text/javascript")
+        assert icon_192.headers["content-type"].startswith("image/png")
+        assert icon_512.headers["content-type"].startswith("image/png")
         assert 'id="map-switch-modal"' in index.text
+        assert 'rel="manifest"' in index.text
         assert '"pt-BR": {' in script.text
         assert "map_switch" in script.text
-        for response in (index, stylesheet, script):
+        assert "serviceWorker.register" in script.text
+        assert manifest.json()["name"] == "Kronochat"
+        assert manifest.json()["display"] == "standalone"
+        assert "kronochat-shell-v1" in service_worker.text
+        for response in (index, stylesheet, script, manifest, service_worker):
             assert response.headers["cache-control"] == (
                 "no-cache, max-age=0, must-revalidate"
             )

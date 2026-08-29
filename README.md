@@ -119,7 +119,9 @@ See [the evaluation guide](docs/evaluations.md) for the suite format and hybrid 
 ## Interface
 
 The UI is intentionally map-first: users can pin context, ask across all maps, inspect
-the retrieved sources and open step images without leaving the answer.
+the retrieved sources and open step images without leaving the answer. It is also an
+installable PWA on supported desktop and mobile browsers. The application shell is
+available offline, while retrieval and generated answers still require connectivity.
 
 <p align="center">
   <img src="docs/screenshots/kronochat-mobile.png" width="430" alt="Kronochat responsive interface" />

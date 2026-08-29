@@ -86,7 +86,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Krono — Black Ops III Zombies",
+    title="Kronochat — Black Ops III Zombies",
     version="1.0.0",
     lifespan=lifespan,
 )

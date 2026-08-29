@@ -2,7 +2,7 @@ const API_BASE = window.location.origin;
 
 const UI_COPY = {
   "pt-BR": {
-    pageTitle: "Krono — Black Ops III Zombies",
+    pageTitle: "Kronochat — Black Ops III Zombies",
     availableMaps: "Mapas disponíveis",
     library: "Base de conhecimento",
     checkingBase: "Verificando base",
@@ -47,7 +47,7 @@ const UI_COPY = {
     staying: "Certo — continuamos em {current}."
   },
   en: {
-    pageTitle: "Krono — Black Ops III Zombies",
+    pageTitle: "Kronochat — Black Ops III Zombies",
     availableMaps: "Available maps",
     library: "Knowledge base",
     checkingBase: "Checking knowledge base",
@@ -720,3 +720,9 @@ elements.mapSwitchModal.addEventListener("click", event => {
 applyUiLocale();
 loadApplication();
 elements.input.focus();
+
+if ("serviceWorker" in navigator && window.isSecureContext) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+  });
+}

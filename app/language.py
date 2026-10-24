@@ -38,6 +38,11 @@ def resolve_response_language(
 
 
 def _detect_language(message: str) -> str | None:
+    # Canonical English game names dominate statistical detection in short
+    # questions such as "Como libero o Pack-a-Punch?" (previously Spanish).
+    # This Portuguese construction has a stronger signal than the item name.
+    if re.search(r"\bcomo\s+(?:eu\s+)?\w+\s+(?:o|os|um|uma)\b", message, re.I):
+        return "pt"
     words = WORD_PATTERN.findall(message)
     letter_count = sum(len(word) for word in words)
     if len(words) < MIN_WORDS or letter_count < MIN_LETTERS:

@@ -1,0 +1,402 @@
+{
+  "version": 1,
+  "reviewed_on": "2026-10-22",
+  "basis": "Canonical Markdown relation review, followed by targeted external source corrections documented in docs/source-corrections.md. This is not a gameplay playtest or a factual audit of every guide.",
+  "maps": {
+    "nacht_der_untoten": {
+      "documents": [
+        "general.md",
+        "samantha_dolls.md",
+        "music_ee.md",
+        "achievement.md"
+      ],
+      "notes": "Standalone dolls and barrel song; achievement now states the three-round no-entry objective. No native power/PAP.",
+      "deferred_documents": [
+        "achievement.md"
+      ]
+    },
+    "verruckt": {
+      "documents": [
+        "general.md",
+        "samantha_dolls.md",
+        "music_ee.md",
+        "achievement.md"
+      ],
+      "notes": "Dolls require toilet song; mannequin location completed using its photo. Acted Alone now specifies 20 headshots from the upstairs/second floor.",
+      "deferred_documents": [
+        "achievement.md"
+      ]
+    },
+    "shi_no_numa": {
+      "documents": [
+        "general.md",
+        "samantha_dolls.md",
+        "music_ee.md",
+        "traps_achievement.md"
+      ],
+      "notes": "No native power/PAP. M1911 condition belongs only to the dolls. Zipline explicitly does not count as a trap.",
+      "deferred_documents": []
+    },
+    "the_giant": {
+      "documents": [
+        "general.md",
+        "pap_teleporters.md",
+        "main_ee_annihilator.md",
+        "music_ee.md",
+        "extra_perk.md",
+        "side_ee.md"
+      ],
+      "notes": "Annihilator and extra perk depend on linked teleporters. Musical and visual eggs independent.",
+      "deferred_documents": []
+    },
+    "kino_der_toten": {
+      "documents": [
+        "general.md",
+        "power_pap.md",
+        "film_reels.md",
+        "paintings.md",
+        "rocket_figurine.md",
+        "samantha_sorrow.md",
+        "music_ee.md",
+        "achievement.md"
+      ],
+      "notes": "Reels, rocket figurine and teleporter achievement require the teleporter/PAP route. Paintings, song and dolls do not require the main quest.",
+      "deferred_documents": []
+    },
+    "ascension": {
+      "documents": [
+        "general.md",
+        "power_pap.md",
+        "main_ee.md",
+        "samantha_sorrow.md",
+        "music_ee.md",
+        "space_monkeys.md",
+        "achievements.md"
+      ],
+      "notes": "Main quest: four players, power/PAP and monkey-round context. Songs do not imply the main EE. Achievements mix independent goals.",
+      "deferred_documents": [
+        "achievements.md"
+      ]
+    },
+    "shangri_la": {
+      "documents": [
+        "general.md",
+        "power_pap.md",
+        "main_ee.md",
+        "music_ee.md",
+        "samantha_hide_and_seek.md",
+        "achievements.md"
+      ],
+      "notes": "Steps 3–6 and tile matching recovered; four gas leaks corrected; all 54 procedural images rebound to their steps, including eight gong reference photos. Cheatsheet excluded from executable phases.",
+      "deferred_documents": [
+        "achievements.md"
+      ]
+    },
+    "moon": {
+      "documents": [
+        "general.md",
+        "power_pap.md",
+        "main_ee.md",
+        "hacker.md",
+        "pes.md",
+        "qed.md",
+        "samantha_sorrow.md",
+        "space_dog.md",
+        "music_ee_1.md",
+        "music_ee_2.md",
+        "music_ee_3.md",
+        "achievements.md"
+      ],
+      "notes": "BO3 Cryogenic Slumber Party distinguished from legacy BO1 Ground Control/One Giant Leap names. Nightmare song no longer references an absent section. Cheatsheet excluded from executable phases.",
+      "deferred_documents": [
+        "achievements.md"
+      ]
+    },
+    "shadows_of_evil": {
+      "documents": [
+        "general.md",
+        "pap.md",
+        "sword.md",
+        "shield.md",
+        "wonder_weapon.md",
+        "pods.md",
+        "civil-protector.md",
+        "build-table.md",
+        "main-ee.md",
+        "side_ee/free_500.md",
+        "side_ee/round-skip.md",
+        "side_ee/upgrade-tripmine-cream.md",
+        "side_ee/upgrade-tripmine-donut.md",
+        "side_ee/free_mega.md",
+        "side_ee/upgrade_lil_arnies.md",
+        "side_ee/margwa-mask.md",
+        "side_ee/noir-mode.md",
+        "side_ee/jumpscare.md",
+        "side_ee/icarus_plane.md",
+        "side_ee/music1.md",
+        "side_ee/music2.md"
+      ],
+      "notes": "EE requires rituals/PAP and upgraded sword; shield/Servant/Protector are optional. Purple pods require fumigator. Craft tables illustrate shield and Servant. Rift access is not equivalent to completing PAP.",
+      "deferred_documents": []
+    },
+    "der_eisendrache": {
+      "documents": [
+        "general.md",
+        "power_pap_teleporter.md",
+        "wrath_of_the_ancients.md",
+        "fire_bow.md",
+        "wolf_bow.md",
+        "lightning_bow.md",
+        "void_bow.md",
+        "ragnarock.md",
+        "shield.md",
+        "main_ee.md",
+        "side_ee/disco_ball.md",
+        "side_ee/death_machine.md",
+        "side_ee/free_mega_gobblegum.md",
+        "side_ee/panzer_helmet.md",
+        "side_ee/plunger.md",
+        "side_ee/second_gondola.md",
+        "side_ee/music_1_dead_again.md",
+        "side_ee/music_2_gramophones.md",
+        "side_ee/music_3_music_box.md",
+        "side_ee/skeletons.md",
+        "side_ee/brm_wallbuy.md"
+      ],
+      "notes": "Shared four-plate anti-gravity activation linked to six procedural consumers. Plunger DG-4 position and temporary charge clarified; Church/Mission Control naming and Fire arrow placement corrected.",
+      "deferred_documents": [
+        "side_ee/free_mega_gobblegum.md"
+      ]
+    },
+    "revelations": {
+      "documents": [
+        "general.md",
+        "pap.md",
+        "pap_apothican_servant.md",
+        "shield.md",
+        "keeper_protector.md",
+        "main_ee.md",
+        "side_ee/masks.md",
+        "side_ee/free_perk.md",
+        "side_ee/time_trials.md",
+        "side_ee/upgrade_lil_arnies.md",
+        "side_ee/wisp.md",
+        "side_ee/trading_table.md",
+        "side_ee/music_1.md",
+        "side_ee/music_2.md"
+      ],
+      "notes": "Keeper is mandatory at reel 1, base Arnies at holes (upgrade optional), PAP/upgraded Servant at bones. Areas named after other maps never import their guides. Wisp is optional and gated by previous quest completion, masks mostly independent.",
+      "deferred_documents": []
+    },
+    "origins": {
+      "documents": [
+        "general.md",
+        "power_pap.md",
+        "staff_setup.md",
+        "fire_staff.md",
+        "ice_staff.md",
+        "lightning_staff.md",
+        "wind_staff.md",
+        "staff_final_upgrade.md",
+        "main_ee.md",
+        "g_strike.md",
+        "maxis_drone.md",
+        "one_inch_punch.md",
+        "shield.md",
+        "shovel_upgrades.md",
+        "challenges.md",
+        "music_ee_1.md",
+        "music_ee_2.md",
+        "music_ee_3.md",
+        "samantha_sorrow.md",
+        "free_magna_collider.md",
+        "free_zombie_blood.md",
+        "achievements.md"
+      ],
+      "notes": "G-Strike return/mud reset/second charging stage, distinct 1-1-5 song triggers and red Fire Crystal pedestal clarified. Overachiever now lists the four challenges.",
+      "deferred_documents": [
+        "achievements.md"
+      ]
+    },
+    "gorod_krovi": {
+      "documents": [
+        "general.md",
+        "power_pap.md",
+        "gauntlet.md",
+        "dragon_strike.md",
+        "shield.md",
+        "main_ee.md",
+        "side_ee/shield_upgrade.md",
+        "side_ee/upgrade_dragon_strike.md",
+        "side_ee/dragon_wings.md",
+        "side_ee/mangler_helmet.md",
+        "side_ee/valkyrie_helmet.md",
+        "side_ee/dubstep_monkeys.md",
+        "side_ee/speed_trials.md",
+        "side_ee/time_trials.md",
+        "side_ee/music_1.md",
+        "side_ee/music_2.md",
+        "side_ee/music_3_samantha_sorrow.md"
+      ],
+      "notes": "Gauntlet and base Dragon Strike depend on Hatchery access. Base shield required for trophy, upgraded shield/Strike optional for EE. Egg heating has two alternatives. Upgrade side files are canonical redirects. Valve table is a case lookup, not thirty sequential tasks.",
+      "deferred_documents": []
+    },
+    "zetsubou_no_shima": {
+      "documents": [
+        "general.md",
+        "power_bunker_pap.md",
+        "buckets_water.md",
+        "plants.md",
+        "kt4.md",
+        "masamune.md",
+        "skull_of_nan_sapwe.md",
+        "trials.md",
+        "shield.md",
+        "gas_mask.md",
+        "main_ee.md",
+        "side_ee/music1.md",
+        "side_ee/music2.md",
+        "side_ee/golden_bucket.md",
+        "side_ee/spider_transformation.md",
+        "side_ee/hallucinations.md",
+        "side_ee/friendly_thrasher.md",
+        "side_ee/jumpscare.md",
+        "side_ee/swamp_monster.md",
+        "side_ee/free_widows_wine.md"
+      ],
+      "notes": "All 16 trials now described; bucket positions transcribed from an author demonstration description (two labelled unfilmed). Masamune wall locations and optional friendly wall separated. Golden Bucket expands four ordinary plant recipes only. Gas-mask prep distinguished from unlocking the elevator.",
+      "deferred_documents": []
+    }
+  },
+  "counts_by_map": [
+    {
+      "map_id": "ascension",
+      "documents_read": 7,
+      "sources": 7,
+      "reviewed_sources": 6,
+      "relations": 4,
+      "root_scopes": 6
+    },
+    {
+      "map_id": "der_eisendrache",
+      "documents_read": 21,
+      "sources": 125,
+      "reviewed_sources": 123,
+      "relations": 46,
+      "root_scopes": 28
+    },
+    {
+      "map_id": "gorod_krovi",
+      "documents_read": 17,
+      "sources": 113,
+      "reviewed_sources": 113,
+      "relations": 23,
+      "root_scopes": 22
+    },
+    {
+      "map_id": "kino_der_toten",
+      "documents_read": 8,
+      "sources": 8,
+      "reviewed_sources": 8,
+      "relations": 3,
+      "root_scopes": 8
+    },
+    {
+      "map_id": "moon",
+      "documents_read": 12,
+      "sources": 13,
+      "reviewed_sources": 12,
+      "relations": 8,
+      "root_scopes": 11
+    },
+    {
+      "map_id": "nacht_der_untoten",
+      "documents_read": 4,
+      "sources": 5,
+      "reviewed_sources": 4,
+      "relations": 0,
+      "root_scopes": 3
+    },
+    {
+      "map_id": "origins",
+      "documents_read": 22,
+      "sources": 35,
+      "reviewed_sources": 34,
+      "relations": 25,
+      "root_scopes": 25
+    },
+    {
+      "map_id": "revelations",
+      "documents_read": 14,
+      "sources": 78,
+      "reviewed_sources": 78,
+      "relations": 12,
+      "root_scopes": 23
+    },
+    {
+      "map_id": "shadows_of_evil",
+      "documents_read": 21,
+      "sources": 57,
+      "reviewed_sources": 57,
+      "relations": 12,
+      "root_scopes": 23
+    },
+    {
+      "map_id": "shangri_la",
+      "documents_read": 6,
+      "sources": 16,
+      "reviewed_sources": 15,
+      "relations": 4,
+      "root_scopes": 5
+    },
+    {
+      "map_id": "shi_no_numa",
+      "documents_read": 4,
+      "sources": 6,
+      "reviewed_sources": 6,
+      "relations": 1,
+      "root_scopes": 4
+    },
+    {
+      "map_id": "the_giant",
+      "documents_read": 6,
+      "sources": 29,
+      "reviewed_sources": 29,
+      "relations": 6,
+      "root_scopes": 8
+    },
+    {
+      "map_id": "verruckt",
+      "documents_read": 4,
+      "sources": 6,
+      "reviewed_sources": 5,
+      "relations": 1,
+      "root_scopes": 3
+    },
+    {
+      "map_id": "zetsubou_no_shima",
+      "documents_read": 20,
+      "sources": 111,
+      "reviewed_sources": 111,
+      "relations": 51,
+      "root_scopes": 23
+    }
+  ],
+  "relation_kinds": {
+    "requires": 175,
+    "illustrates": 15,
+    "recommended": 6
+  },
+  "selection_documents": {
+    "zetsubou_no_shima:plants.md": "Independent plant recipes; choose only the requested normal/fertilized variant.",
+    "revelations:side_ee/masks.md": "Independent masks; one requested mask does not require all masks.",
+    "shadows_of_evil:pods.md": "Fumigator, pod maturation and reward lists are distinct scopes.",
+    "origins:shovel_upgrades.md": "Ordinary shovel, Golden upgrades and red dig-ups are different objectives.",
+    "zetsubou_no_shima:trials.md": "Assigned random trial versus list of possible trials versus electric shield.",
+    "der_eisendrache:general.md": "Overview mixes independent systems; select the actual objective.",
+    "gorod_krovi:general.md": "Overview mixes independent systems; select the actual objective.",
+    "revelations:general.md": "Overview mixes independent systems; select the actual objective.",
+    "shadows_of_evil:general.md": "Overview mixes independent systems; select the actual objective.",
+    "zetsubou_no_shima:general.md": "Overview mixes independent systems; select the actual objective."
+  }
+}

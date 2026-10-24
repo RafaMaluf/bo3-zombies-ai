@@ -27,7 +27,7 @@ Related image: images/source-guide/5caa6567598512ca184b7a44a460b60937f523c5-8674
 
 Related image: images/source-guide/c21cea5dbf899f5317355f9130a04af270670e67-1da5859b59.webp
 
-Once in the Crazy place, reach for Juggernog tonight the fire altar. You will be able to pick up a fire crystal.
+Inside the Crazy Place, collect the red Fire Crystal from the fire pedestal. This is an elemental pedestal, not a Juggernog machine; buying Juggernog is not a crafting requirement.
 
 Related image: images/source-guide/fb3a366307c781316a9cd74e0e64c0fc00c569e7-60a0dd2d23.webp
 

@@ -28,7 +28,7 @@ Also, the dolls will play a lullaby song, so you can spot them easily.
   Related image: images/source-guide/a356991fae31bc0b039a78a292c615471fec801c-b15acd08a5.webp
 - On a burning hole in the roof, above the stair case near Mule kick.
   Related image: images/source-guide/0f7ce533a102c8f37ec7319f9c744ed3eea9bfdc-53a63314b3.webp
-- On top of a mannequin, on the first floor right after the stair case, on the side leading to the
+- On the mannequin at the top of the stairs, by the upstairs Mystery Box location. The doll sits on its head; use the attached screenshot to identify the mannequin.
   Related image: images/source-guide/d0b5ee8beff80867f9033a8eda538a6b6be20f62-89b5f61227.webp
 - In one of the morgue's body box, in the spawning area.
   Related image: images/source-guide/6e7213510e0e830e47634aeeadaa40ba64386a3e-a2a4356707.webp

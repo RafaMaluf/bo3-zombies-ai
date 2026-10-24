@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Krono - PDF</title>
+  <link rel="stylesheet" href="./export.css">
+</head>
+<body>
+  <nav class="export-controls">
+    <p id="export-status" role="status">Preparando a conversa e as imagens…</p>
+    <button type="button" id="print-pdf" disabled>Salvar como PDF</button>
+    <p id="export-help">Na janela de impressão, escolha “Salvar como PDF”. O arquivo inclui textos e imagens e pode ser compartilhado.</p>
+  </nav>
+  <header class="export-heading"><span>KRONO · BLACK OPS III ZOMBIES</span><h1 id="export-title"></h1></header>
+  <main id="export-messages"></main>
+  <script src="./rendering.js"></script>
+  <script src="./history-store.js"></script>
+  <script src="./export.js"></script>
+</body>
+</html>

@@ -1,11 +1,33 @@
 from pathlib import Path
 
+from app.answer_policy import build_contract
 from app.knowledge_base import KnowledgeBase
 from app.main import _select_image_assets
 from app.prompt_builder import SYSTEM_PROMPT, build_answer_prompt
 from app.retrieval import SearchEngine
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+def test_ordered_prompt_does_not_teach_fields_forbidden_by_its_output_schema():
+    knowledge_base = KnowledgeBase(ROOT / "maps")
+    result = SearchEngine(knowledge_base).search("Como monto o escudo?", "gorod_krovi", limit=8)
+    contract = build_contract(result.chunks, "detailed", ordered=True)
+    assert len(contract.requirements) > 1
+    prompt = build_answer_prompt(
+        "Como monto o escudo?", [], result.chunks, knowledge_base, 28000, 24,
+        answer_contract=contract,
+    )
+    system = prompt.messages[0]["content"]
+    assert "OrderedAnswer" in system
+    assert '"need_clarification": false' not in system
+    assert '"blocks": [' not in system
+    summary = build_answer_prompt(
+        "EE resumido", [], result.chunks, knowledge_base, 28000, 24,
+        answer_contract=build_contract(result.chunks, "summary", ordered=True),
+    )
+    assert "one short clause or bullet for EACH procedure" in summary.messages[1]["content"]
+    assert "at most two" not in summary.messages[1]["content"]
 
 
 def test_prompt_only_exposes_images_from_retrieved_chunks() -> None:
@@ -97,7 +119,7 @@ def test_multi_guide_prompt_contains_all_named_guides_and_language_rules() -> No
         "one_inch_punch.md",
     }
     normalized_system_prompt = " ".join(SYSTEM_PROMPT.split())
-    assert "answer every requested objective in one response" in normalized_system_prompt
+    assert "answer all supplied steps" in normalized_system_prompt
     assert "Never mix English grammar into a Portuguese sentence" in normalized_system_prompt
     assert "already resolved the response language" in normalized_system_prompt
     assert "never expose IDs" in normalized_system_prompt

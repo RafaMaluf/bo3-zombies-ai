@@ -10,7 +10,7 @@ To get the Plunger, you must first destroy the Fire Bow quest wall in the Clock 
 
 Before doing the clock step, make sure the Fire Bow quest wall in the Clock Tower has already been destroyed.
 
-Then place the Ragnarok DG-4 in the required location.
+At the top of the Clock Tower, deploy the Ragnarok DG-4 as a trap directly in front of the exposed clock gears behind the broken Fire Bow wall. Merely holding them or placing them downstairs does not perform this step.
 
 Related image: images/side_ees/9plungerragnarockclock.jpg
 
@@ -35,13 +35,13 @@ Related image: images/side_ees/12plungerenergyball.jpg
 
 ## step 4 - wall-run into the past
 
-From the stairs going down into the pyramid room, wall-run on the symbol to your right. If the setup was done correctly, you will eventually be teleported back in time.
+Activate the pyramid room anti-gravity first (see the anti-gravity procedure). During an active cycle, wall-run across the circular symbol to the right of the workbench, towards the Wolf Bow wall. If the setup was done correctly, you will eventually be teleported back in time.
 
 Related image: images/side_ees/13plungerwheretorun.jpg
 
 ## step 5 - pick up the Plunger
 
-Once in the past, pick up the Plunger from the table to the left of the teleporter.
+Once in the past, pick up the Plunger from the table beside the teleporter, shown in the pickup image.
 
 Related image: images/side_ees/14plungerinpast.jpg
 
@@ -52,13 +52,13 @@ The Plunger can temporarily upgrade into a flaming version.
 ### steps
 1. Obtain the Plunger.
 2. Kill a Panzer by any method.
-3. Your Plunger becomes flaming for about 4 minutes.
+3. Your Plunger becomes flaming for about 60 seconds.
 4. During that time, it one-shots Panzers.
 
 ## full progression summary
 
 1. Destroy the Fire Bow quest wall in the Clock Tower.
-2. Place the Ragnarok DG-4 in the required spot.
+2. Deploy the Ragnarok DG-4 in front of the exposed Clock Tower gears behind the broken wall.
 3. Interact with the lever near the Wundersphere landing point.
 4. Stop the clock at 9:35 / 9:36.
 5. Go to the pyramid room and confirm the energy ball appears.

@@ -1,0 +1,230 @@
+{
+  "cases": [
+    {
+      "id": "origins-full",
+      "map_id": "origins",
+      "message": "Me explica o EE de Origins completo, sem resumir",
+      "required_paths": [
+        "main_ee.md",
+        "power_pap.md",
+        "staff_setup.md",
+        "fire_staff.md",
+        "ice_staff.md",
+        "lightning_staff.md",
+        "wind_staff.md",
+        "staff_final_upgrade.md",
+        "g_strike.md",
+        "maxis_drone.md",
+        "one_inch_punch.md"
+      ],
+      "required_sections": {
+        "fire_staff.md": [
+          "Preparation - Fire Staff",
+          "Preparation - Kagutsuchi's blood (Upgraded fire staff)"
+        ],
+        "ice_staff.md": [
+          "Preparation - Ice staff",
+          "Preparation - Ull's Arrow (Upgraded ice staff)"
+        ],
+        "lightning_staff.md": [
+          "Preparation - Lightning staff",
+          "Preparation - Kimat's bite (Upgraded lightning staff)"
+        ],
+        "wind_staff.md": [
+          "Preparation - Wind staff",
+          "Preparation - Borea's Fury (Upgraded wind staff)"
+        ]
+      },
+      "excluded_paths": [
+        "music_ee_1.md",
+        "music_ee_2.md",
+        "music_ee_3.md",
+        "samantha_sorrow.md",
+        "achievements.md"
+      ],
+      "before_paths": [
+        [
+          "staff_setup.md",
+          "fire_staff.md"
+        ],
+        [
+          "fire_staff.md",
+          "staff_final_upgrade.md"
+        ],
+        [
+          "ice_staff.md",
+          "staff_final_upgrade.md"
+        ],
+        [
+          "lightning_staff.md",
+          "staff_final_upgrade.md"
+        ],
+        [
+          "wind_staff.md",
+          "staff_final_upgrade.md"
+        ]
+      ]
+    },
+    {
+      "id": "zetsubou-full",
+      "map_id": "zetsubou_no_shima",
+      "message": "EE de Zetsubou no Shima completo, sem resumir",
+      "required_paths": [
+        "main_ee.md",
+        "power_bunker_pap.md",
+        "buckets_water.md",
+        "kt4.md",
+        "masamune.md",
+        "skull_of_nan_sapwe.md",
+        "shield.md",
+        "gas_mask.md",
+        "trials.md"
+      ],
+      "required_sections": {
+        "trials.md": [
+          "electric shield requirement",
+          "easy trials",
+          "medium trials",
+          "hard trials"
+        ],
+        "buckets_water.md": [
+          "bucket locations",
+          "rainbow water"
+        ],
+        "power_bunker_pap.md": [
+          "power - fill the 2 generators",
+          "bunker entry",
+          "underwater bunker step"
+        ],
+        "masamune.md": [
+          "part 3 - Element 115 flask",
+          "part 2 - rainbow water plant"
+        ]
+      },
+      "excluded_paths": [
+        "side_ee/spider_transformation.md",
+        "side_ee/free_widows_wine.md",
+        "side_ee/music1.md"
+      ],
+      "before_paths": [
+        [
+          "power_bunker_pap.md",
+          "kt4.md"
+        ],
+        [
+          "kt4.md",
+          "masamune.md"
+        ],
+        [
+          "shield.md",
+          "masamune.md"
+        ]
+      ],
+      "before_sections": [
+        [
+          "buckets_water.md",
+          "bucket locations",
+          "power_bunker_pap.md",
+          "power - fill the 2 generators"
+        ],
+        [
+          "trials.md",
+          "electric shield requirement",
+          "masamune.md",
+          "part 3 - Element 115 flask"
+        ]
+      ]
+    },
+    {
+      "id": "zetsubou-pap",
+      "map_id": "zetsubou_no_shima",
+      "message": "Como libero o Pack-a-Punch?",
+      "required_paths": [
+        "power_bunker_pap.md",
+        "buckets_water.md"
+      ],
+      "required_sections": {
+        "power_bunker_pap.md": [
+          "power - fill the 2 generators",
+          "bunker entry",
+          "underwater bunker step",
+          "pack-a-punch part 1 - underwater fan area",
+          "pack-a-punch part 2 - cocoon drop",
+          "pack-a-punch part 3 - valve in the submerged caverns",
+          "unlocking pack-a-punch"
+        ]
+      },
+      "excluded_paths": [
+        "main_ee.md",
+        "masamune.md",
+        "trials.md",
+        "plants.md"
+      ],
+      "before_paths": [
+        [
+          "buckets_water.md",
+          "power_bunker_pap.md"
+        ]
+      ]
+    },
+    {
+      "id": "shadows-pap",
+      "map_id": "shadows_of_evil",
+      "message": "Como libero o Pack-a-Punch?",
+      "required_paths": [
+        "pap.md"
+      ],
+      "required_sections": {
+        "pap.md": [
+          "get the summoning key + Nero setup",
+          "Jackie's ritual / Canals",
+          "Jessica's ritual / Footlight",
+          "Floyd's ritual / Waterfront",
+          "final ritual to unlock Pack-a-Punch"
+        ]
+      },
+      "excluded_paths": [
+        "main-ee.md",
+        "sword.md",
+        "wonder_weapon.md"
+      ],
+      "before_paths": []
+    },
+    {
+      "id": "gorod-base-shield",
+      "map_id": "gorod_krovi",
+      "message": "Como monto o escudo?",
+      "required_paths": [
+        "shield.md"
+      ],
+      "required_sections": {
+        "shield.md": [
+          "part 1 - first shield piece",
+          "part 2 - second shield piece",
+          "part 3 - third shield piece",
+          "crafting the shield"
+        ]
+      },
+      "excluded_paths": [
+        "main_ee.md",
+        "side_ee/shield_upgrade.md",
+        "gauntlet.md"
+      ],
+      "excluded_title_patterns": [
+        "upgrade",
+        "tiamat"
+      ],
+      "before_paths": []
+    }
+  ],
+  "additional_behaviors": [
+    "Resumo e completo preservam todos os objetivos obrigatÃ³rios; sÃ³ varia a expansÃ£o.",
+    "Fase guiada de Origins que exige cajados inclui seus requisitos sem outras fases do EE.",
+    "Resumo de Zetsubou menciona desafios de todos os jogadores e coleta das recompensas antes do escudo elÃ©trico.",
+    "Objetivo explicitamente concluÃ­do pelo usuÃ¡rio nÃ£o Ã© reexplicado; nÃ£o inferir progresso do assistente.",
+    "Uma relaÃ§Ã£o opcional nÃ£o se torna requisito por ter sido selecionada.",
+    "Imagem pertence ao passo original e todas as alternativas distintas sÃ£o preservadas.",
+    "MudanÃ§a de texto invalida relaÃ§Ãµes revisadas afetadas; ciclos nÃ£o sÃ£o aceitos.",
+    "Objetivo novo durante um EE respeita o novo escopo e nÃ£o avanÃ§a a partida."
+  ]
+}

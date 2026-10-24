@@ -1,8 +1,15 @@
-const CACHE_NAME = "kronochat-shell-v1";
+const CACHE_NAME = "kronochat-shell-v2";
 const APP_SHELL = [
   "/app/",
-  "/app/style.css",
-  "/app/app.js",
+  "/app/style.css?v=2",
+  "/app/app.js?v=2",
+  "/app/rendering.js",
+  "/app/history-store.js",
+  "/app/history.js",
+  "/app/companion.js",
+  "/app/export.html",
+  "/app/export.css",
+  "/app/export.js",
   "/app/logo.png",
   "/app/favicon-48.png",
   "/app/apple-touch-icon.png",

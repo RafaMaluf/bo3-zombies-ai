@@ -14,6 +14,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Check frontend syntax
+        run: for file in frontend/*.js; do node --check "$file"; done
+
   quality:
     name: Quality and test suites
     runs-on: ubuntu-latest
@@ -125,7 +139,7 @@ jobs:
           curl --fail --silent --show-error http://127.0.0.1:8000/health | python -c '
           import json, sys
           health = json.load(sys.stdin)
-          expected = {"maps": 14, "documents": 166, "chunks": 602, "images": 1084}
+          expected = {"maps": 14, "documents": 166, "chunks": 607, "images": 1084}
           assert health["status"] == "ok", health
           assert all(health[key] == value for key, value in expected.items()), health
           assert health["validation_errors"] == 0, health

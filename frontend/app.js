@@ -2,11 +2,18 @@ const API_BASE = window.location.origin;
 
 const UI_COPY = {
   "pt-BR": {
+    responseMode: "Modo de resposta", modeQuick: "Rápido", modeComplete: "Completo",
+    modeQuickHint: "Um guia · prioriza velocidade",
+    modeCompleteHint: "Guias relacionados · pode demorar mais",
+    expandMode: "Quer incluir os pré-requisitos e guias relacionados?",
+    useComplete: "Usar Completo",
+    requestCancel: "Cancelar resposta",
+    requestCancelled: "Resposta cancelada.",
     pageTitle: "Kronochat — Black Ops III Zombies",
     availableMaps: "Mapas disponíveis",
     library: "Base de conhecimento",
     checkingBase: "Verificando base",
-    clearChat: "Limpar conversa",
+    clearChat: "Nova conversa",
     openMaps: "Abrir mapas",
     closeMaps: "Fechar menu",
     close: "Fechar",
@@ -23,16 +30,27 @@ const UI_COPY = {
     apiOffline: "API offline",
     mapsLoadError: "Não foi possível carregar os mapas.",
     requestError: "Não foi possível responder agora.",
+    requestProcessing: "Preparando a resposta… {seconds}s",
+    requestStarting: "Recebendo sua pergunta…",
+    requestUnderstanding: "Entendendo sua pergunta…",
+    requestSearching: "Consultando os guias…",
+    requestPlanning: "Organizando as etapas e os pré-requisitos…",
+    requestGenerating: "Gerando a resposta…",
+    requestReviewing: "Conferindo a resposta…",
+    requestFinalizing: "Organizando o texto e as imagens…",
+    requestElapsed: "Tempo decorrido: {seconds}s",
+    requestConnectionError: "A conexão falhou. Tente novamente.",
+    requestExpired: "A resposta não terminou no prazo de espera. Tente novamente.",
     welcomeEyebrow: "Krono está online",
-    welcomeTitle: "Entre no round<br />sabendo o próximo passo.",
-    welcomeCopy: "Escolha um mapa ou pergunte diretamente. A resposta usa apenas os guias locais e traz as imagens certas para cada etapa.",
+    welcomeTitle: "Seu próximo passo começa aqui.",
+    welcomeCopy: "Pergunte sobre o mapa, uma peça ou um Easter Egg.",
     quickPap: "Liberar Pack-a-Punch",
     quickPapPrompt: "Como eu libero o Pack-a-Punch?",
     quickEe: "Easter Egg principal",
     quickEePrompt: "Como faço o Easter Egg principal?",
     quickShield: "Montar o escudo",
     quickShieldPrompt: "Como monto o escudo?",
-    placeholder: "Pergunte sobre o mapa…",
+    placeholder: "Escreva sua pergunta…",
     send: "Enviar",
     composerHint: "Enter envia · Shift + Enter quebra a linha",
     conversation: "Conversa",
@@ -44,14 +62,29 @@ const UI_COPY = {
     switchCopy: "A conversa atual está no contexto de {current}. Deseja iniciar uma nova conversa em {requested}?",
     switchConfirm: "Ir para {requested}",
     switchContinue: "Continuar em {current}",
-    staying: "Certo — continuamos em {current}."
+    staying: "Certo — continuamos em {current}.",
+    guideRoadmap: "Roteiro do Easter Egg", guideFullTitle: "Guia completo",
+    guideStart: "Começar do início", guideComplete: "Concluí esta fase",
+    guideOverview: "Ver roteiro", guideFull: "Ver guia completo", guideStop: "Encerrar acompanhamento",
+    guidePhase: "Fase {current} de {total}", guideFinished: "Última fase concluída",
+    guideJump: "Ir para uma fase", guidePlayers: "Jogadores", guideUnknown: "Não informado",
+    guideSolo: "Solo", guideHelp: "Estou com dificuldade nesta fase.",
+    guideHelpButton: "Estou com dificuldade", imageLimit: "Há mais imagens nesta etapa. Consulte a fase separadamente.",
+    imageUnavailable: "Imagem indisponível", imageOpen: "Ampliar imagem: {caption}"
   },
   en: {
+    responseMode: "Response mode", modeQuick: "Quick", modeComplete: "Complete",
+    modeQuickHint: "One guide · prioritizes speed",
+    modeCompleteHint: "Related guides · may take longer",
+    expandMode: "Want to include prerequisites and related guides?",
+    useComplete: "Use Complete",
+    requestCancel: "Cancel answer",
+    requestCancelled: "Answer cancelled.",
     pageTitle: "Kronochat — Black Ops III Zombies",
     availableMaps: "Available maps",
     library: "Knowledge base",
     checkingBase: "Checking knowledge base",
-    clearChat: "Clear conversation",
+    clearChat: "New conversation",
     openMaps: "Open maps",
     closeMaps: "Close menu",
     close: "Close",
@@ -68,9 +101,20 @@ const UI_COPY = {
     apiOffline: "API offline",
     mapsLoadError: "The maps could not be loaded.",
     requestError: "Krono could not answer right now.",
+    requestProcessing: "Preparing the answer… {seconds}s",
+    requestStarting: "Receiving your question…",
+    requestUnderstanding: "Understanding your question…",
+    requestSearching: "Consulting the guides…",
+    requestPlanning: "Organizing the steps and prerequisites…",
+    requestGenerating: "Generating the answer…",
+    requestReviewing: "Reviewing the answer…",
+    requestFinalizing: "Arranging the text and images…",
+    requestElapsed: "Elapsed time: {seconds}s",
+    requestConnectionError: "The connection failed. Please try again.",
+    requestExpired: "The answer did not finish within the time limit. Please try again.",
     welcomeEyebrow: "Krono is online",
-    welcomeTitle: "Enter the round<br />knowing your next step.",
-    welcomeCopy: "Choose a map or ask directly. Answers use the local guides and bring the right images for each step.",
+    welcomeTitle: "Your next step starts here.",
+    welcomeCopy: "Ask about a map, a part, or an Easter Egg.",
     quickPap: "Unlock Pack-a-Punch",
     quickPapPrompt: "How do I unlock Pack-a-Punch?",
     quickEe: "Main Easter Egg",
@@ -89,7 +133,15 @@ const UI_COPY = {
     switchCopy: "Your current conversation is scoped to {current}. Start a new conversation in {requested}?",
     switchConfirm: "Go to {requested}",
     switchContinue: "Stay in {current}",
-    staying: "Got it — we will stay in {current}."
+    staying: "Got it — we will stay in {current}.",
+    guideRoadmap: "Easter Egg roadmap", guideFullTitle: "Full guide",
+    guideStart: "Start from the beginning", guideComplete: "I completed this phase",
+    guideOverview: "View roadmap", guideFull: "View full guide", guideStop: "Stop tracking",
+    guidePhase: "Phase {current} of {total}", guideFinished: "Final phase completed",
+    guideJump: "Go to a phase", guidePlayers: "Players", guideUnknown: "Not specified",
+    guideSolo: "Solo", guideHelp: "I need help with this phase.",
+    guideHelpButton: "I need help", imageLimit: "More images belong to this step. Open the phase separately.",
+    imageUnavailable: "Image unavailable", imageOpen: "Enlarge image: {caption}"
   }
 };
 
@@ -123,13 +175,9 @@ function t(key, values = {}) {
 }
 
 const elements = {
-  sidebar: document.getElementById("sidebar"),
-  sidebarBackdrop: document.getElementById("sidebar-backdrop"),
-  menuToggle: document.getElementById("menu-toggle"),
-  mapList: document.getElementById("map-list"),
-  mapCount: document.getElementById("map-count"),
+  sidebar: document.getElementById("history-dialog"),
+  menuToggle: document.getElementById("history-open"),
   activeMapLabel: document.getElementById("active-map-label"),
-  knowledgeStats: document.getElementById("knowledge-stats"),
   systemStatus: document.getElementById("system-status"),
   clearChat: document.getElementById("clear-chat"),
   welcome: document.getElementById("welcome"),
@@ -137,8 +185,9 @@ const elements = {
   chat: document.getElementById("chat"),
   form: document.getElementById("chat-form"),
   input: document.getElementById("message-input"),
+  responseMode: document.getElementById("response-mode"),
   sendButton: document.getElementById("send-btn"),
-  composerContext: document.getElementById("composer-context"),
+  cancelButton: document.getElementById("cancel-btn"),
   characterCount: document.getElementById("character-count"),
   imageModal: document.getElementById("image-modal"),
   modalImage: document.getElementById("modal-image"),
@@ -157,30 +206,37 @@ const state = {
   activeMapId: null,
   history: [],
   pending: false,
-  pendingMapSwitch: null
+  pendingMapSwitch: null,
+  requestAbort: null,
+  guide: null,
+  responseMode: "quick"
 };
 
 function applyUiLocale() {
   document.documentElement.lang = UI_LOCALE;
   document.title = t("pageTitle");
-  elements.sidebar.setAttribute("aria-label", t("availableMaps"));
-  elements.sidebarBackdrop.setAttribute("aria-label", t("closeMaps"));
-  elements.menuToggle.setAttribute("aria-label", t("openMaps"));
   elements.modalClose.setAttribute("aria-label", t("close"));
   elements.chat.setAttribute("aria-label", t("conversation"));
-  document.getElementById("library-title").textContent = t("library");
   document.getElementById("system-status-label").textContent = t("checkingBase");
   document.getElementById("clear-chat-label").textContent = t("clearChat");
-  document.getElementById("active-context-title").textContent = t("activeContext");
-  document.getElementById("welcome-eyebrow").textContent = t("welcomeEyebrow");
   document.getElementById("welcome-title").innerHTML = t("welcomeTitle");
   document.getElementById("welcome-copy").textContent = t("welcomeCopy");
   elements.input.placeholder = t("placeholder");
+  elements.responseMode.options[0].textContent = t("modeQuick");
+  elements.responseMode.options[1].textContent = t("modeComplete");
+  updateResponseMode();
   elements.sendButton.setAttribute("aria-label", t("send"));
-  document.getElementById("composer-hint-label").textContent = t("composerHint");
+  elements.cancelButton.textContent = t("requestCancel");
   elements.mapSwitchEyebrow.textContent = t("switchEyebrow");
-  elements.activeMapLabel.textContent = t("allMaps");
-  document.getElementById("composer-context-label").textContent = t("searchingAll");
+  elements.activeMapLabel.textContent = "";
+  elements.input.setAttribute("aria-label", UI_LOCALE === "pt-BR" ? "Mensagem" : "Message");
+  document.querySelector(".conversation-menu summary").setAttribute("aria-label", UI_LOCALE === "pt-BR" ? "Opções da conversa" : "Conversation options");
+  document.getElementById("image-previous").setAttribute("aria-label", UI_LOCALE === "pt-BR" ? "Imagem anterior" : "Previous image");
+  document.getElementById("image-next").setAttribute("aria-label", UI_LOCALE === "pt-BR" ? "Próxima imagem" : "Next image");
+  document.querySelector(".response-mode-menu summary").setAttribute("aria-label", t("responseMode"));
+  document.getElementById("mode-quick-hint").textContent = t("modeQuickHint");
+  document.getElementById("mode-complete-hint").textContent = t("modeCompleteHint");
+  document.querySelectorAll("[data-response-mode] strong").forEach((label, i) => label.textContent = t(i ? "modeComplete" : "modeQuick"));
 
   const prompts = [
     ["quickPap", "quickPapPrompt"],
@@ -194,73 +250,18 @@ function applyUiLocale() {
   });
 }
 
-function escapeHtml(value) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function updateResponseMode(value = state.responseMode) {
+  state.responseMode = value === "complete" ? "complete" : "quick";
+  elements.responseMode.value = state.responseMode;
+  document.getElementById("response-mode-label").textContent = t(state.responseMode === "complete" ? "modeComplete" : "modeQuick");
+  for (const button of document.querySelectorAll("[data-response-mode]")) button.setAttribute("aria-pressed", String(button.dataset.responseMode === state.responseMode));
+  document.getElementById("response-mode-description").textContent =
+    t(state.responseMode === "complete" ? "modeCompleteHint" : "modeQuickHint");
 }
 
-function renderInlineMarkdown(value) {
-  return escapeHtml(value)
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-}
-
-function renderMarkdown(value) {
-  const lines = value.replace(/\r\n/g, "\n").split("\n");
-  const output = [];
-  let listType = null;
-
-  const closeList = () => {
-    if (listType) output.push(`</${listType}>`);
-    listType = null;
-  };
-
-  for (const rawLine of lines) {
-    const line = rawLine.trim();
-    if (!line) {
-      closeList();
-      continue;
-    }
-
-    const numbered = line.match(/^(\d+)\.\s+(.+)$/);
-    const bullet = line.match(/^[-*]\s+(.+)$/);
-    if (numbered) {
-      if (listType !== "ol") {
-        closeList();
-        output.push("<ol>");
-        listType = "ol";
-      }
-      output.push(`<li>${renderInlineMarkdown(numbered[2])}</li>`);
-      continue;
-    }
-    if (bullet) {
-      if (listType !== "ul") {
-        closeList();
-        output.push("<ul>");
-        listType = "ul";
-      }
-      output.push(`<li>${renderInlineMarkdown(bullet[1])}</li>`);
-      continue;
-    }
-
-    closeList();
-    if (line.startsWith("### ")) {
-      output.push(`<h4>${renderInlineMarkdown(line.slice(4))}</h4>`);
-    } else if (line.startsWith("## ")) {
-      output.push(`<h3>${renderInlineMarkdown(line.slice(3))}</h3>`);
-    } else if (line.startsWith("# ")) {
-      output.push(`<h3>${renderInlineMarkdown(line.slice(2))}</h3>`);
-    } else {
-      output.push(`<p>${renderInlineMarkdown(line)}</p>`);
-    }
-  }
-
-  closeList();
-  return output.join("");
+function chooseResponseMode(value) {
+  updateResponseMode(value);
+  try { localStorage.setItem("krono.responseMode.v1", state.responseMode); } catch {}
 }
 
 function getMap(mapId) {
@@ -278,72 +279,27 @@ function imageVariantUrl(image, variant = "thumb") {
 }
 
 function setSidebarOpen(open) {
-  document.body.classList.toggle("sidebar-open", open);
-  elements.menuToggle.setAttribute("aria-expanded", String(open));
+  if (open) return historyUI.show();
+  elements.sidebar.close();
+  elements.menuToggle.setAttribute("aria-expanded", "false");
 }
 
-function selectMap(mapId, { focus = true } = {}) {
+function selectMap(mapId, { focus = true, persist = true } = {}) {
+  if (companionUI.active && mapId !== companionUI.matchState?.map_id) companionUI.leave();
   state.activeMapId = mapId || null;
-  const selectedMap = getMap(state.activeMapId);
-  elements.activeMapLabel.textContent = selectedMap?.display_name || t("allMaps");
-  elements.composerContext.querySelector("span:last-child").textContent = selectedMap
-    ? t("searchingMap", { map: selectedMap.display_name })
-    : t("searchingAll");
-
-  for (const button of elements.mapList.querySelectorAll(".map-button")) {
-    button.classList.toggle("active", button.dataset.mapId === (mapId || ""));
+  if (state.guide && state.guide.state.map_id !== state.activeMapId) {
+    state.guide = null;
+    renderGuideControls();
   }
+  const selectedMap = getMap(state.activeMapId);
+  elements.activeMapLabel.textContent = selectedMap?.display_name || "";
+  elements.activeMapLabel.hidden = !selectedMap;
 
+  if (persist && historyUI?.meta && historyUI.meta.mapId !== state.activeMapId) {
+    historyUI.write({mapId: state.activeMapId}).catch(() => {});
+  }
   setSidebarOpen(false);
   if (focus) elements.input.focus();
-}
-
-function renderMaps() {
-  elements.mapList.replaceChildren();
-
-  const allButton = document.createElement("button");
-  allButton.className = "map-button active";
-  allButton.type = "button";
-  allButton.dataset.mapId = "";
-  allButton.innerHTML = `
-    <span class="map-cover map-cover-all"></span>
-    <span class="map-copy">
-      <strong>${t("allMaps")}</strong>
-      <small>${t("allMapsHint")}</small>
-    </span>
-  `;
-  allButton.addEventListener("click", () => selectMap(null));
-  elements.mapList.appendChild(allButton);
-
-  for (const map of state.maps) {
-    const button = document.createElement("button");
-    button.className = "map-button";
-    button.type = "button";
-    button.dataset.mapId = map.map_id;
-
-    const cover = document.createElement("span");
-    cover.className = "map-cover";
-    if (map.cover_image_id) {
-      const coverUrl = map.cover_image_url || mediaUrl(map.cover_image_id);
-      cover.style.backgroundImage = `linear-gradient(90deg, rgba(9,9,11,.08), rgba(9,9,11,.7)), url("${coverUrl}")`;
-    }
-
-    const copy = document.createElement("span");
-    copy.className = "map-copy";
-    const title = document.createElement("strong");
-    title.textContent = map.display_name;
-    const meta = document.createElement("small");
-    meta.textContent = t("mapMeta", {
-      documents: map.document_count,
-      images: map.image_count
-    });
-    copy.append(title, meta);
-    button.append(cover, copy);
-    button.addEventListener("click", () => selectMap(map.map_id));
-    elements.mapList.appendChild(button);
-  }
-
-  elements.mapCount.textContent = String(state.maps.length);
 }
 
 function createSourceDetails(sources) {
@@ -367,27 +323,64 @@ function createSourceDetails(sources) {
   return details;
 }
 
-function createImageGallery(images) {
+function createImageGallery(images, { inline = false } = {}) {
   if (!images?.length) return null;
 
   const gallery = document.createElement("div");
-  gallery.className = "message-images";
-  for (const image of images) {
+  gallery.className = inline ? "message-images step-images" : "message-images";
+  for (const [index, image] of images.entries()) {
     const figure = document.createElement("figure");
     const img = document.createElement("img");
     img.src = imageVariantUrl(image, "thumb");
-    img.alt = "";
+    img.alt = image.caption;
     img.loading = "lazy";
     img.decoding = "async";
 
     const caption = document.createElement("figcaption");
-    caption.textContent = image.caption;
+    caption.textContent = String(index + 1);
 
     figure.append(img, caption);
-    figure.addEventListener("click", () => openImage(image));
+    figure.tabIndex = 0;
+    figure.setAttribute("role", "button");
+    figure.setAttribute("aria-label", t("imageOpen", { caption: image.caption }));
+    figure.addEventListener("click", () => openImage(image, images, index));
+    figure.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openImage(image, images, index);
+      }
+    });
+    img.addEventListener("error", () => {
+      figure.classList.add("image-unavailable");
+      caption.textContent = t("imageUnavailable");
+    }, { once: true });
     gallery.appendChild(figure);
   }
+  gallery.classList.toggle("many-images", images.length > 3);
   return gallery;
+}
+
+function createAnswerStep(block) {
+  const section = document.createElement("section");
+  section.className = "answer-step";
+  if (block.title) {
+    const title = document.createElement("h3");
+    title.textContent = block.title;
+    section.appendChild(title);
+  }
+  const copy = document.createElement("div");
+  copy.className = "step-copy";
+  copy.innerHTML = renderMarkdown(block.body);
+  section.appendChild(copy);
+  const images = createImageGallery(block.images, { inline: true });
+  if (images) section.appendChild(images);
+  if (block.available_image_count > block.images.length) {
+    const notice = document.createElement("p");
+    notice.className = "image-limit-note";
+    notice.textContent = t("imageLimit");
+    section.appendChild(notice);
+  }
+  return section;
 }
 
 function addMessage(role, text, options = {}) {
@@ -401,19 +394,22 @@ function addMessage(role, text, options = {}) {
   const header = document.createElement("header");
   header.innerHTML = role === "user"
     ? `<span>${t("you")}</span>`
-    : '<span class="assistant-mark">K</span><span>Krono</span>';
+    : `<span>Krono</span><span class="field-notes">/ ${UI_LOCALE === "pt-BR" ? "Notas de campo" : "Field notes"}</span>`;
 
   const body = document.createElement("div");
   body.className = "message-body";
   if (role === "assistant") {
-    body.innerHTML = renderMarkdown(text);
+    body.innerHTML = renderMarkdown(options.blocks?.length ? options.introduction || "" : text);
+    for (const block of options.blocks || []) {
+      body.appendChild(createAnswerStep(block));
+    }
   } else {
     body.textContent = text;
   }
 
   article.append(header, body);
 
-  const gallery = createImageGallery(options.images);
+  const gallery = options.blocks?.length ? null : createImageGallery(options.images);
   if (gallery) article.appendChild(gallery);
 
   const sources = createSourceDetails(options.sources);
@@ -422,7 +418,8 @@ function addMessage(role, text, options = {}) {
   if (options.suggestedMapIds?.length) {
     const suggestions = document.createElement("div");
     suggestions.className = "map-suggestions";
-    for (const mapId of options.suggestedMapIds) {
+    const order = state.maps.map(map => map.map_id);
+    for (const mapId of [...options.suggestedMapIds].sort((a, b) => order.indexOf(a) - order.indexOf(b))) {
       const map = getMap(mapId);
       if (!map) continue;
       const button = document.createElement("button");
@@ -453,6 +450,12 @@ function addMessage(role, text, options = {}) {
   }
 
   elements.chat.appendChild(article);
+  while (elements.chat.querySelectorAll(".message:not(.typing-message)").length > 30) {
+    elements.chat.querySelector(".message:not(.typing-message)").remove();
+  }
+  if (options.persist !== false && historyUI?.meta) {
+    historyUI.append(transcriptRow(role, text, options, !options.error));
+  }
   if (role === "assistant") {
     scrollMessageToStart(article);
   } else {
@@ -465,8 +468,9 @@ function addTypingIndicator() {
   const article = document.createElement("article");
   article.className = "message assistant typing-message";
   article.innerHTML = `
-    <header><span class="assistant-mark">K</span><span>Krono</span></header>
-    <div class="typing"><span></span><span></span><span></span></div>
+    <header><span>Krono</span></header>
+    <p class="request-status" role="status" aria-live="polite">${t("requestStarting")}</p>
+    <p class="request-elapsed"></p>
   `;
   elements.chat.appendChild(article);
   scrollToBottom();
@@ -490,48 +494,138 @@ function scrollMessageToStart(article) {
   });
 }
 
-function openImage(image) {
+let imageGroup = [], imagePosition = 0;
+function openImage(image, group = [image], position = 0) {
+  imageGroup = group; imagePosition = position;
+  showImage();
+  if (!elements.imageModal.open) elements.imageModal.showModal();
+}
+function showImage() {
+  const image = imageGroup[imagePosition];
   elements.modalImage.src = imageVariantUrl(image, "full");
-  elements.modalImage.alt = image.caption;
-  elements.modalCaption.textContent = `${getMap(image.map_id)?.display_name || image.map_id} · ${image.caption}`;
-  elements.imageModal.showModal();
+  elements.modalImage.alt = image.caption || "";
+  elements.modalCaption.textContent = `${getMap(image.map_id)?.display_name || image.map_id} · ${imagePosition + 1} / ${imageGroup.length}`;
+  document.getElementById("image-previous").disabled = imagePosition === 0;
+  document.getElementById("image-next").disabled = imagePosition === imageGroup.length - 1;
+  document.querySelector(".image-navigation").hidden = imageGroup.length < 2;
 }
-
-function closeImage() {
-  elements.imageModal.close();
-  elements.modalImage.removeAttribute("src");
+function moveImage(direction) {
+  const next = imagePosition + direction;
+  if (next < 0 || next >= imageGroup.length) return;
+  imagePosition = next; showImage();
 }
+function closeImage() { elements.imageModal.close(); }
+elements.imageModal.addEventListener("close", () => { elements.modalImage.removeAttribute("src"); imageGroup = []; });
+document.getElementById("image-previous").onclick = () => moveImage(-1);
+document.getElementById("image-next").onclick = () => moveImage(1);
+elements.imageModal.addEventListener("keydown", event => {
+  if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); moveImage(event.key === "ArrowLeft" ? -1 : 1); }
+});
 
 function setPending(pending) {
   state.pending = pending;
   elements.input.disabled = pending;
+  elements.responseMode.disabled = pending;
+  for (const button of document.querySelectorAll("[data-response-mode]")) button.disabled = pending;
+  if (pending) document.getElementById("response-mode-menu").open = false;
   elements.sendButton.disabled = pending;
+  elements.sendButton.hidden = pending;
+  elements.cancelButton.hidden = !pending;
   elements.sendButton.classList.toggle("pending", pending);
+  for (const control of document.querySelectorAll("#guide-controls button, #guide-controls select")) {
+    control.disabled = pending;
+  }
 }
 
 function resetComposer() {
   elements.input.value = "";
   elements.input.style.height = "auto";
   elements.characterCount.textContent = "0 / 2000";
+  elements.characterCount.classList.remove("near-limit");
 }
 
-async function sendMessage(message) {
-  const response = await fetch(`${API_BASE}/chat`, {
+async function requestJson(path, options = {}, signal = null) {
+  const { timeoutMs = 20000, ...fetchOptions } = options;
+  if (signal?.aborted) throw new DOMException("Cancelled", "AbortError");
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  signal?.addEventListener("abort", abort, { once: true });
+  const timeout = setTimeout(abort, timeoutMs);
+  try {
+    const response = await fetch(`${API_BASE}${path}`, { ...fetchOptions, signal: controller.signal });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error(payload.detail || t("requestError"));
+      error.httpStatus = response.status;
+      throw error;
+    }
+    return payload;
+  } catch (error) {
+    if (signal?.aborted) throw new DOMException("Cancelled", "AbortError");
+    if (error.httpStatus) throw error;
+    const connectionError = new Error(t("requestConnectionError"));
+    connectionError.transient = true;
+    throw connectionError;
+  } finally {
+    clearTimeout(timeout);
+    signal?.removeEventListener("abort", abort);
+  }
+}
+
+async function sendMessage(message, {
+  guideAction = null, guidePhase = null, signal = null, onProgress = () => {}
+} = {}) {
+  let job = await requestJson("/chat/jobs", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       message,
+      response_mode: state.responseMode,
+      guide_state: null,
+      match_state: !state.activeMapId || companionUI.matchState?.map_id === state.activeMapId
+        ? companionUI.matchState : null,
+      guide_action: guideAction,
+      guide_phase: guidePhase,
       conversation_history: state.history.slice(-10),
       active_map_id: state.activeMapId,
       preferred_language: navigator.languages?.[0] || navigator.language || "pt-BR"
     })
-  });
+  }, signal);
+  return pollJob(job, signal, onProgress);
+}
 
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(payload.detail || t("requestError"));
+async function pollJob(job, signal, onProgress = () => {}) {
+  if (!job.job_id) throw new Error(t("requestError"));
+  const jobId = job.job_id;
+  const started = Date.now();
+  let failures = 0;
+  let completed = false;
+  try {
+    while (Date.now() - started < 660000) {
+      if (signal?.aborted) throw new DOMException("Cancelled", "AbortError");
+      onProgress(job);
+      if (job.state === "completed" && job.response) {
+        completed = true;
+        return job.response;
+      }
+      if (job.state === "failed") throw new Error(job.error || t("requestError"));
+      if (job.state !== "pending") throw new Error(t("requestError"));
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      try {
+        job = await requestJson(`/chat/jobs/${encodeURIComponent(jobId)}`, {}, signal);
+        failures = 0;
+      } catch (error) {
+        if (!error.transient || ++failures >= 3) throw error;
+      }
+    }
+    throw new Error(t("requestExpired"));
+  } finally {
+    if (!completed) {
+      fetch(`${API_BASE}/chat/jobs/${encodeURIComponent(jobId)}`, {
+        method: "DELETE", keepalive: true
+      }).catch(() => {});
+    }
   }
-  return payload;
 }
 
 function removePendingMessageFromHistory(message) {
@@ -575,19 +669,21 @@ function continueCurrentMap() {
   elements.input.focus();
 }
 
-function confirmMapSwitch() {
+async function confirmMapSwitch() {
   const pending = state.pendingMapSwitch;
   if (!pending) return;
   elements.mapSwitchModal.close();
   state.pendingMapSwitch = null;
-  clearConversation();
+  if (!await clearConversation()) return;
   selectMap(pending.action.requested_map_id, { focus: false });
   submitMessage(pending.message);
 }
 
-async function submitMessage(message, { echoUser = true } = {}) {
+async function submitMessage(message, { echoUser = true, guideAction = null, guidePhase = null } = {}) {
   const cleanMessage = message.trim();
-  if (!cleanMessage || state.pending) return;
+  if (!cleanMessage || state.pending || !historyUI.meta || historyUI.switching) return;
+  if (historyUI.pageBefore !== null) await historyUI.latest();
+  state.history = state.history.slice(-10);
 
   if (echoUser) {
     addMessage("user", cleanMessage);
@@ -596,9 +692,30 @@ async function submitMessage(message, { echoUser = true } = {}) {
   resetComposer();
   setPending(true);
   const typing = addTypingIndicator();
+  const requestAbort = new AbortController();
+  state.requestAbort = requestAbort;
 
   try {
-    const response = await sendMessage(cleanMessage);
+    const response = await sendMessage(cleanMessage, {
+      guideAction, guidePhase, signal: requestAbort.signal,
+      onProgress: job => {
+        if (state.requestAbort !== requestAbort || requestAbort.signal.aborted) return;
+        const keys = {
+          starting: "requestStarting", understanding: "requestUnderstanding",
+          searching: "requestSearching", planning: "requestPlanning",
+          generating: "requestGenerating", reviewing: "requestReviewing",
+          finalizing: "requestFinalizing"
+        };
+        const status = typing.querySelector(".request-status");
+        const label = keys[job.phase] ? t(keys[job.phase]) : t("requestProcessing", {
+          seconds: job.elapsed_seconds
+        });
+        if (status.textContent !== label) status.textContent = label;
+        typing.querySelector(".request-elapsed").textContent = job.elapsed_seconds >= 10
+          ? t("requestElapsed", { seconds: job.elapsed_seconds }) : "";
+      }
+    });
+    if (requestAbort.signal.aborted) return;
     typing.remove();
 
     if (response.map_switch && openMapSwitchModal(response.map_switch, cleanMessage)) {
@@ -621,36 +738,80 @@ async function submitMessage(message, { echoUser = true } = {}) {
         content: response.clarification_question
       });
     } else {
-      addMessage("assistant", response.answer, {
+      const article = addMessage("assistant", response.answer, {
         images: response.relevant_images,
+        blocks: response.blocks,
+        introduction: response.introduction,
         sources: response.sources
       });
+      if (response.offer_complete) {
+        const offer = document.createElement("div");
+        offer.className = "response-mode-offer";
+        const copy = document.createElement("p"); copy.textContent = t("expandMode");
+        const button = document.createElement("button"); button.type = "button";
+        button.className = "ghost-button"; button.textContent = t("useComplete");
+        button.addEventListener("click", () => {
+          if (state.pending) return;
+          chooseResponseMode("complete");
+          submitMessage(cleanMessage, { echoUser: false });
+        });
+        offer.append(copy, button); article.appendChild(offer);
+      }
       state.history.push({
         role: "assistant",
-        content: response.answer,
+        content: response.answer.slice(0, 12000),
         source_paths: [...new Set(response.sources.map(source => source.path))]
       });
     }
+    companionUI.offer(response.companion_offer_map_id,
+      response.guide?.state.language || response.response_language);
   } catch (error) {
     typing.remove();
-    addMessage("assistant", error.message, { error: true });
+    if (state.requestAbort !== requestAbort) return;
+    removePendingMessageFromHistory(cleanMessage);
+    const cancelled = requestAbort.signal.aborted;
+    const detail = cancelled ? t("requestCancelled") : error.message;
+    if (!cancelled || requestAbort.signal.reason === "user-cancel") {
+      addMessage("assistant", detail, { error: !cancelled });
+    }
   } finally {
-    setPending(false);
-    if (!elements.mapSwitchModal.open) elements.input.focus();
+    if (state.requestAbort === requestAbort) {
+      state.requestAbort = null;
+      setPending(false);
+      if (!elements.mapSwitchModal.open) elements.input.focus();
+    }
   }
 }
 
-function clearConversation() {
+function renderGuideControls() {
+  document.getElementById("guide-controls")?.remove();
+}
+
+async function clearConversation() {
+  return historyUI.newConversation();
+}
+
+function resetConversationView() {
+  resetComposer();
+  companionUI.offered.clear();
+  if (companionUI.active) companionUI.leave({notify: false});
+  state.requestAbort?.abort();
+  state.requestAbort = null;
+  setPending(false);
   state.history = [];
+  state.guide = null;
+  renderGuideControls();
   elements.chat.replaceChildren();
   elements.welcome.hidden = false;
-  selectMap(null, { focus: false });
+  closeImage();
+  selectMap(null, { focus: false, persist: false });
 }
 
 function autoResizeComposer() {
   elements.input.style.height = "auto";
   elements.input.style.height = `${Math.min(elements.input.scrollHeight, 160)}px`;
   elements.characterCount.textContent = `${elements.input.value.length} / 2000`;
+  elements.characterCount.classList.toggle("near-limit", elements.input.value.length >= 1800);
 }
 
 async function loadApplication() {
@@ -663,19 +824,15 @@ async function loadApplication() {
 
     const health = await healthResponse.json();
     state.maps = await mapsResponse.json();
-    renderMaps();
-
-    const stats = t("stats", { chunks: health.chunks, images: health.images });
-    const [chunkCopy, imageCopy] = stats.split(" · ");
-    elements.knowledgeStats.innerHTML = `<strong>${chunkCopy.split(" ")[0]}</strong> ${chunkCopy.split(" ").slice(1).join(" ")}<span></span><strong>${imageCopy.split(" ")[0]}</strong> ${imageCopy.split(" ").slice(1).join(" ")}`;
 
     const healthy = health.status === "ok";
+    elements.systemStatus.hidden = healthy && health.llm_configured;
     elements.systemStatus.classList.toggle("error", !healthy);
     elements.systemStatus.querySelector("span:last-child").textContent = healthy
       ? health.llm_configured ? t("healthy") : t("baseOnly")
       : t("inconsistent");
   } catch {
-    elements.mapList.innerHTML = `<p class="load-error">${t("mapsLoadError")}</p>`;
+    elements.systemStatus.hidden = false;
     elements.systemStatus.classList.add("error");
     elements.systemStatus.querySelector("span:last-child").textContent = t("apiOffline");
   }
@@ -699,10 +856,7 @@ elements.quickPrompts.addEventListener("click", event => {
   if (button) submitMessage(button.dataset.prompt);
 });
 elements.clearChat.addEventListener("click", clearConversation);
-elements.menuToggle.addEventListener("click", () => {
-  setSidebarOpen(!document.body.classList.contains("sidebar-open"));
-});
-elements.sidebarBackdrop.addEventListener("click", () => setSidebarOpen(false));
+elements.cancelButton.addEventListener("click", () => state.requestAbort?.abort("user-cancel"));
 elements.modalClose.addEventListener("click", closeImage);
 elements.imageModal.addEventListener("click", event => {
   if (event.target === elements.imageModal) closeImage();
@@ -717,9 +871,85 @@ elements.mapSwitchModal.addEventListener("click", event => {
   if (event.target === elements.mapSwitchModal) continueCurrentMap();
 });
 
+const companionUI = new CompanionUI({
+  locale: UI_LOCALE,
+  language: navigator.languages?.[0] || navigator.language || "pt-BR",
+  requestJson, pollJob,
+  cachedAnswer: match => historyUI.cachedAnswer(match),
+  saveMatch: async (match, rows) => { await historyUI.write({match}, rows); },
+  onOffered: offered => historyUI.write({offered}).catch(() => {}),
+  onLeave: async () => { await historyUI.flush(); await historyUI.latest(); },
+  record: (role, text, options = {}, context = true) => historyUI.write({}, [transcriptRow(role, text, options, context)]),
+  selectMap: mapId => selectMap(mapId, {focus: false}),
+  cancelChat: () => {
+    if (state.pending && state.history.at(-1)?.role === "user") state.history.pop();
+    state.requestAbort?.abort(); state.requestAbort = null; setPending(false);
+  },
+  notice: text => addMessage("assistant", text, {error: true}),
+  renderAnswer: (container, response) => {
+    container.replaceChildren();
+    const intro = document.createElement("div");
+    intro.innerHTML = renderMarkdown(response.need_clarification
+      ? response.clarification_question : response.blocks?.length ? response.introduction || "" : response.answer);
+    container.appendChild(intro);
+    for (const block of response.blocks || []) container.appendChild(createAnswerStep(block));
+    const sources = createSourceDetails(response.sources);
+    if (sources) container.appendChild(sources);
+  }
+});
+
+const historyUI = new ConversationHistory({
+  locale: UI_LOCALE,
+  cancel: () => {
+    state.requestAbort?.abort(); state.requestAbort = null; setPending(false);
+    companionUI.leave({notify: false});
+  },
+  reset: resetConversationView,
+  setMatch: (match, offered) => companionUI.setMatch(match, offered),
+  selectMap: mapId => selectMap(mapId, {focus: false, persist: false}),
+  setContext: messages => { state.history = messages; },
+  renderRows: (rows, pager) => {
+    elements.chat.replaceChildren(); elements.welcome.hidden = !!rows.length;
+    const navigation = document.createElement("div"); navigation.className = "history-pagination";
+    for (const [action, label] of [[pager.older, pager.copy.older], [pager.latest, pager.copy.latest]]) {
+      if (!action) continue;
+      const button = document.createElement("button"); button.type = "button";
+      button.className = "ghost-button"; button.textContent = label; button.onclick = action;
+      navigation.appendChild(button);
+    }
+    elements.chat.appendChild(navigation);
+    for (const row of rows) addMessage(row.role, row.text, {...row.options, persist: false});
+    if (rows.length) scrollMessageToStart(pager.latest ? elements.chat.querySelector(".message") : elements.chat.querySelector(".message:last-child"));
+  },
+});
+
+try { updateResponseMode(localStorage.getItem("krono.responseMode.v1")); } catch {}
+elements.responseMode.addEventListener("change", () => chooseResponseMode(elements.responseMode.value));
+for (const button of document.querySelectorAll("[data-response-mode]")) button.addEventListener("click", () => {
+  if (state.pending) return;
+  chooseResponseMode(button.dataset.responseMode);
+  document.getElementById("response-mode-menu").open = false;
+});
+for (const menu of document.querySelectorAll(".conversation-menu, .response-mode-menu")) {
+  document.addEventListener("click", event => { if (!menu.contains(event.target)) menu.open = false; });
+  menu.addEventListener("keydown", event => { if (event.key === "Escape") { menu.open = false; menu.querySelector("summary").focus(); } });
+}
 applyUiLocale();
-loadApplication();
-elements.input.focus();
+elements.input.disabled = true; elements.sendButton.disabled = true;
+elements.menuToggle.disabled = true; elements.clearChat.disabled = true;
+loadApplication().then(() => historyUI.init()).finally(() => {
+  elements.input.disabled = false; elements.sendButton.disabled = false;
+  elements.menuToggle.disabled = false; elements.clearChat.disabled = false;
+  selectMap(state.activeMapId, {focus: false, persist: false});
+});
+
+// Follow the visible viewport when a mobile keyboard opens.
+function resizeWorkspace() {
+  document.documentElement.style.setProperty("--app-height", `${window.visualViewport?.height || window.innerHeight}px`);
+}
+window.visualViewport?.addEventListener("resize", resizeWorkspace);
+window.addEventListener("resize", resizeWorkspace);
+resizeWorkspace();
 
 if ("serviceWorker" in navigator && window.isSecureContext) {
   window.addEventListener("load", () => {

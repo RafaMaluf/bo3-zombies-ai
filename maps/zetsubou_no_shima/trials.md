@@ -66,6 +66,9 @@ Water one plant across 3 rounds until it has been watered 3 times.
 
 ## medium trials
 
+### kill a mutated zombie before it enrages
+Kill a Thrasher before it enters its enraged state. Use a strong weapon and finish it quickly; this is separate from killing a normal zombie DURING its transformation and from the head-removal trial.
+
 ### kill 20 zombies underwater
 Kill 20 zombies in underwater sections of the map.
 
@@ -132,6 +135,7 @@ Practical note:
 - Water the same plant 3 times
 
 ### medium
+- Kill a mutated zombie before it enrages
 - Kill 20 zombies underwater
 - Kill 15 zombies attracted to a plant
 - Kill 10 spore-infected zombies with headshots

@@ -96,18 +96,18 @@ After using the clock, **one circle will glow**. From that active circle, shoot 
 2. standing on the rock and shooting again to move it (your screen will get a red glow to show you are close enough)
 3. repeating until it reaches the correct fireplace
 
-Once the blazing rock reaches the correct fireplace, interact with the fire to pick up the arrow. 
+You have at most four charged shots to bring the rock into the correct fireplace. When its fire turns reddish pink, interact to PLACE the quest arrow into it. The reforged arrow is collected from the sun in the next step, not from the fireplace.
 
 ### fireplace destinations from the Steam guide
-- **circle near Double Tap** → **fireplace near Samantha’s room**
-- **circle on top of the castle** → **church fireplace**
+- **circle near Double Tap** → **fireplace in Richtofen’s room, opposite Samantha’s room**
+- **circle on top of the castle** → **Church / Mission Control fireplace under the dragon (Speed Cola room)**
 - **circle near the Clock Tower** → **fireplace upstairs near the first dragon / Wunderfizz** 
 
 ### optional symbol reference
 From the extra guide you found, the symbol mapping is:
 
-- **Templar cross** → fireplace by Samantha’s Room → corresponding ring by **KRM-262 / Double Tap**
-- **Arrow right with two triangles underneath** → fireplace under the Dragon Head statue in the **Control Room** → corresponding ring by the **Death Ray / Wundersphere**
+- **Templar cross** → fireplace in Richtofen’s Room, across from Samantha’s Room → corresponding ring by **KRM-262 / Double Tap**
+- **Arrow right with two triangles underneath** → fireplace under the Dragon Head statue in the **Mission Control / Church (Speed Cola room)** → corresponding ring by the **Death Ray / Wundersphere**
 - **Two triangles right, arrow right, two triangles right** → fireplace in the **Lower Courtyard upstairs across from the Mystery Box / first dragon area** → corresponding ring outside the **Clock Tower**
 
 ### fireplace images
@@ -124,7 +124,7 @@ From the extra guide you found, the symbol mapping is:
 
 ## step 7 - interact with the sun
 
-After picking up the arrow from the fireplace, go back to the **top of the castle** and interact with the sun, which is now at the same height as you. It rises and explodes, leaving behind the **reforged arrow** to pick up. 
+After placing the arrow into the fireplace, go back to the **top of the castle** and interact with the sun, which is now at the same height as you. It rises and explodes, leaving behind the **reforged arrow** to pick up.
 
 ### steps
 1. Return to the upper castle / sun position.
@@ -160,7 +160,7 @@ Related image:
 6. Stand in each circle and kill zombies to charge them.
 7. Use the clock to identify the correct fireplace.
 8. Spawn and move the blazing rock from the active circle to that fireplace.
-9. Interact with the fireplace to collect the arrow.
+9. Interact with the glowing fireplace to place the quest arrow into it.
 10. Return to the top of the castle and interact with the sun.
 11. Pick up the reforged arrow.
 12. Place it on the Fire altar in the pyramid room and charge it with nearby zombie kills.

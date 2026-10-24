@@ -6,7 +6,8 @@ The Gas Mask is a very useful support item on Zetsubou No Shima. It does 2 main 
 
 - protects you from toxic spore gas so you stop coughing
 - lets you stay underwater longer before taking damage
-- if you dont use it you wont get to the boss fight. you die before
+
+Carry a fresh mask into the final boss area for protection from its gas. This guide treats it as survival preparation, not as an elevator unlock switch. It has limited durability; do not promise invulnerability or indefinite underwater breathing.
 
 After collecting all 3 parts, you can craft it at a workbench in **Lab A** or **Lab B**.
 

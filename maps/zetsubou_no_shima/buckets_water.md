@@ -14,13 +14,42 @@ A bucket can hold **3 charges of water**, which means you can:
 
 ## bucket locations
 
-Buckets can be found throughout the map. There are many total spawn points, so this file focuses on the system rather than listing every exact location.
+Pick up a metal bucket with the glowing blue rim using interact. Each player carries one. Check these possible positions; a bucket does not occupy every position simultaneously.
 
-The main bucket areas are:
-- spawn
-- Lab A
-- Lab B
-- main bunker
+### spawn clearing
+- Left of the first fork tree.
+- Below the drop-down.
+- Beside the map board.
+- Above the drop-down: by the tree or path edge.
+- Behind the second central tree, near GobbleGum.
+
+### Lab A indoors
+- Table opposite generator.
+- Telephone table beside generator.
+- Desk opposite GobbleGum.
+- Beside stationary cage.
+- Beneath stairs near GobbleGum.
+
+### Lab A outside
+- Side bridge: front-right or back-left.
+- Rear bridge: by water or webs.
+- Beside Japanese poster near zipline stairs.
+- Box beside bunker-bound stairs.
+
+### Lab B indoors
+- Generator room left: barrel, shelf or skull table.
+- Generator room right: cabinet.
+- Downstairs exit box.
+- Upstairs: lamp table or either white table.
+
+### Lab B outside / green water
+- Balcony by water drop.
+- Far-stair balcony.
+- Walkway behind green pool.
+- Perk-side balcony near stairs.
+- Rocks/bushes by lower stairs towards green pool.
+
+The last two outdoor Lab B positions are described by the source author without footage. The existing image illustrates a bucket, not all thirty positions.
 
 Related image: images/buckets_water/1bucket.jpg
 

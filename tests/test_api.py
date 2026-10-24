@@ -3,6 +3,7 @@ from collections.abc import Iterator
 
 import pytest
 from fastapi.testclient import TestClient
+from planning_fakes import SeedPlanner
 
 from app.config import settings
 from app.llm import (
@@ -14,32 +15,29 @@ from app.llm import (
 from app.main import app
 
 
-class ImageSelectingLLM:
-    async def answer(self, messages: list[dict[str, str]]) -> LLMResponse:
+class ImageSelectingLLM(SeedPlanner):
+    async def answer(self, messages: list[dict[str, str]], **kwargs) -> LLMResponse:
         image_ids = re.findall(r"img_[a-f0-9]{16}", messages[-1]["content"])
         selected = [image_ids[0], image_ids[0], "img_not_allowed"] if image_ids else []
         answer = (
-            "Resposta de teste.\n\n"
-            "---\n"
-            "**Imagens de apoio**\n"
-            f"- Escudo: `{image_ids[0]}`"
+            f"Resposta de teste.\n\n---\n**Imagens de apoio**\n- Escudo: `{image_ids[0]}`"
             if image_ids
             else "Resposta de teste."
         )
         return LLMResponse(answer=answer, image_ids=selected)
 
 
-class NoImageLLM:
-    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+class NoImageLLM(SeedPlanner):
+    async def answer(self, _: list[dict[str, str]], **kwargs) -> LLMResponse:
         return LLMResponse(answer="Resposta de teste sem seleção do modelo.")
 
 
-class UnavailableLLM:
-    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+class UnavailableLLM(SeedPlanner):
+    async def answer(self, _: list[dict[str, str]], **kwargs) -> LLMResponse:
         raise LLMUnavailableError("GROQ_API_KEY is not configured.")
 
 
-class AmbiguousFollowUpLLM:
+class AmbiguousFollowUpLLM(SeedPlanner):
     async def resolve_query(
         self,
         _: list[dict[str, str]],
@@ -56,11 +54,11 @@ class AmbiguousFollowUpLLM:
             ],
         )
 
-    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+    async def answer(self, _: list[dict[str, str]], **kwargs) -> LLMResponse:
         raise AssertionError("A clarification must not generate an answer.")
 
 
-class RewritingFollowUpLLM:
+class RewritingFollowUpLLM(SeedPlanner):
     async def resolve_query(
         self,
         _: list[dict[str, str]],
@@ -69,29 +67,29 @@ class RewritingFollowUpLLM:
             resolved_query="Como consigo o Wolf Bow em Der Eisendrache?",
         )
 
-    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+    async def answer(self, _: list[dict[str, str]], **kwargs) -> LLMResponse:
         return LLMResponse(answer="Guia contextual do arco do lobo.")
 
 
-class FailingResolverLLM:
+class FailingResolverLLM(SeedPlanner):
     async def resolve_query(
         self,
         _: list[dict[str, str]],
     ) -> QueryResolution:
         raise LLMResponseError("No usable resolution.")
 
-    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+    async def answer(self, _: list[dict[str, str]], **kwargs) -> LLMResponse:
         return LLMResponse(answer="O escudo é montado na bancada.")
 
 
-class PlayerCountFollowUpLLM:
+class PlayerCountFollowUpLLM(SeedPlanner):
     async def resolve_query(
         self,
         _: list[dict[str, str]],
     ) -> QueryResolution:
         raise LLMResponseError("No usable resolution.")
 
-    async def answer(self, _: list[dict[str, str]]) -> LLMResponse:
+    async def answer(self, _: list[dict[str, str]], **kwargs) -> LLMResponse:
         return LLMResponse(
             answer=(
                 "No jogo sem mod, o Easter Egg principal exige 4 jogadores. "
@@ -158,9 +156,7 @@ def test_remote_asset_urls_are_returned_and_media_endpoint_redirects() -> None:
         with TestClient(app) as client:
             maps = client.get("/maps").json()
             cover = next(item for item in maps if item["cover_image_id"])
-            assert cover["cover_image_url"].startswith(
-                "https://assets.example.com/images/v1/"
-            )
+            assert cover["cover_image_url"].startswith("https://assets.example.com/images/v1/")
             redirect = client.get(
                 f"/media/{cover['cover_image_id']}?variant=thumb",
                 follow_redirects=False,
@@ -214,7 +210,7 @@ def test_frontend_redirect_and_assets() -> None:
         assert "serviceWorker.register" in script.text
         assert manifest.json()["name"] == "Kronochat"
         assert manifest.json()["display"] == "standalone"
-        assert "kronochat-shell-v1" in service_worker.text
+        assert "kronochat-shell-v2" in service_worker.text
         for response in (index, stylesheet, script, manifest, service_worker):
             assert response.headers["cache-control"] == (
                 "no-cache, max-age=0, must-revalidate"
@@ -266,33 +262,20 @@ def test_generic_question_returns_map_clarification_without_calling_llm() -> Non
         assert len(payload["suggested_map_ids"]) == 14
 
 
-def test_more_than_three_explicit_guides_are_capped_without_calling_llm() -> None:
+def test_more_than_three_explicit_guides_reach_generation_without_file_choice() -> None:
     with TestClient(app) as client:
-        client.app.state.llm = UnavailableLLM()
+        client.app.state.llm = NoImageLLM()
         response = client.post(
             "/chat",
             json={
-                "message": (
-                    "Como faço o G-Strike, o Maxis Drone, o One Inch Punch "
-                    "e o Shield?"
-                ),
+                "message": "Como faço o G-Strike, o Maxis Drone, o One Inch Punch e o Shield?",
                 "active_map_id": "origins",
             },
         )
-
         assert response.status_code == 200
         payload = response.json()
-        assert payload["need_clarification"]
-        assert payload["clarification_question"] == (
-            "Você pediu 4 guias de uma vez. Para manter a resposta objetiva, "
-            "escolha até 3."
-        )
-        assert payload["suggested_queries"] == [
-            "G Strike",
-            "Maxis Drone",
-            "One Inch Punch",
-            "Shield",
-        ]
+        assert not payload["need_clarification"]
+        assert payload["answer"]
         assert payload["active_map_id"] == "origins"
 
 
@@ -318,9 +301,9 @@ def test_explicit_other_map_returns_structured_switch_without_calling_llm() -> N
         }
 
 
-def test_ambiguous_follow_up_offers_valid_document_choices() -> None:
+def test_plural_follow_up_reaches_planning_instead_of_offering_files() -> None:
     with TestClient(app) as client:
-        client.app.state.llm = AmbiguousFollowUpLLM()
+        client.app.state.llm = NoImageLLM()
         response = client.post(
             "/chat",
             json={
@@ -346,17 +329,10 @@ def test_ambiguous_follow_up_offers_valid_document_choices() -> None:
 
         assert response.status_code == 200
         payload = response.json()
-        assert payload["need_clarification"]
-        assert payload["clarification_question"] == (
-            "Encontrei 4 guias relacionados em Der Eisendrache. Qual deles você quer consultar?"
-        )
-        assert payload["suggested_queries"] == [
-            "Fire Bow",
-            "Lightning Bow",
-            "Void Bow",
-            "Wolf Bow",
-        ]
-        assert payload["suggested_map_ids"] == []
+        assert not payload["need_clarification"]
+        assert payload["clarification_question"] == ""
+        assert payload["suggested_queries"] == []
+        assert payload["answer"]
 
 
 def test_referential_follow_up_is_rewritten_before_retrieval() -> None:

@@ -38,7 +38,8 @@ def test_versioned_embedding_index_matches_current_knowledge_base() -> None:
         expected_model="voyage-4-large",
     )
 
-    assert len(index.chunk_ids) == knowledge_base.stats["chunks"] == 602
+    assert len(index.chunk_ids) == knowledge_base.stats["chunks"]
+    assert set(index.chunk_ids) == set(knowledge_base.chunks)
     assert index.dimensions == 1024
     assert index.knowledge_base_hash == knowledge_base_fingerprint(
         ordered_chunks(knowledge_base)
@@ -60,7 +61,7 @@ def test_write_and_score_embedding_index(tmp_path: Path) -> None:
         expected_model=StaticEmbeddingClient.model,
     )
 
-    assert manifest["validated_vectors"] == 602
+    assert manifest["validated_vectors"] == knowledge_base.stats["chunks"]
     assert set(index.score((1.0, 0.0)).values()) == {1.0}
     with pytest.raises(EmbeddingError, match="expected 2"):
         index.score((1.0,))

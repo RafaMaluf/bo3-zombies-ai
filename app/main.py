@@ -3,7 +3,8 @@ from __future__ import annotations
 import asyncio
 import logging
 import mimetypes
-import re
+import time
+import uuid
 from contextlib import asynccontextmanager
 from typing import Literal
 
@@ -12,40 +13,31 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 
+from app.answer_policy import resolve_answer_intent
 from app.assets import AssetManifest
+from app.chat_jobs import ChatJobs, ChatJobStatus
+from app.chat_service import _select_image_assets as _select_image_assets
+from app.chat_service import answer_chat
+from app.companion_api import companion_router
+from app.companion_state import build_catalog
 from app.config import settings
-from app.conversation import (
-    build_resolution_messages,
-    clarification_for_options,
-    deterministic_follow_up_options,
-    document_catalog,
-    history_without_duplicate_current_message,
-    should_resolve_follow_up,
-    source_anchored_query,
-    validated_document_options,
-)
-from app.domain import ImageAsset
 from app.embeddings import EmbeddingError, EmbeddingIndex, VoyageEmbeddingClient
 from app.knowledge_base import KnowledgeBase
 from app.language import resolve_response_language
-from app.llm import LLMResponseError, LLMService, LLMUnavailableError
+from app.llm import LLMService
 from app.media import MediaService
-from app.prompt_builder import build_answer_prompt
 from app.retrieval import SearchEngine
 from app.schemas import (
     ChatRequest,
     ChatResponse,
     HealthResponse,
     MapSummary,
-    MapSwitchAction,
-    RelevantImage,
-    SelectedSource,
 )
 
 logger = logging.getLogger("krono")
+request_logger = logging.getLogger("uvicorn.error.krono.chat")
 mimetypes.add_type("text/javascript", ".js")
 mimetypes.add_type("image/webp", ".webp")
-IMAGE_ID_PATTERN = re.compile(r"`?img_[a-f0-9]{16}`?", flags=re.IGNORECASE)
 
 
 @asynccontextmanager
@@ -76,13 +68,17 @@ async def lifespan(app: FastAPI):
         embedding_client=embedding_client,
     )
     app.state.llm = LLMService(settings)
+    app.state.chat_jobs = ChatJobs()
     app.state.media = MediaService(settings.cache_dir)
 
     for issue in knowledge_base.issues:
         log = logger.error if issue.severity == "error" else logger.warning
         log("%s [%s] %s", issue.path, issue.code, issue.message)
 
-    yield
+    try:
+        yield
+    finally:
+        await app.state.chat_jobs.close()
 
 
 app = FastAPI(
@@ -121,107 +117,6 @@ def _asset_url(request: Request, image_id: str, variant: str) -> str:
         if remote_url:
             return remote_url
     return f"/media/{image_id}?variant={variant}"
-
-
-async def _search(
-    search_engine: SearchEngine,
-    query: str,
-    active_map_id: str | None,
-    limit: int,
-):
-    # Semantic retrieval performs a short network request. Keep it away from
-    # FastAPI's event loop while preserving the synchronous deterministic API
-    # used by the retrieval test suite.
-    return await asyncio.to_thread(
-        search_engine.search,
-        query,
-        active_map_id,
-        limit,
-    )
-
-
-def _select_image_assets(
-    requested_ids: list[str],
-    available_assets: tuple[ImageAsset, ...],
-    limit: int,
-) -> list[ImageAsset]:
-    allowed = {asset.id: asset for asset in available_assets}
-    selected = []
-    seen_ids: set[str] = set()
-    for image_id in requested_ids:
-        asset = allowed.get(image_id)
-        if asset is None or asset.id in seen_ids:
-            continue
-        selected.append(asset)
-        seen_ids.add(asset.id)
-        if len(selected) >= limit:
-            return selected
-
-    target_count = min(limit, 6)
-    if selected:
-        selected_documents = {asset.document_path for asset in selected}
-        selected_sections = {(asset.document_path, asset.section) for asset in selected}
-        for asset in available_assets:
-            if (
-                asset.id in seen_ids
-                or asset.document_path not in selected_documents
-                or (asset.document_path, asset.section) not in selected_sections
-            ):
-                continue
-            selected.append(asset)
-            seen_ids.add(asset.id)
-            if len(selected) >= target_count:
-                break
-        return selected
-
-    if not available_assets:
-        return selected
-
-    # Models occasionally omit images even for visual procedures. Fall back
-    # to one asset per section from the highest-ranked visual document instead
-    # of leaking loosely related images from another guide.
-    seen_sections: set[tuple[str, str]] = set()
-    preferred_document = available_assets[0].document_path
-    for asset in available_assets:
-        if asset.document_path != preferred_document:
-            continue
-        section_key = (asset.map_id, asset.section)
-        if section_key in seen_sections:
-            continue
-        selected.append(asset)
-        seen_sections.add(section_key)
-        seen_ids.add(asset.id)
-        if len(selected) >= target_count:
-            break
-
-    # A location guide can keep every screenshot in one section. Once section
-    # diversity is covered, fill the remaining slots from the same document.
-    for asset in available_assets:
-        if asset.document_path != preferred_document or asset.id in seen_ids:
-            continue
-        selected.append(asset)
-        seen_ids.add(asset.id)
-        if len(selected) >= target_count:
-            break
-    return selected
-
-
-def _strip_internal_image_references(answer: str) -> str:
-    lines = [line for line in answer.splitlines() if not IMAGE_ID_PATTERN.search(line)]
-    orphaned_tail_markers = {
-        "---",
-        "images",
-        "imagens",
-        "imagens de apoio",
-        "supporting images",
-    }
-    while lines:
-        marker = lines[-1].strip().strip("*# ").casefold()
-        if not marker or marker in orphaned_tail_markers:
-            lines.pop()
-            continue
-        break
-    return "\n".join(lines).rstrip()
 
 
 @app.get("/", include_in_schema=False)
@@ -285,232 +180,85 @@ async def media(
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest, request: Request) -> ChatResponse:
-    knowledge_base = _kb(request)
-    if knowledge_base.errors:
-        raise HTTPException(
-            status_code=503,
-            detail=(
-                "The knowledge base has validation errors. Run `python -m scripts.validate_kb`."
-            ),
-        )
-
-    search_engine: SearchEngine = request.app.state.search_engine
-    history = history_without_duplicate_current_message(
-        req.conversation_history,
-        req.message,
-        settings.max_history_messages,
-    )
-    response_language = resolve_response_language(
-        req.message,
-        history,
-        req.preferred_language,
-    )
-    requested_map_switch_id = search_engine.requested_map_switch_id(
-        req.message,
-        req.active_map_id,
-    )
-    if requested_map_switch_id is not None and req.active_map_id is not None:
-        return ChatResponse(
-            active_map_id=req.active_map_id,
-            map_switch=MapSwitchAction(
-                current_map_id=req.active_map_id,
-                requested_map_id=requested_map_switch_id,
-            ),
-        )
-
-    request_map_id = req.active_map_id if req.active_map_id in knowledge_base.maps else None
-    if request_map_id is None:
-        explicit_maps = search_engine.explicit_map_ids(req.message)
-        if len(explicit_maps) == 1:
-            request_map_id = explicit_maps[0]
-
-    requested_paths = search_engine.explicit_document_paths(
-        req.message,
-        request_map_id,
-    )
-    if len(requested_paths) > settings.max_multi_documents:
-        labels_by_path = {
-            reference.path: reference.label
-            for reference in document_catalog(knowledge_base, request_map_id or "")
-        }
-        return ChatResponse(
-            need_clarification=True,
-            clarification_question=(
-                f"Você pediu {len(requested_paths)} guias de uma vez. "
-                f"Para manter a resposta objetiva, escolha até "
-                f"{settings.max_multi_documents}."
-            ),
-            suggested_queries=[labels_by_path.get(path, path) for path in requested_paths],
-            active_map_id=request_map_id,
-        )
-
-    retrieval = await _search(
-        search_engine,
-        req.message,
-        req.active_map_id,
-        settings.max_retrieved_chunks,
-    )
-
-    llm: LLMService = request.app.state.llm
-    if should_resolve_follow_up(
-        req.message,
-        history,
-        req.active_map_id,
-        retrieval,
-    ):
-        active_record = knowledge_base.maps.get(req.active_map_id or "")
-        catalog = document_catalog(knowledge_base, req.active_map_id or "")
-        if active_record is not None and catalog:
-            deterministic_options = deterministic_follow_up_options(
-                req.message,
-                history,
-                catalog,
-            )
-            if deterministic_options:
-                return ChatResponse(
-                    need_clarification=True,
-                    clarification_question=clarification_for_options(
-                        req.message,
-                        active_record.display_name,
-                        deterministic_options,
-                        "Qual guia você quer consultar?",
-                    ),
-                    suggested_queries=[item.label for item in deterministic_options],
-                    active_map_id=req.active_map_id,
-                )
-
-            anchored_query = source_anchored_query(
-                req.message,
-                history,
-                catalog,
-            )
-            resolution_messages = build_resolution_messages(
-                message=req.message,
-                history=history,
-                map_name=active_record.display_name,
-                catalog=catalog,
-                response_language=response_language,
-            )
-            try:
-                resolution = await llm.resolve_query(resolution_messages)
-            except (LLMUnavailableError, LLMResponseError):
-                logger.warning("Could not resolve ambiguous follow-up", exc_info=True)
-                if anchored_query:
-                    anchored_retrieval = await _search(
-                        search_engine,
-                        anchored_query,
-                        req.active_map_id,
-                        settings.max_retrieved_chunks,
-                    )
-                    if not anchored_retrieval.needs_clarification:
-                        retrieval = anchored_retrieval
-            else:
-                if resolution.need_clarification:
-                    options = validated_document_options(
-                        resolution.candidate_document_paths,
-                        catalog,
-                        req.message,
-                    )
-                    if options or not anchored_query:
-                        return ChatResponse(
-                            need_clarification=True,
-                            clarification_question=clarification_for_options(
-                                req.message,
-                                active_record.display_name,
-                                options,
-                                resolution.clarification_question,
-                            ),
-                            suggested_queries=[item.label for item in options],
-                            active_map_id=req.active_map_id,
-                        )
-                else:
-                    resolved_retrieval = await _search(
-                        search_engine,
-                        resolution.resolved_query,
-                        req.active_map_id,
-                        settings.max_retrieved_chunks,
-                    )
-                    if not resolved_retrieval.needs_clarification:
-                        retrieval = resolved_retrieval
-                        anchored_query = ""
-
-                if anchored_query:
-                    anchored_retrieval = await _search(
-                        search_engine,
-                        anchored_query,
-                        req.active_map_id,
-                        settings.max_retrieved_chunks,
-                    )
-                    if not anchored_retrieval.needs_clarification:
-                        retrieval = anchored_retrieval
-
-    if retrieval.needs_clarification:
-        return ChatResponse(
-            need_clarification=True,
-            clarification_question=retrieval.clarification_question,
-            suggested_map_ids=list(retrieval.suggested_map_ids),
-            active_map_id=retrieval.active_map_id or req.active_map_id,
-        )
-
-    prompt = build_answer_prompt(
-        user_message=req.message,
-        history=history,
-        scored_chunks=retrieval.chunks,
-        knowledge_base=knowledge_base,
-        max_context_chars=settings.max_context_chars,
-        max_candidate_images=settings.max_candidate_images,
-        response_language=response_language,
-    )
-
+    request_id = uuid.uuid4().hex[:12]
+    started = time.monotonic()
+    status = 500
+    request_logger.info("Chat started id=%s map=%s", request_id, req.active_map_id)
     try:
-        generated = await llm.answer(prompt.messages)
-    except LLMUnavailableError as error:
-        raise HTTPException(status_code=503, detail=str(error)) from error
-    except LLMResponseError as error:
-        logger.exception("Chat generation failed")
+        response = await asyncio.wait_for(
+            answer_chat(
+                req,
+                _kb(request),
+                request.app.state.search_engine,
+                request.app.state.llm,
+                lambda image_id, variant: _asset_url(request, image_id, variant),
+            ),
+            timeout=settings.chat_timeout_seconds,
+        )
+        status = 200
+        response.response_language = resolve_response_language(
+            req.message,
+            req.conversation_history,
+            req.preferred_language,
+        )
+        quest_paths = {
+            c.path
+            for c in _kb(request).chunks.values()
+            if c.map_id == response.active_map_id and c.category == "main_ee"
+        }
+        related_quest = resolve_answer_intent(req.message).main_quest or any(
+            s.path in quest_paths and s.map_id == response.active_map_id for s in response.sources
+        )
+        if response.active_map_id and related_quest:
+            try:
+                build_catalog(_kb(request), response.active_map_id)
+            except ValueError:
+                pass
+            else:
+                response.companion_offer_map_id = response.active_map_id
+        return response
+    except asyncio.TimeoutError as error:
+        status = 504
         raise HTTPException(
-            status_code=502,
-            detail="The model failed to generate a valid answer. Try again.",
+            status_code=504,
+            detail=(
+                "A geração excedeu o tempo máximo de espera. Tente novamente ou peça "
+                "uma etapa específica do guia. A resposta completa não foi concluída."
+            ),
         ) from error
-
-    selected_assets = _select_image_assets(
-        requested_ids=generated.image_ids,
-        available_assets=prompt.images,
-        limit=settings.max_response_images,
-    )
-    relevant_images: list[RelevantImage] = []
-    for asset in selected_assets:
-        relevant_images.append(
-            RelevantImage(
-                id=asset.id,
-                map_id=asset.map_id,
-                path=asset.path,
-                caption=asset.caption,
-                section=asset.section,
-                thumbnail_url=_asset_url(request, asset.id, "thumb"),
-                full_url=_asset_url(request, asset.id, "full"),
-            )
+    except HTTPException as error:
+        status = error.status_code
+        raise
+    except asyncio.CancelledError:
+        status = 499
+        raise
+    finally:
+        request_logger.info(
+            "Chat finished id=%s status=%s elapsed=%.1fs",
+            request_id,
+            status,
+            time.monotonic() - started,
         )
-    sources = [
-        SelectedSource(
-            chunk_id=item.chunk.id,
-            map_id=item.chunk.map_id,
-            map_name=item.chunk.map_name,
-            path=item.chunk.path,
-            section=item.chunk.section_title,
-            score=item.score,
-        )
-        for item in prompt.chunks
-    ]
 
-    return ChatResponse(
-        answer=_strip_internal_image_references(generated.answer),
-        need_clarification=generated.need_clarification,
-        clarification_question=generated.clarification_question,
-        sources=sources,
-        relevant_images=relevant_images,
-        active_map_id=retrieval.active_map_id,
-    )
+
+@app.post("/chat/jobs", response_model=ChatJobStatus, status_code=202)
+async def start_chat_job(req: ChatRequest, request: Request, response: Response) -> ChatJobStatus:
+    response.headers["Cache-Control"] = "no-store"
+    return request.app.state.chat_jobs.start(lambda: chat(req, request))
+
+
+@app.get("/chat/jobs/{job_id}", response_model=ChatJobStatus)
+async def chat_job(job_id: str, request: Request, response: Response) -> ChatJobStatus:
+    response.headers["Cache-Control"] = "no-store"
+    return request.app.state.chat_jobs.get(job_id)
+
+
+@app.delete("/chat/jobs/{job_id}", response_model=ChatJobStatus)
+async def cancel_chat_job(job_id: str, request: Request) -> ChatJobStatus:
+    return await request.app.state.chat_jobs.cancel(job_id)
+
+
+app.include_router(companion_router(_asset_url))
 
 
 app.mount(

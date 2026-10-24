@@ -3,164 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#09090b" />
-  <meta
-    name="description"
-    content="Assistente pessoal para os mapas de Zombies de Call of Duty: Black Ops III."
-  />
+  <meta name="theme-color" content="#191816" />
+  <meta name="description" content="Seu caderno de campo para Black Ops III Zombies." />
   <title>Kronochat — Black Ops III Zombies</title>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="icon" href="./favicon-48.png" type="image/png" sizes="48x48" />
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" sizes="180x180" />
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style.css?v=2" />
 </head>
 <body>
-  <div class="noise" aria-hidden="true"></div>
-
-  <div class="app-shell">
-    <aside id="sidebar" class="sidebar" aria-label="Mapas disponíveis">
-      <div class="brand">
-        <img src="./logo.png" alt="Kronochat" class="brand-logo" />
-        <p class="brand-kicker">Black Ops III Zombies</p>
+  <main class="workspace">
+    <header class="topbar">
+      <button id="history-open" class="icon-button" type="button" aria-label="Abrir conversas" aria-controls="history-dialog" aria-expanded="false">☰</button>
+      <span id="conversation-title" class="conversation-title">Nova conversa</span>
+      <span id="active-map-label" class="active-map" hidden></span>
+      <details id="conversation-menu" class="conversation-menu">
+        <summary aria-label="Opções da conversa">···</summary>
+        <div class="menu-popover">
+          <button type="button" id="export-chat">Exportar PDF</button>
+          <button type="button" id="rename-chat">Renomear</button>
+          <button type="button" id="delete-chat">Excluir conversa</button>
+        </div>
+      </details>
+    </header>
+    <p id="system-status" class="system-status" role="status" hidden><span></span><span id="system-status-label"></span></p>
+    <p id="history-warning" class="history-warning" role="status" hidden></p>
+    <section class="chat-stage">
+      <div id="welcome" class="welcome">
+        <img src="./logo.png" alt="Kronochat" class="welcome-logo" />
+        <h1 id="welcome-title">Seu próximo passo começa aqui.</h1>
+        <p id="welcome-copy">Pergunte sobre o mapa, uma peça ou um Easter Egg.</p>
+        <div id="quick-prompts" class="quick-prompts">
+          <button type="button" data-prompt="Como eu libero o Pack-a-Punch?">Pack-a-Punch</button>
+          <button type="button" data-prompt="Como faço o Easter Egg principal?">Easter Egg</button>
+          <button type="button" data-prompt="Como monto o escudo?">Escudo</button>
+        </div>
       </div>
-
-      <div class="library-heading">
-        <span id="library-title">Base de conhecimento</span>
-        <span id="map-count" class="library-count">—</span>
-      </div>
-
-      <nav id="map-list" class="map-list" aria-label="Selecionar mapa">
-        <div class="map-skeleton"></div>
-        <div class="map-skeleton"></div>
-        <div class="map-skeleton"></div>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div id="system-status" class="system-status">
-          <span class="status-dot"></span>
-          <span id="system-status-label">Verificando base</span>
+      <div id="chat" class="chat" aria-live="polite" aria-label="Conversa"></div>
+    </section>
+    <footer class="composer-shell">
+      <form id="chat-form" class="composer">
+        <textarea id="message-input" placeholder="Escreva sua pergunta…" aria-label="Mensagem" rows="1" maxlength="2000" required></textarea>
+        <div class="composer-tools">
+          <details id="response-mode-menu" class="response-mode-menu">
+            <summary aria-label="Modo de resposta"><span aria-hidden="true">ϟ</span> <span id="response-mode-label">Rápido</span><span aria-hidden="true">⌄</span></summary>
+            <div class="mode-popover">
+              <button type="button" data-response-mode="quick"><strong>Rápido</strong><span id="mode-quick-hint">Um guia · prioriza velocidade</span></button>
+              <button type="button" data-response-mode="complete"><strong>Completo</strong><span id="mode-complete-hint">Inclui guias relacionados</span></button>
+            </div>
+          </details>
+          <select id="response-mode" hidden aria-label="Modo de resposta"><option value="quick">Rápido</option><option value="complete">Completo</option></select>
+          <span id="response-mode-description" class="sr-only"></span>
+          <span id="character-count" class="character-count">0 / 2000</span>
+          <button id="send-btn" class="send-button" type="submit" aria-label="Enviar">↑</button>
+          <button id="cancel-btn" class="ghost-button cancel-request" type="button" hidden>Cancelar resposta</button>
         </div>
-        <button id="clear-chat" class="ghost-button" type="button">
-          <span id="clear-chat-label">Limpar conversa</span>
-        </button>
-      </div>
-    </aside>
-
-    <button
-      id="sidebar-backdrop"
-      class="sidebar-backdrop"
-      type="button"
-      aria-label="Fechar menu"
-    ></button>
-
-    <main class="workspace">
-      <header class="topbar">
-        <button
-          id="menu-toggle"
-          class="icon-button menu-toggle"
-          type="button"
-          aria-label="Abrir mapas"
-          aria-expanded="false"
-        >
-          <span></span><span></span><span></span>
-        </button>
-
-        <div class="active-context">
-          <span id="active-context-title" class="eyebrow">Contexto ativo</span>
-          <strong id="active-map-label">Todos os mapas</strong>
-        </div>
-
-        <div id="knowledge-stats" class="knowledge-stats" aria-label="Estatísticas">
-          <span>Carregando…</span>
-        </div>
-
-      </header>
-
-      <section class="chat-stage">
-        <div id="welcome" class="welcome">
-          <div class="welcome-orbit" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <p id="welcome-eyebrow" class="eyebrow accent">Krono está online</p>
-          <h1 id="welcome-title">Entre no round<br />sabendo o próximo passo.</h1>
-          <p id="welcome-copy" class="welcome-copy">
-            Escolha um mapa ou pergunte diretamente. A resposta usa apenas os
-            guias locais e traz as imagens certas para cada etapa.
-          </p>
-          <div id="quick-prompts" class="quick-prompts">
-            <button type="button" data-prompt="Como eu libero o Pack-a-Punch?">
-              Liberar Pack-a-Punch
-            </button>
-            <button type="button" data-prompt="Como faço o Easter Egg principal?">
-              Easter Egg principal
-            </button>
-            <button type="button" data-prompt="Como monto o escudo?">
-              Montar o escudo
-            </button>
-          </div>
-        </div>
-
-        <div
-          id="chat"
-          class="chat"
-          aria-live="polite"
-          aria-label="Conversa"
-        ></div>
-      </section>
-
-      <footer class="composer-shell">
-        <form id="chat-form" class="composer">
-          <div id="composer-context" class="composer-context">
-            <span class="context-dot"></span>
-            <span id="composer-context-label">Busca em todos os mapas</span>
-          </div>
-          <div class="composer-row">
-            <textarea
-              id="message-input"
-              placeholder="Pergunte sobre o mapa…"
-              rows="1"
-              maxlength="2000"
-              required
-            ></textarea>
-            <button id="send-btn" class="send-button" type="submit" aria-label="Enviar">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 12h13M13 6l6 6-6 6"></path>
-              </svg>
-            </button>
-          </div>
-          <div class="composer-hint">
-            <span id="composer-hint-label">Enter envia · Shift + Enter quebra a linha</span>
-            <span id="character-count">0 / 2000</span>
-          </div>
-        </form>
-      </footer>
-    </main>
-  </div>
-
-  <dialog id="image-modal" class="image-modal">
-    <button id="modal-close" class="modal-close" type="button" aria-label="Fechar">
-      ×
-    </button>
-    <figure>
-      <img id="modal-image" alt="" />
-      <figcaption id="modal-caption"></figcaption>
-    </figure>
+      </form>
+    </footer>
+  </main>
+  <dialog id="history-dialog" class="history-dialog" aria-label="Conversas">
+    <div class="drawer-brand"><img src="./logo.png" alt="Kronochat"/><button type="button" id="history-close" class="icon-button" aria-label="Fechar conversas">×</button></div>
+    <button id="clear-chat" class="new-conversation" type="button"><span aria-hidden="true">＋</span><span id="clear-chat-label">Nova conversa</span></button>
+    <h2 id="history-title">Conversas</h2>
+    <div id="history-list"></div>
+    <button type="button" id="history-more" class="ghost-button" hidden>Mais conversas</button>
+    <details class="storage-info"><summary>ⓘ <span id="history-info-label">Sobre o histórico</span></summary><p id="history-local-copy"></p></details>
   </dialog>
-
+  <dialog id="image-modal" class="image-modal" aria-label="Imagem ampliada">
+    <header><span id="modal-caption"></span><button id="modal-close" class="icon-button" type="button" aria-label="Fechar">×</button></header>
+    <img id="modal-image" alt="" />
+    <nav class="image-navigation"><button type="button" id="image-previous" aria-label="Imagem anterior">←</button><button type="button" id="image-next" aria-label="Próxima imagem">→</button></nav>
+  </dialog>
   <dialog id="map-switch-modal" class="map-switch-modal">
-    <div class="map-switch-card">
-      <p id="map-switch-eyebrow" class="eyebrow accent">Outro mapa detectado</p>
-      <h2 id="map-switch-title"></h2>
-      <p id="map-switch-copy" class="map-switch-copy"></p>
-      <div class="map-switch-actions">
-        <button id="map-switch-continue" class="ghost-button" type="button"></button>
-        <button id="map-switch-confirm" class="map-switch-confirm" type="button"></button>
-      </div>
-    </div>
+    <div class="map-switch-card"><p id="map-switch-eyebrow" class="eyebrow">Outro mapa detectado</p><h2 id="map-switch-title"></h2><p id="map-switch-copy"></p><div class="map-switch-actions"><button id="map-switch-continue" class="ghost-button" type="button"></button><button id="map-switch-confirm" class="map-switch-confirm" type="button"></button></div></div>
   </dialog>
-
-  <script src="./app.js"></script>
+  <script src="./rendering.js"></script><script src="./history-store.js"></script><script src="./history.js"></script><script src="./companion.js"></script><script src="./app.js?v=2"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@ To do this, you need:
 ## steps
 
 1. Go to the green tanks room.
-2. Return to the wall that was previously vanished / revealed with the Skull.
+2. Use the Skull mesmerize attack on the wall in the green tanks room to expose the roots. This optional wall is separate from the underwater Masamune planting spot.
 3. Shoot the roots there with the **Masamune**.
 4. This reveals a spore.
 5. Wait until a normal zombie is near the spore.
@@ -24,3 +24,4 @@ To do this, you need:
 - it only lasts for a limited time
 
 Related image: images/side_ees/friendlythrasher.jpg
+Related image: images/masamune/7placestomesmerize3.jpg

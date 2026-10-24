@@ -2,7 +2,7 @@
 
 ## Side easter egg - Secret song 3
 
-To activate this song, you must interact with three numbers painted on the ground near the generators. https://www.youtube.com/watch?v=p8UpEg94CNA Press the "1" from the generator 1, and the "5" from the generator 5.
+Activate Aether by going prone on the painted generator floor numbers in this order: the first "1" at Generator 1, the OTHER "1" at Generator 1, then either "5" at Generator 5. These are three separate floor markings: 1 → 1 → 5. Do not repeat the same first marking twice. Demonstration: https://www.youtube.com/watch?v=p8UpEg94CNA
 
 Related image: images/source-guide/5fd42991cc49af04667e67a0d6ccd73682925595-3073961226.webp
 

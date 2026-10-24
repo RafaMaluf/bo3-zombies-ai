@@ -10,13 +10,13 @@ Go now to the church, on the first floor there is a bassin with water where you 
 
 Related image: images/source-guide/67ba78c8a4805713b10212697a0eb36e62f8fbc8-13058da704.webp
 
-You will be asked to do melee kills on zombies, either with knife, upgraded staff, shield, or One inch punch. (See part bellow)
+Charge the stone with 20 melee kills on nearby zombies, either with knife, upgraded staff, shield, or One inch punch. (See part bellow)
 
 Related image: images/source-guide/6791408f7925d63c0f6f4558905743116b5e25c4-e2b9d69a44.webp
 
 Related image: images/source-guide/a4273e97a8f1f34e1b2e51657b1815a14595b64c-9860589f0b.webp
 
-Once placed back, melee kill zombies again until it's done. You will see a glowing G-strike equipment hovering above the table.
+Once the stone stops taking souls, collect it from the church basin. Carry it back to the ORIGINAL table in the Tank Station at Generator 2 without stepping in mud. Use dry paths and boards; touching mud dirties the stone, so return it to the church basin to clean it again before retrying the journey. Place the clean stone on the Tank Station table, then get another 20 melee kills nearby. Collect the glowing G-Strike reward above that table. The church charging stage and the Tank Station charging stage are both required.
 
 Related image: images/source-guide/981fa35c454845ec513b91e286196045c24e1e7e-7b3a0ab689.webp
 

@@ -53,7 +53,7 @@ def extract_image_paths(content: str) -> tuple[str, ...]:
     return tuple(paths)
 
 
-def _remove_image_reference_lines(content: str) -> str:
+def remove_image_reference_lines(content: str) -> str:
     clean_lines: list[str] = []
     for line in content.splitlines():
         if IMAGE_REFERENCE_LINE.match(line):
@@ -74,7 +74,7 @@ def split_markdown_by_sections(content: str) -> list[MarkdownSection]:
         sections.append(
             MarkdownSection(
                 title="overview",
-                content=_remove_image_reference_lines(pre_heading),
+                content=remove_image_reference_lines(pre_heading),
                 image_paths=extract_image_paths(pre_heading),
                 position=position,
             )
@@ -94,7 +94,7 @@ def split_markdown_by_sections(content: str) -> list[MarkdownSection]:
             continue
 
         image_paths = extract_image_paths(body)
-        clean_body = _remove_image_reference_lines(body)
+        clean_body = remove_image_reference_lines(body)
         section_content = f"## {title}"
         if clean_body:
             section_content = f"{section_content}\n\n{clean_body}"

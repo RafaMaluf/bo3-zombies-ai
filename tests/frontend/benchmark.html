@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="pt-BR"><meta charset="utf-8"><title>Krono - teste local de armazenamento</title>
+<button id="run">Medir 1.000 respostas sintéticas</button><pre id="result">Pronto. Usa um banco temporário separado e o remove após medir.</pre>
+<button id="seed">Criar conversa de teste com 85 mensagens</button>
+<script src="/app/history-store.js"></script>
+<script>
+document.getElementById('run').onclick = async () => {
+  const button=document.getElementById('run'); button.disabled=true;
+  const output=document.getElementById('result'); output.textContent='Medindo…';
+  const name=`krono.benchmark.${crypto.randomUUID()}`;
+  let db;
+  try {
+    db=await HistoryStore.open(name); const record=await db.create('Teste temporário');
+    const body='Uma instrução com locais e condições. '.repeat(400);
+    let bytes=0; const start=performance.now();
+    for(let batch=0;batch<20;batch++) {
+      const rows=Array.from({length:50},()=>transcriptRow('assistant','',{blocks:[{title:'Etapa',body,images:[{id:'img_0123456789abcdef'}]}]}));
+      bytes+=new TextEncoder().encode(JSON.stringify(rows)).byteLength;
+      await db.update(record.id,{},rows);
+    }
+    const written=performance.now(); const rows=await db.page(record.id);
+    const read=performance.now();
+    const metadata=await db.list(); const listed=performance.now();
+    output.textContent=JSON.stringify({records:1000,serializedBytes:bytes,loadedMessages:rows.length,
+      writeMs:Math.round(written-start),pageReadMs:Math.round(read-written),metadataReadMs:Math.round(listed-read),
+      metadataRecords:metadata.length},null,2);
+  } catch(error) { output.textContent=error.stack; }
+  finally {
+    db?.db.close();
+    indexedDB.deleteDatabase(name);
+    button.disabled=false;
+  }
+};
+document.getElementById('seed').onclick = async () => {
+  const db=await HistoryStore.open(); const record=await db.create('Teste de paginação (85)');
+  await db.update(record.id,{automaticTitle:false},Array.from({length:85},(_,i)=>transcriptRow(i%2?'assistant':'user',`Mensagem de teste ${i+1}`)));
+  db.db.close(); document.getElementById('result').textContent='Conversa de teste criada: 85 mensagens. Abra pelo histórico do aplicativo de teste.';
+};
+</script></html>

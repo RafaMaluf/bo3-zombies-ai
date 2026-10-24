@@ -5,7 +5,7 @@
 The Golden Bucket is a side easter egg upgrade on Zetsubou No Shima. Once obtained, the bucket no longer empties after watering plants, making the plant system much easier to manage.
 
 To unlock it, you must:
-- hatch one of every major plant type
+- grow the four ordinary water recipes: blue-only reward, green-only holding, purple-only carnivorous, and mixed-colour fruit
 - use the Skull of Nan Sapwe on the poster near the purple water
 - use the Skull again under Lab B to reveal the special growing spot
 - place your bucket there
@@ -18,7 +18,7 @@ Before starting, you should have:
 - a normal bucket
 - the **Skull of Nan Sapwe**
 - access to the plant system
-- already grown one of each major plant type
+- already grown a blue-only, green-only, purple-only and mixed-colour fruit plant. Water each on three consecutive rounds; for fruit, use blue, green and purple once each. Fertilized and imprint variants are not additional tasks in this checklist
 
 ## step 1 - reveal the special growing spot
 

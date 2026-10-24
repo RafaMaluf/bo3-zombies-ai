@@ -82,7 +82,8 @@ def test_shangri_la_player_count_section_distinguishes_vanilla_and_solo_mod() ->
 
     assert "4 players" in chunk.content
     assert "1 player" in chunk.content
-    assert "2 or 3 players" in chunk.content
+    assert "Vanilla still requires four players" in chunk.content
+    assert "compatible mods may change the player-count rules" in chunk.content
     assert "Solo Easter Egg mod" in chunk.content
 
 

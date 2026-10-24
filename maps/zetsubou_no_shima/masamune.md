@@ -13,9 +13,9 @@ The **Masamune** is the upgraded form of the KT-4. To build it, you need:
 
 Important note:
 - the rainbow water system has already been covered in `buckets_water.md`
-- the 4 mesmerize wall locations shown here are **not really Masamune steps by themselves**
-- only the **last mesmerize location** is directly tied to the Masamune plant step
-- the other mesmerize wall spots are useful because the guide mixes them into the same general setup flow, but they are more broadly connected to the map / easter egg progression
+- the poster and elevator wall set up the hidden-wall sequence
+- the underwater wall reveals the Masamune planting spot
+- the optional green-tank wall belongs to the friendly Thrasher side quest
 
 ## part 1 - spider tooth
 
@@ -64,18 +64,24 @@ Rainbow water collection itself was already explained in `buckets_water.md`.
 
 ### mesmerize wall locations
 
-Using the Skull of Nan Sapwe in hypnosis / mesmerize mode reveals hidden wall sections. The guide mixes several of these into the same setup chain.
+Using the Skull of Nan Sapwe in hypnosis / mesmerize mode reveals hidden wall sections. Follow the poster and elevator setup before revealing the underwater planting spot.
 
-The 4 shown wall spots are:
+First mesmerize the incomplete poster beside the purple water in the bunker cocoon room.
 
-Related images:
-- images/masamune/5placestomesmerize1.jpg
-- images/masamune/6placestomesmerize2.jpg
-- images/masamune/7placestomesmerize3.jpg
-- images/masamune/8placestomesmerize4.jpg
+Related image: images/masamune/5placestomesmerize1.jpg
+
+Next mesmerize the sealed wall beside the elevator at the bunker entrance, by the yellow danger sign, revealing its machinery.
+
+Related image: images/masamune/6placestomesmerize2.jpg
+
+For the Masamune plant, dive to the bottom of the blue-lit tunnel near Mule Kick where the original KT-4 plant was collected. Face the rock wall beside that pickup and mesmerize it to reveal the hidden planting spot.
+
+Related image: images/masamune/8placestomesmerize4.jpg
+
+The green-tank wall shown in the friendly Thrasher guide is an optional side quest, not another Masamune part.
 
 Important note:
-- the **last** mesmerize location is the one that matters directly for the Masamune plant step
+- the **underwater** mesmerize location reveals the Masamune plant step
 - that last wall reveals the underwater grow spot used for the rainbow water plant
 
 ### actual plant step
@@ -161,7 +167,6 @@ Related image:
 - images/masamune/4widowswinefreeperkpurplepool.jpg
 - images/masamune/5placestomesmerize1.jpg
 - images/masamune/6placestomesmerize2.jpg
-- images/masamune/7placestomesmerize3.jpg
 - images/masamune/8placestomesmerize4.jpg
 - images/masamune/9plantunderwater.jpg
 - images/masamune/10plantready.jpg

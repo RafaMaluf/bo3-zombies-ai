@@ -28,4 +28,4 @@ The excavators might breach:
 - Tunnel 6 (Depressurizing and blocking the way)
 - Tunnel 11 (Depressurizing and blocking the way)
 
-Note that by their definition, you cannot do both achievements in the same game.
+Ground Control is a legacy Black Ops achievement name, not an additional BO3/Zombies Chronicles Steam achievement. As a side objective, prevent all three excavators from breaching: hack each active console before its cutter breaks through. This conflicts with the One Giant Leap setup in the same match, which deliberately breaches both tunnels. Cryogenic Slumber Party in BO3 refers to completing the main Richtofen quest; use main_ee.md for the full sequence.

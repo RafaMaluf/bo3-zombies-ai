@@ -6,4 +6,4 @@ Acted Alone
 
 Difficulty: Easy
 
-You simply need to headshot zombies, while they are still in the courtyard, and you on the first floor. Description isn't necessary. :c
+For Acted Alone, get 20 zombie headshot kills in the courtyard while you are on the asylum's SECOND floor (the upstairs level). Shoot through the upstairs windows facing the central courtyard; the targets must still be outside there. Accumulate the 20 kills in the same match.

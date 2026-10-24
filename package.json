@@ -1,0 +1,10 @@
+{
+  "name": "krono-frontend-tests",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/frontend/*.test.cjs"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "6.2.6"
+  }
+}

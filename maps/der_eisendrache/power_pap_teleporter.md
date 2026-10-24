@@ -148,3 +148,6 @@ Related images:
 - images/pap_power/teleporter_rocket.jpeg
 - images/pap_power/jumppad_lander.jpeg
 - images/pap_power/jumper.jpeg
+## anti-gravity activation
+
+In the Undercroft, find the four small square floor plates around the pyramid. Stand on each plate until it lights blue (about three seconds), then move to the next. Once all four are lit, low gravity begins, allowing high jumps and wall-running. After a cycle ends, wait for it to reactivate automatically; you do not need to charge the four plates again each cycle. This setup is used for the elevated shield part, Lightning and Wolf bow wall-runs, Plunger travel, BRM wallbuy and free Death Machine. It does not itself unlock Pack-a-Punch.

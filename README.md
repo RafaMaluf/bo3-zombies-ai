@@ -1,5 +1,7 @@
 # Kronochat
 
+Local history, match companion and field-notebook UI: [implementation notes](docs/frontend-redesign.md), [backlog](docs/backlog.md).
+
 [![CI](https://github.com/RafaMaluf/bo3-zombies-ai/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/RafaMaluf/bo3-zombies-ai/actions/workflows/ci.yml)
 [![Coverage threshold: 90%](https://img.shields.io/badge/coverage_threshold-90%25-brightgreen)](https://github.com/RafaMaluf/bo3-zombies-ai/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)

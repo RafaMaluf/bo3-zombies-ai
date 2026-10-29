@@ -22,6 +22,7 @@ from app.config import settings
 from app.conversation import (
     build_resolution_messages,
     clarification_for_options,
+    continuation_document_paths,
     deterministic_follow_up_options,
     document_catalog,
     history_without_duplicate_current_message,
@@ -274,16 +275,19 @@ async def _search(
     query: str,
     active_map_id: str | None,
     limit: int,
+    document_paths: tuple[str, ...] = (),
 ):
     report_progress("searching")
     # Semantic retrieval performs a short network request. Keep it away from
     # FastAPI's event loop while preserving the synchronous deterministic API
     # used by the retrieval test suite.
+    options = {"document_paths": document_paths} if document_paths else {}
     return await asyncio.to_thread(
         search_engine.search,
         retrieval_query(query),
         active_map_id,
         limit,
+        **options,
     )
 
 
@@ -477,24 +481,39 @@ async def answer_chat(
         if len(pap_paths) == 1:
             objective_path_candidates.extend(pap_paths)
     objective_paths = tuple(dict.fromkeys(objective_path_candidates))
+    continuation_paths: tuple[str, ...] = ()
+    if request_map_id and not objective_paths and not re.search(
+        r"\b(?:pack[ -]a[ -]punch|pap|easter egg|ee|main quest)\b",
+        retrieval_query(req.message),
+    ):
+        continuation_paths = continuation_document_paths(
+            req.message, history, document_catalog(knowledge_base, request_map_id)
+        )
+        objective_paths = continuation_paths
     try:
         guide_context = prepare_guidance(req, knowledge_base, search_engine, response_language)
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     if guide_context:
         response_language = guide_context.progress.state.language or response_language
+    planning_question = req.message
+    if continuation_paths and not guide_context:
+        # Restrict ranking, not just the query text, to the confirmed objective.
+        planning_question = source_anchored_query(
+            req.message, history, document_catalog(knowledge_base, request_map_id or "")
+        )
     retrieval = (
         guide_context.retrieval
         if guide_context
         else await _search(
             search_engine,
-            req.message,
+            planning_question,
             request_map_id,
             settings.max_retrieved_chunks,
+            continuation_paths,
         )
     )
 
-    planning_question = req.message
     resolved_multiple = False
     explicit_objective = bool(requested_paths) or bool(
         re.search(
@@ -504,6 +523,7 @@ async def answer_chat(
     )
     if (
         not guide_context
+        and not continuation_paths
         and not explicit_objective
         and should_resolve_follow_up(
             req.message,

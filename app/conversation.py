@@ -24,6 +24,10 @@ REFERENTIAL_OPENERS = {
     "este",
     "esta",
     "isso",
+    "onde",
+    "donde",
+    "ou",
+    "wo",
     "qual",
     "quais",
     "what",
@@ -287,6 +291,37 @@ def source_anchored_query(
         if labels:
             return f"{message} {' '.join(labels)}"
     return ""
+
+
+def continuation_document_paths(
+    message: str,
+    history: list[ConversationMessage],
+    catalog: tuple[DocumentReference, ...],
+) -> tuple[str, ...]:
+    """Bind a short, implicit continuation to one confirmed source objective.
+
+    Explicit new objectives are handled by the caller. Families, comparisons and
+    multi-source history still need the usual ambiguity resolution.
+    """
+    words = normalize_text(message).split()
+    if not words or len(words) > 8:
+        return ()
+    if set(words) & (REFERENTIAL_TERMS | {"compare", "comparar", "versus", "vs"}):
+        return ()
+    if words[0] not in REFERENTIAL_OPENERS | ELLIPTICAL_OPENERS:
+        return ()
+    query_tokens = set(expanded_query_tokens(message))
+    named_family = [item for item in catalog if query_tokens & set(tokenize(item.label))]
+    allowed = {item.path for item in catalog}
+    for item in reversed(history):
+        if item.role != "assistant":
+            continue
+        # An unsourced answer/clarification must not resurrect an older topic.
+        paths = tuple(dict.fromkeys(item.source_paths))
+        if any(option.path not in paths for option in named_family):
+            return ()
+        return paths if len(paths) == 1 and paths[0] in allowed else ()
+    return ()
 
 
 def clarification_for_options(

@@ -614,6 +614,8 @@ class SearchEngine:
         query: str,
         active_map_id: str | None,
         limit: int,
+        *,
+        document_paths: tuple[str, ...] = (),
     ) -> RetrievalResult:
         explicit_maps = self.explicit_map_ids(query)
         valid_active_map = active_map_id if active_map_id in self.knowledge_base.maps else None
@@ -631,6 +633,8 @@ class SearchEngine:
         for chunk in self._chunks:
             if chunk.map_id not in allowed_maps:
                 continue
+            if document_paths and chunk.path not in document_paths:
+                continue
             score = self._score_chunk(query_tokens, original_query_tokens, chunk)
             bm25_scores[chunk.id] = score
         lexical_scored = [
@@ -640,6 +644,8 @@ class SearchEngine:
         ]
         lexical_scored.sort(key=lambda item: (-item.score, item.chunk.position))
         scored = self._rank_chunks(query, allowed_maps, bm25_scores)
+        if document_paths:
+            scored = [item for item in scored if item.chunk.path in document_paths]
 
         unique_topic_map = self._unique_topic_map(query, original_query_tokens)
         if not explicit_maps and not valid_active_map and unique_topic_map:

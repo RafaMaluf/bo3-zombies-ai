@@ -158,12 +158,19 @@ class AnswerContract:
             )
         elif self.detail == "detailed":
             lines.append(
-                "Explain every supplied action, alternative location, condition and prerequisite. "
+                "Explain every requested action, alternative location, condition and prerequisite. "
                 "Do not replace instructions with a title or a one-sentence acknowledgement. "
                 "Do not expand procedures from other guides that are not supplied."
             )
         else:
             lines.append("Answer the specific question directly; do not recite the whole guide.")
+        if not self.ordered:
+            lines.append(
+                "Choose the excerpt that answers the question in conversation context. "
+                "Retrieval rank does not determine the current step or prove completion. "
+                "Do not assume later steps have been completed. Explain the requested point "
+                "at the requested detail, without reciting all retrieved sections."
+            )
         if self.requirements:
             lines.append("REQUIRED SECTIONS (each needs its own grounded block):")
             lines.extend(
@@ -186,7 +193,9 @@ def build_contract(
     ordered: bool,
     brief_completion: bool = False,
 ) -> AnswerContract:
-    required = chunks if ordered else chunks[:1]
+    # For a point question the best matching excerpt may not rank first. Forcing
+    # that source into the answer can turn a location question into a final step.
+    required = chunks if ordered else ()
     requirements = []
     for item in required:
         words = len(WORDS.findall(item.chunk.content))

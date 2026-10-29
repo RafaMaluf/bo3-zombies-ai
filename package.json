@@ -2,9 +2,11 @@
   "name": "krono-frontend-tests",
   "private": true,
   "scripts": {
-    "test": "node --test tests/frontend/*.test.cjs"
+    "test": "node --test tests/frontend/*.test.cjs",
+    "test:layout": "node --test tests/browser/*.test.cjs"
   },
   "devDependencies": {
-    "fake-indexeddb": "6.2.6"
+    "fake-indexeddb": "6.2.6",
+    "playwright-core": "1.62.1"
   }
 }

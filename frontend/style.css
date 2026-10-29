@@ -203,6 +203,8 @@ dialog::backdrop {
   display:flex;
   flex-direction:column;
   position:relative;
+  overflow:hidden;
+  container-type:size;
 }
 .chat {
   overflow:auto;
@@ -218,6 +220,11 @@ dialog::backdrop {
 }
 .welcome {
   margin:auto;
+  width:100%;
+  min-height:0;
+  max-height:100%;
+  overflow-y:auto;
+  overscroll-behavior:contain;
   text-align:center;
   padding:30px 24px;
   max-width:650px;
@@ -1130,6 +1137,26 @@ dialog::backdrop {
   }
   .guide-controls {
     margin:8px 16px;
+  }
+}
+/* React to the space left above the composer, including an open keyboard. */
+@container (max-height:350px) {
+  .welcome {
+    padding:12px 16px;
+  }
+  .welcome-logo {
+    display:none;
+  }
+  .welcome h1 {
+    font-size:22px;
+    margin-bottom:8px;
+  }
+  .welcome p {
+    font-size:13px;
+    margin-bottom:0;
+  }
+  .quick-prompts {
+    margin-top:12px;
   }
 }
 @media(prefers-reduced-motion:reduce) {

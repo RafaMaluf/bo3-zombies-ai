@@ -53,7 +53,8 @@ o acesso por falta de suporte à política de URLs desse navegador. **Ainda falt
 validar abertura/fechamento do teclado num iPhone real, em Safari e PWA.**
 Testes de viewport e uma execução correta do modelo não comprovam ausência de
 bugs do WebKit nem correção factual de todas as futuras respostas. Estas mudanças
-são locais, sem push ou deploy nesta etapa.
+foram publicadas na `main` até `dd895f8`. O retorno do aparelho confirmou que
+conversas existentes melhoraram, mas revelou a falha de boas-vindas abaixo.
 
 ## Aceite no aparelho
 
@@ -63,3 +64,33 @@ visível, sem sobreposição à barra de status. Digitar, fechar o teclado e rep
 a resposta não deve reabrir o teclado sozinha. Conferir também rotação da tela,
 campo do acompanhamento e renomeação de conversa. No chat Rápido, repetir
 pinturas do lobo → localização da flecha; a foto deve ser a da parede no subsolo.
+
+## Retorno do iPhone: conversa nova
+
+O estado vazio tinha um problema adicional de flexbox: com 214px disponíveis na
+área central, as boas-vindas ocupavam 381px e sobrepunham o compositor. Reproduzido
+em navegador headless com o HTML, CSS e JavaScript reais, mantendo o layout
+viewport e reduzindo apenas o visual viewport.
+
+- Boas-vindas podem encolher e rolam dentro de seus próprios limites. A área
+  central impede pintura sobre o compositor.
+- Uma consulta à altura do contêiner compacta as boas-vindas em pouco espaço:
+  retira a logo e reduz título e espaçamento. Os atalhos continuam acessíveis.
+  A apresentação normal retorna quando há espaço novamente.
+- Cache do PWA passa a v4; somente a referência do CSS muda. Não há nova lógica
+  de teclado nem alteração na geração das respostas.
+- Regressão reproduzida antes da correção: 5 dos 7 cenários Chromium falhavam.
+  Depois: **14 testes de layout aprovados em Chromium e WebKit**, incluindo a
+  troca de uma conversa existente por uma nova, viewport deslocado, campo com
+  várias linhas, fechamento do teclado simulado e larguras 320/393/430px,
+  paisagem e desktop. O teste verifica inclusive qual elemento recebe o toque
+  no centro do campo, detectando a sobreposição.
+- Os 26 testes unitários frontend e o teste de entrega dos arquivos PWA passam.
+  Playwright é dependência apenas de desenvolvimento; o CI executa as regressões
+  nos dois motores. Não há chamadas de modelo nesses testes.
+
+Executar com `npm run test:layout`, após
+`npx playwright-core install chromium webkit`. Para os dois motores, definir
+`KRONO_LAYOUT_ENGINES=chromium,webkit`. Um Chromium já instalado pode ser usado
+com `KRONO_CHROMIUM_PATH`. Isso valida layout nos motores, **não substitui a
+abertura do teclado no iPhone físico**.

@@ -41,9 +41,12 @@ do lobo, “onde eu pego a flecha?” recebeu as instruções e fotos do arco el
 - Teste real local com GPT-OSS-120B/OpenRouter: após as pinturas, a pergunta sobre
   a flecha retornou a parede quebrada à esquerda da escada, com a foto da etapa
   inicial do guia do lobo. A repetição com histórico resumido do PDF também
-  retornou esse local e uma foto. Não utilizou a cota Groq de produção.
-- Ruff, mypy e sintaxe JavaScript verificados. Resultados da suíte integral e das
-  verificações finais são registrados nos commits desta correção.
+  retornou esse local e uma foto. O replay HTTP em `/chat`, com o índice Voyage
+  ativo, também retornou a etapa inicial e sua foto (14,7 s nesta execução).
+  A miniatura indicada também respondeu HTTP 200 (`image/webp`), com TLS validado.
+  Não utilizou a cota Groq de produção.
+- Suíte Python final: **427 testes aprovados**. Frontend: **26 testes aprovados**.
+  Ruff, mypy e sintaxe JavaScript sem erros.
 
 Controle visual do Firefox indisponível nesta sessão: a ferramenta interrompeu
 o acesso por falta de suporte à política de URLs desse navegador. **Ainda falta
@@ -51,3 +54,12 @@ validar abertura/fechamento do teclado num iPhone real, em Safari e PWA.**
 Testes de viewport e uma execução correta do modelo não comprovam ausência de
 bugs do WebKit nem correção factual de todas as futuras respostas. Estas mudanças
 são locais, sem push ou deploy nesta etapa.
+
+## Aceite no aparelho
+
+Em Safari e no PWA instalado, abrir uma resposta longa, rolar até um ponto
+intermediário e tocar no campo: cabeçalho e compositor devem continuar na área
+visível, sem sobreposição à barra de status. Digitar, fechar o teclado e repetir;
+a resposta não deve reabrir o teclado sozinha. Conferir também rotação da tela,
+campo do acompanhamento e renomeação de conversa. No chat Rápido, repetir
+pinturas do lobo → localização da flecha; a foto deve ser a da parede no subsolo.

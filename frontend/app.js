@@ -299,7 +299,7 @@ function selectMap(mapId, { focus = true, persist = true } = {}) {
     historyUI.write({mapId: state.activeMapId}).catch(() => {});
   }
   setSidebarOpen(false);
-  if (focus) elements.input.focus();
+  if (focus) KronoViewport.focusInput(elements.input);
 }
 
 function createSourceDetails(sources) {
@@ -666,7 +666,7 @@ function continueCurrentMap() {
     addMessage("assistant", notice, { clarification: true });
     state.history.push({ role: "assistant", content: notice });
   }
-  elements.input.focus();
+  KronoViewport.focusInput(elements.input);
 }
 
 async function confirmMapSwitch() {
@@ -778,7 +778,7 @@ async function submitMessage(message, { echoUser = true, guideAction = null, gui
     if (state.requestAbort === requestAbort) {
       state.requestAbort = null;
       setPending(false);
-      if (!elements.mapSwitchModal.open) elements.input.focus();
+      if (!elements.mapSwitchModal.open) KronoViewport.focusInput(elements.input);
     }
   }
 }
@@ -943,13 +943,7 @@ loadApplication().then(() => historyUI.init()).finally(() => {
   selectMap(state.activeMapId, {focus: false, persist: false});
 });
 
-// Follow the visible viewport when a mobile keyboard opens.
-function resizeWorkspace() {
-  document.documentElement.style.setProperty("--app-height", `${window.visualViewport?.height || window.innerHeight}px`);
-}
-window.visualViewport?.addEventListener("resize", resizeWorkspace);
-window.addEventListener("resize", resizeWorkspace);
-resizeWorkspace();
+KronoViewport.install(window, document);
 
 if ("serviceWorker" in navigator && window.isSecureContext) {
   window.addEventListener("load", () => {

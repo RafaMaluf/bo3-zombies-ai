@@ -1,6 +1,13 @@
 # Backlog do Krono
 
-Atualizado em 24/10/2026.
+Atualizado em 29/10/2026.
+
+## Incidente mobile e continuidade
+
+Correções locais do teclado Safari/PWA e da continuação “onde pego a flecha?”
+após o arco do lobo. Há regressões automatizadas e teste real OpenRouter;
+validação do teclado em iPhone físico ainda pendente. Detalhes e limites em
+[mobile-continuity-fixes.md](mobile-continuity-fixes.md). Sem publicação.
 
 ## Redesign Caderno de campo implementado localmente
 

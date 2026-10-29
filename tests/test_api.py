@@ -210,11 +210,11 @@ def test_frontend_redirect_and_assets() -> None:
         assert "serviceWorker.register" in script.text
         assert manifest.json()["name"] == "Kronochat"
         assert manifest.json()["display"] == "standalone"
-        assert "kronochat-shell-v4" in service_worker.text
-        viewport = client.get("/app/viewport.js?v=3")
+        assert "kronochat-shell-v5" in service_worker.text
+        viewport = client.get("/app/viewport.js?v=5")
         assert viewport.status_code == 200
         assert "KronoViewport.install" in script.text
-        assert './viewport.js?v=3' in index.text
+        assert './viewport.js?v=5' in index.text
         for response in (index, stylesheet, script, manifest, service_worker):
             assert response.headers["cache-control"] == (
                 "no-cache, max-age=0, must-revalidate"

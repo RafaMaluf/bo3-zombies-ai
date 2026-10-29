@@ -9,9 +9,10 @@ do lobo, “onde eu pego a flecha?” recebeu as instruções e fotos do arco el
 ## Correções
 
 - O documento mantém sua geometria; a aplicação acompanha altura e deslocamento
-  do `visualViewport`, tanto em `resize` quanto em `scroll`. Atualizações são
-  agrupadas por frame, sem polling, sem forçar a rolagem global e sem alterar a
-  posição de leitura da conversa. Zoom por gesto continua disponível.
+  do `visualViewport`, tanto em `resize` quanto em `scroll`. Na revisão v5, os
+  eventos aplicam as medidas imediatamente, com observação breve da transição
+  descrita abaixo. Não há loop permanente nem rolagem global forçada; o ponto
+  de leitura e o zoom por gesto são preservados.
 - Campos editáveis usam no mínimo 16px; cabeçalho respeita a área segura. O
   compositor limita a própria altura ao espaço visível. Toque não recebe foco
   automático após uma resposta ou mudança de mapa. A gaveta também acompanha a
@@ -94,3 +95,35 @@ Executar com `npm run test:layout`, após
 `KRONO_LAYOUT_ENGINES=chromium,webkit`. Um Chromium já instalado pode ser usado
 com `KRONO_CHROMIUM_PATH`. Isso valida layout nos motores, **não substitui a
 abertura do teclado no iPhone físico**.
+
+## Transição do teclado — revisão v5
+
+O retorno do aparelho confirmou o layout final, mas relatou um salto antes da
+estabilização, tanto em conversa nova quanto na continuação.
+
+- Os eventos de viewport agora aplicam as medidas imediatamente, eliminando a
+  espera pelo próximo `requestAnimationFrame` que o app acrescentava.
+- Durante 500ms após foco/desfoco de um campo ou redimensionamento, um único
+  observador por frame acompanha medidas que já mudaram antes do próximo evento
+  de viewport. O observador termina sozinho e é cancelado ao ocultar a página
+  ou desmontar a integração. Botões e checkboxes não iniciam essa observação.
+- Altura e deslocamento só são escritos quando mudam. O deslocamento da aplicação
+  usa `transform` em vez de alterar `top`; não se adicionou uma transição CSS à
+  altura ou à posição. Não há estimativa fixa da altura do teclado.
+- Cache do PWA e referências do CSS/viewport passam a v5. O restante do chat,
+  histórico e geração permanece com o mesmo comportamento.
+
+Validação: **29 testes unitários frontend, 18 testes de layout em Chromium/WebKit
+e o teste de entrega dos arquivos PWA aprovados**. Os novos testes percorrem
+frames intermediários de abertura/fechamento, sem disparar eventos artificiais
+de resize/scroll, e verificam altura, deslocamento, campo acessível, ausência de
+sobreposição e preservação do ponto de leitura numa conversa já estabilizada.
+O preparo aguarda a restauração do IndexedDB antes de iniciar a interação.
+
+Limite: essa observação só aproveita medidas que o navegador já tornou
+disponíveis. Há um [relato no WebKit](https://bugs.webkit.org/show_bug.cgi?id=265578)
+de altura divulgada apenas no fim da animação em determinadas configurações do
+Safari; isso não foi confirmado neste aparelho. A API é descrita na
+[documentação do VisualViewport](https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport).
+Os testes de frames não medem a sensação ou a animação nativa do teclado no iPhone;
+a suavidade precisa ser confirmada no Safari e no PWA físicos.

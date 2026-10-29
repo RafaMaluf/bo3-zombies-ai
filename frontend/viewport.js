@@ -6,31 +6,65 @@
 
   function install(win, doc) {
     let frame = null;
-    let last = "";
+    let watchUntil = 0;
+    let lastHeight;
+    let lastTop;
     const viewport = win.visualViewport;
+    const now = () => win.performance?.now() ?? Date.now();
     function update() {
-      frame = null;
       // A pinch zoom should magnify the page, not reflow the application.
       if (viewport && Math.abs(viewport.scale - 1) > 0.01) return;
       const height = viewport?.height || win.innerHeight;
       const top = Math.max(0, viewport?.offsetTop || 0);
       if (!Number.isFinite(height) || height <= 0) return;
-      const geometry = `${height}:${top}`;
-      if (geometry === last) return;
-      last = geometry;
-      doc.documentElement.style.setProperty("--app-height", `${height}px`);
-      doc.documentElement.style.setProperty("--app-top", `${top}px`);
+      if (height !== lastHeight) {
+        lastHeight = height;
+        doc.documentElement.style.setProperty("--app-height", `${height}px`);
+      }
+      if (top !== lastTop) {
+        lastTop = top;
+        doc.documentElement.style.setProperty("--app-top", `${top}px`);
+      }
     }
-    function schedule() {
-      if (frame === null) frame = win.requestAnimationFrame(update);
+    function tick() {
+      frame = null;
+      update();
+      if (now() < watchUntil && !doc.hidden) frame = win.requestAnimationFrame(tick);
     }
-    const targets = [[win, "resize"], [win, "pageshow"]];
-    if (viewport) targets.push([viewport, "resize"], [viewport, "scroll"]);
-    for (const [target, name] of targets) target.addEventListener(name, schedule);
+    function watch() {
+      update();
+      if (!viewport || doc.hidden || Math.abs(viewport.scale - 1) > 0.01) return;
+      // Safari may change geometry between its viewport events. Observe only
+      // the short keyboard transition; there is no polling while idle/playing.
+      watchUntil = now() + 500;
+      if (frame === null) frame = win.requestAnimationFrame(tick);
+    }
+    function focusChanged(event) {
+      const field = event.target;
+      const textInput = field?.tagName === "INPUT" &&
+        ["", "text", "search", "email", "url", "tel", "number", "password"].includes(field.type || "");
+      if (field?.tagName === "TEXTAREA" || textInput || field?.isContentEditable) watch();
+    }
+    function cancelWatch() {
+      watchUntil = 0;
+      if (frame !== null) win.cancelAnimationFrame(frame);
+      frame = null;
+    }
+    function visibilityChanged() {
+      if (doc.hidden) cancelWatch();
+      else update();
+    }
+    const targets = [[win, "resize", watch], [win, "pageshow", update],
+      [doc, "focusin", focusChanged], [doc, "focusout", focusChanged],
+      [doc, "visibilitychange", visibilityChanged]];
+    if (viewport) targets.push([viewport, "resize", watch], [viewport, "scroll", update]);
+    // Apply published geometry in the event itself, without waiting another
+    // frame for the application to catch up with a native keyboard pan.
+    for (const [target, name, handler] of targets) target.addEventListener(name, handler);
     update();
     return () => {
-      if (frame !== null) win.cancelAnimationFrame(frame);
-      for (const [target, name] of targets) target.removeEventListener(name, schedule);
+      cancelWatch();
+      for (const [target, name, handler] of targets) target.removeEventListener(name, handler);
     };
   }
 

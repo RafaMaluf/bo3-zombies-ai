@@ -7,22 +7,28 @@ function target(fields = {}) {
   return Object.assign(fields, {
     addEventListener(name, handler) { events.set(name, handler); },
     removeEventListener(name) { events.delete(name); },
-    emit(name) { events.get(name)?.(); },
+    emit(name, event = {}) { events.get(name)?.(event); },
   });
 }
 function fixture(withVisualViewport = true) {
   let id = 0;
+  let now = 0;
   const frames = new Map();
   const props = new Map();
   const viewport = target({height: 740, offsetTop: 0, scale: 1});
   const win = target({innerHeight: 800,
+    performance: {now: () => now},
     visualViewport: withVisualViewport ? viewport : undefined,
     requestAnimationFrame(fn) { frames.set(++id, fn); return id; },
     cancelAnimationFrame(id) { frames.delete(id); },
   });
-  const stop = install(win, {documentElement: {style: {setProperty(k, v) { props.set(k, v); }}}});
-  const flush = () => { const pending = [...frames.values()]; frames.clear(); pending.forEach(fn => fn()); };
-  return {win, viewport, props, frames, stop, flush};
+  const doc = target({hidden:false, documentElement: {style: {setProperty(k, v) { props.set(k, v); }}}});
+  const stop = install(win, doc);
+  const flush = (elapsed = 16) => {
+    now += elapsed;
+    const pending = [...frames.values()]; frames.clear(); pending.forEach(fn => fn(now));
+  };
+  return {win, doc, viewport, props, frames, stop, flush};
 }
 
 test('keyboard opening, visual panning and closing keep the shell in the visible area', () => {
@@ -32,7 +38,7 @@ test('keyboard opening, visual panning and closing keep the shell in the visible
   f.viewport.emit('resize');
   f.viewport.offsetTop = 220;
   f.viewport.emit('scroll');
-  assert.equal(f.frames.size, 1); // one update for a burst of keyboard events
+  assert.equal(f.frames.size, 1); // one bounded observer, even after an event burst
   f.flush();
   assert.equal(f.props.get('--app-height'), '380px');
   assert.equal(f.props.get('--app-top'), '220px');
@@ -86,4 +92,50 @@ test('only a fine pointer with hover may automatically focus the input', () => {
   assert.equal(calls.length, 0);
   focusInput(input, {matchMedia: () => ({matches: true})});
   assert.deepEqual(calls, [{preventScroll: true}]);
+});
+
+test('focus tracks changing geometry before a delayed viewport event, then stops reading', () => {
+  const f = fixture();
+  f.doc.emit('focusin', {target:{tagName:'TEXTAREA'}});
+  f.viewport.height = 600;
+  f.flush();
+  assert.equal(f.props.get('--app-height'), '600px');
+  f.viewport.height = 380; f.viewport.offsetTop = 80;
+  f.flush();
+  assert.equal(f.props.get('--app-height'), '380px');
+  assert.equal(f.props.get('--app-top'), '80px');
+  for (let i=0; i<40; i++) f.flush();
+  assert.equal(f.frames.size, 0); // no permanent animation/polling loop
+  f.doc.emit('focusout', {target:{tagName:'TEXTAREA'}});
+  f.viewport.height = 740; f.viewport.offsetTop = 0;
+  f.flush();
+  assert.equal(f.props.get('--app-height'), '740px');
+  assert.equal(f.props.get('--app-top'), '0px');
+  f.stop();
+  assert.equal(f.frames.size, 0);
+});
+
+test('resize/scroll geometry is applied in the event, without another animation frame', () => {
+  const f = fixture();
+  f.viewport.height = 380; f.viewport.offsetTop = 80;
+  f.viewport.emit('resize');
+  assert.equal(f.props.get('--app-height'), '380px');
+  assert.equal(f.props.get('--app-top'), '80px');
+});
+
+test('backgrounding cancels transition observation and ordinary buttons do not start it', () => {
+  const f = fixture();
+  f.doc.emit('focusin', {target:{tagName:'BUTTON'}});
+  assert.equal(f.frames.size, 0);
+  f.doc.emit('focusin', {target:{tagName:'INPUT',type:'checkbox'}});
+  assert.equal(f.frames.size, 0);
+  f.doc.emit('focusin', {target:{tagName:'TEXTAREA'}});
+  assert.equal(f.frames.size, 1);
+  f.doc.hidden = true; f.doc.emit('visibilitychange');
+  assert.equal(f.frames.size, 0);
+  f.viewport.height = 600;
+  f.doc.hidden = false; f.doc.emit('visibilitychange');
+  assert.equal(f.props.get('--app-height'), '600px');
+  assert.equal(f.frames.size, 0);
+  f.stop();
 });

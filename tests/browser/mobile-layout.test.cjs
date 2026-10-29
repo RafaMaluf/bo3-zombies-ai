@@ -30,7 +30,10 @@ async function openApp(browser, width, height) {
     }
   });
   await page.goto(origin + '/app/');
-  await page.waitForFunction(() => !document.querySelector('#message-input').disabled);
+  // Opening IndexedDB briefly enables the input through the cancellation hook;
+  // wait for history restoration itself before interacting with the page.
+  await page.waitForFunction(() => !document.querySelector('#message-input').disabled &&
+    historyUI.meta && !historyUI.switching);
   return {page, context};
 }
 
@@ -127,5 +130,59 @@ for (const name of (process.env.KRONO_LAYOUT_ENGINES || 'chromium').split(',')) 
         await checkLayout(page);
       } finally {await context.close();}
     });
+    for (const existing of [false,true]) {
+      test(`intermediate keyboard frames without viewport events / ${existing ? 'existing' : 'new'} chat`, async () => {
+        const {page,context} = await openApp(browser,393,852);
+        try {
+          const frames = await page.evaluate(async existing => {
+            if (existing) {
+              // Seed an already settled conversation, without starting the
+              // independent smooth scroll used when a new answer arrives.
+              const article = document.createElement('article');
+              article.className = 'message assistant';
+              article.innerHTML = `<div class="message-body">${renderMarkdown('Resposta longa.\n\n'.repeat(60))}</div>`;
+              document.querySelector('#chat').appendChild(article);
+              document.querySelector('#welcome').hidden = true;
+              await new Promise(requestAnimationFrame);
+              await new Promise(requestAnimationFrame);
+              document.querySelector('#chat').scrollTo({top:100,behavior:'instant'});
+              await new Promise(requestAnimationFrame);
+              await new Promise(requestAnimationFrame);
+            }
+            const input = document.querySelector('#message-input');
+            const initialScroll = document.querySelector('#chat').scrollTop;
+            const snapshots = [];
+            async function sample(sequence) {
+              for (const [height,top] of sequence) {
+                // Deliberately withhold resize/scroll: measurements change first.
+                Object.defineProperty(visualViewport,'height',{configurable:true,value:height});
+                Object.defineProperty(visualViewport,'offsetTop',{configurable:true,value:top});
+                await new Promise(requestAnimationFrame);
+                const shell = document.querySelector('.workspace').getBoundingClientRect();
+                const stage = document.querySelector('.chat-stage').getBoundingClientRect();
+                const welcome = document.querySelector('#welcome').getBoundingClientRect();
+                const field = input.getBoundingClientRect();
+                snapshots.push({height,top,actualHeight:shell.height,actualTop:shell.top,
+                  hit:document.elementFromPoint(field.left+20,field.top+field.height/2)?.id,
+                  overlap:!existing && welcome.bottom > stage.bottom+1,
+                  scroll:document.querySelector('#chat').scrollTop,initialScroll});
+              }
+            }
+            input.focus({preventScroll:true});
+            await sample([[760,0],[660,20],[540,40],[420,60],[380,80]]);
+            input.blur();
+            await sample([[460,60],[580,40],[700,20],[852,0]]);
+            return snapshots;
+          }, existing);
+          for (const frame of frames) {
+            assert.ok(Math.abs(frame.height-frame.actualHeight) < 1,JSON.stringify(frame));
+            assert.ok(Math.abs(frame.top-frame.actualTop) < 1,JSON.stringify(frame));
+            assert.equal(frame.hit,'message-input',JSON.stringify(frame));
+            assert.equal(frame.overlap,false,JSON.stringify(frame));
+            if (existing) assert.equal(frame.scroll,100,JSON.stringify(frame));
+          }
+        } finally {await context.close();}
+      });
+    }
   });
 }
